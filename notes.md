@@ -1,1 +1,3 @@
 While both . MD and . txt are plain text files, the latter doesn't allow text formatting like headings, sub-headings, lists, font style, bold, italics etc. . MD files are created for more sophisticated reasons, such as converting into HTML to be displayed on browsers.
+
+these are further changes. 
