@@ -20,7 +20,7 @@ public class ChessBoard {
      * @param piece    the piece to add
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
-        Board[position.getRow()][position.getColumn()] = piece;
+        Board[position.getRow() - 1][position.getColumn() - 1] = piece;
     }
 
     /**
@@ -47,5 +47,45 @@ public class ChessBoard {
      */
     public void resetBoard() {
         throw new RuntimeException("Not implemented");
+    }
+
+    /**
+     * This allows for a easier representation of board when printed.
+     */
+    @Override
+    public String toString(){
+        StringBuilder str = new StringBuilder();
+        for(int r = 7; r >= 0; r--){
+            for(int c = 0; c < 8; c++){
+                str.append("|");
+                if(Board[r][c] == null){
+                    str.append("_");
+                }else{
+                    ChessPiece piece = Board[r][c];
+                    switch (piece.getPieceType()) {
+                        case ChessPiece.PieceType.KING:
+                            str.append("K");
+                            break;
+                        case ChessPiece.PieceType.QUEEN:
+                            str.append("Q");
+                            break;
+                        case ChessPiece.PieceType.BISHOP:
+                            str.append("B");
+                            break;
+                        case ChessPiece.PieceType.KNIGHT:
+                            str.append("k");
+                            break;
+                        case ChessPiece.PieceType.ROOK:
+                            str.append("R");
+                            break;
+                        case ChessPiece.PieceType.PAWN:
+                            str.append("P");
+                            break;
+                    }
+                }
+            }
+            str.append("|\n");
+        }
+        return str.toString();
     }
 }

@@ -56,57 +56,17 @@ public class ChessPiece {
         ChessPiece piece = board.getPiece(myPosition);
         int r0 = myPosition.getRow();
         int c0 = myPosition.getColumn();
+        System.out.print(board);
         switch (piece.getPieceType()) {
             case PieceType.KING:
                 System.out.println("hey this guy is a king");
-                for(int r = r0 - 1; r < r0 + 2; r ++){
-                    for(int c = c0 - 1; c < c0 + 2; c ++){
-                       if (r < 0 || r > 7 || r == r0 || c < 0 || c > 7 || c == c0){break;}
-                       if (board.getTeamColorAt(r,c) == ThisPieceColor){break;}
-                       Positions.add(new ChessPosition(r,c));
-                    }
-                }
+                Positions = PieceMoves.KingMoves(board, myPosition, ThisPieceColor);
                 break;
             case PieceType.QUEEN:
                 System.out.println("hey this guy is a Queen");
             case PieceType.BISHOP:
-                System.out.println("hey this guy is a Bishop");
-                for(int r = r0 + 1, c = c0 + 1; r <= 7 && c <= 7; r ++, c ++){
-                    if(board.getTeamColorAt(r,c) == ThisPieceColor){break;}
-                    if(board.getTeamColorAt(r,c) == null){
-                        Positions.add(new ChessPosition(r,c));
-                    }else{
-                        Positions.add(new ChessPosition(r,c));
-                        break;
-                    }
-                }
-                for(int r = r0 - 1, c = c0 - 1; r >= 0 && c >= 0; r --, c --){
-                    if(board.getTeamColorAt(r,c) == ThisPieceColor){break;}
-                    if(board.getTeamColorAt(r,c) == null){
-                        Positions.add(new ChessPosition(r,c));
-                    }else{
-                        Positions.add(new ChessPosition(r,c));
-                        break;
-                    }
-                }
-                for(int r = r0 + 1, c = c0 - 1; r <= 7 && c >= 0; r ++, c --){
-                    if(board.getTeamColorAt(r,c) == ThisPieceColor){break;}
-                    if(board.getTeamColorAt(r,c) == null){
-                        Positions.add(new ChessPosition(r,c));
-                    }else{
-                        Positions.add(new ChessPosition(r,c));
-                        break;
-                    }
-                }
-                for(int r = r0 - 1, c = c0 + 1; r >= 0 && c <= 7; r --, c ++){
-                    if(board.getTeamColorAt(r,c) == ThisPieceColor){break;}
-                    if(board.getTeamColorAt(r,c) == null){
-                        Positions.add(new ChessPosition(r,c));
-                    }else{
-                        Positions.add(new ChessPosition(r,c));
-                        break;
-                    }
-                }
+                System.out.println("hey this guy is a Bishop at " + r0 + ", " + c0);
+                Positions = PieceMoves.BishopMoves(board, myPosition, ThisPieceColor);
                 break;
             case PieceType.KNIGHT:
                 System.out.println("hey this guy is a Knight");

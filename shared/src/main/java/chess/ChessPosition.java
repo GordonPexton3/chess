@@ -28,4 +28,18 @@ public class ChessPosition {
     public int getColumn() {
         return col;
     }
+
+    /**
+     * overriding the toString method to see the position in format (r,c)
+     */
+    @Override
+    public String toString(){
+        StringBuilder str = new StringBuilder();
+        str.append("(");
+        str.append(row);
+        str.append(",");
+        str.append(col);
+        str.append(")");
+        return str.toString();
+    }
 }
