@@ -54,9 +54,18 @@ public class ChessPiece {
     public Collection<ChessPosition> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         Collection<ChessPosition> Positions = new HashSet<>();
         ChessPiece piece = board.getPiece(myPosition);
+        int r0 = myPosition.getRow();
+        int c0 = myPosition.getColumn();
         switch (piece.getPieceType()) {
             case PieceType.KING:
                 System.out.println("hey this guy is a king");
+                for(int r = r0 - 1; r < r0 + 2; r ++){
+                    for(int c = c0 - 1; c < c0 + 2; c ++){
+                       if (r < 0 || r > 7 || r == r0 || c < 0 || c > 7 || c == c0){break;}
+                       if (board.getTeamColorAt(r,c) == ThisPieceColor){break;}
+                       Positions.add(new ChessPosition(r,c));
+                    }
+                }
             case PieceType.QUEEN:
                 System.out.println("hey this guy is a Queen");
             case PieceType.BISHOP:
