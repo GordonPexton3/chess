@@ -65,31 +65,57 @@ public class ChessPiece {
                        Positions.add(new ChessPosition(r,c));
                     }
                 }
+                break;
             case PieceType.QUEEN:
                 System.out.println("hey this guy is a Queen");
             case PieceType.BISHOP:
                 System.out.println("hey this guy is a Bishop");
                 //Positions.addAll(BishopsMoves(board, myPosition));
+                outerLoop:
                 for(int r = r0 + 1; r <= 7; r ++){
                     for(int c = c0 + 1; c <= 7; c ++){
-                        if(board.getTeamColorAt(r,c) == ThisPieceColor){break;}
+                        if(board.getTeamColorAt(r,c) == ThisPieceColor){break outerLoop;}
+                        if(board.getTeamColorAt(r,c) != ThisPieceColor){
+                            Positions.add(new ChessPosition(r,c));
+                            break outerLoop;
+                        }
+                        Positions.add(new ChessPosition(r,c));
                     }
                 }
+                outerLoop:
                 for(int r = r0 - 1; r >= 0; r --){
                     for(int c = c0 - 1; c >= 0; c --){
-
+                        if(board.getTeamColorAt(r,c) == ThisPieceColor){break outerLoop;}
+                        if(board.getTeamColorAt(r,c) != ThisPieceColor){
+                            Positions.add(new ChessPosition(r,c));
+                            break outerLoop;
+                        }
+                        Positions.add(new ChessPosition(r,c));
                     }
                 }
+                outerLoop:
                 for(int r = r0 - 1; r >= 0; r --){
                     for(int c = c0 + 1; c < 7; c ++){
-
+                        if(board.getTeamColorAt(r,c) == ThisPieceColor){break outerLoop;}
+                        if(board.getTeamColorAt(r,c) != ThisPieceColor){
+                            Positions.add(new ChessPosition(r,c));
+                            break outerLoop;
+                        }
+                        Positions.add(new ChessPosition(r,c));
                     }
                 }
+                outerLoop:
                 for(int r = r0 + 1; r < 7; r ++){
                     for(int c = c0 - 1; c >= 0; c --){
-
+                        if(board.getTeamColorAt(r,c) == ThisPieceColor){break outerLoop;}
+                        if(board.getTeamColorAt(r,c) != ThisPieceColor){
+                            Positions.add(new ChessPosition(r,c));
+                            break outerLoop;
+                        }
+                        Positions.add(new ChessPosition(r,c));
                     }
                 }
+                break;
             case PieceType.KNIGHT:
                 System.out.println("hey this guy is a Knight");
             case PieceType.ROOK:
