@@ -10,9 +10,8 @@ import java.util.HashSet;
  * signature of the existing methods.
  */
 public class ChessPiece {
-    public ChessPosition Position;
-    private PieceType ThisPieceType;
-    private ChessGame.TeamColor ThisPieceColor;
+    private final PieceType ThisPieceType;
+    private final ChessGame.TeamColor ThisPieceColor;
     public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
         ThisPieceType = type;
         ThisPieceColor = pieceColor;
@@ -70,7 +69,27 @@ public class ChessPiece {
                 System.out.println("hey this guy is a Queen");
             case PieceType.BISHOP:
                 System.out.println("hey this guy is a Bishop");
-                return Positions;
+                //Positions.addAll(BishopsMoves(board, myPosition));
+                for(int r = r0 + 1; r <= 7; r ++){
+                    for(int c = c0 + 1; c <= 7; c ++){
+                        if(board.getTeamColorAt(r,c) == ThisPieceColor){break;}
+                    }
+                }
+                for(int r = r0 - 1; r >= 0; r --){
+                    for(int c = c0 - 1; c >= 0; c --){
+
+                    }
+                }
+                for(int r = r0 - 1; r >= 0; r --){
+                    for(int c = c0 + 1; c < 7; c ++){
+
+                    }
+                }
+                for(int r = r0 + 1; r < 7; r ++){
+                    for(int c = c0 - 1; c >= 0; c --){
+
+                    }
+                }
             case PieceType.KNIGHT:
                 System.out.println("hey this guy is a Knight");
             case PieceType.ROOK:
@@ -80,4 +99,31 @@ public class ChessPiece {
         }
         return Positions;
     }
+
+    private Collection<ChessPosition> BishopsMoves(ChessBoard board, ChessPosition myPosition){
+        int r0 = myPosition.getRow();
+        int c0 = myPosition.getColumn();
+        for(int r = r0 + 1; r < 7; r ++){
+            for(int c = c0 + 1; c < 7; c ++){
+
+            }
+        }
+        for(int r = r0 + 1; r < 7; r ++){
+            for(int c = c0 + 1; c < 7; c ++){
+
+            }
+        }
+        for(int r = r0 + 1; r < 7; r ++){
+            for(int c = c0 + 1; c < 7; c ++){
+
+            }
+        }
+        for(int r = r0 + 1; r < 7; r ++){
+            for(int c = c0 + 1; c < 7; c ++){
+
+            }
+        }
+        return Positions;
+    }
+
 }
