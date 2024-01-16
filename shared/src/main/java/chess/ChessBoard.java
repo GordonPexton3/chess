@@ -7,7 +7,7 @@ package chess;
  * signature of the existing methods.
  */
 public class ChessBoard {
-    private ChessPiece[][] Board = new ChessPiece[8][8];
+    private final ChessPiece[][] Board = new ChessPiece[8][8];
 
     public ChessBoard() {
         
@@ -35,6 +35,9 @@ public class ChessBoard {
     }
 
     public ChessGame.TeamColor getTeamColorAt(int r, int c){
+        if (Board[r][c] == null){
+            return null;
+        }
         return Board[r][c].getTeamColor();
     }
 

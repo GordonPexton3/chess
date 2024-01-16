@@ -1,5 +1,6 @@
 package chess;
 
+import javax.print.attribute.standard.MediaSize;
 import java.util.Collection;
 import java.util.HashSet;
 
@@ -12,7 +13,7 @@ import java.util.HashSet;
 public class ChessPiece {
     private final PieceType ThisPieceType;
     private final ChessGame.TeamColor ThisPieceColor;
-    public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
+    public ChessPiece(ChessGame.TeamColor pieceColor, PieceType type) {
         ThisPieceType = type;
         ThisPieceColor = pieceColor;
     }
@@ -70,86 +71,53 @@ public class ChessPiece {
                 System.out.println("hey this guy is a Queen");
             case PieceType.BISHOP:
                 System.out.println("hey this guy is a Bishop");
-                //Positions.addAll(BishopsMoves(board, myPosition));
-                outerLoop:
-                for(int r = r0 + 1; r <= 7; r ++){
-                    for(int c = c0 + 1; c <= 7; c ++){
-                        if(board.getTeamColorAt(r,c) == ThisPieceColor){break outerLoop;}
-                        if(board.getTeamColorAt(r,c) != ThisPieceColor){
-                            Positions.add(new ChessPosition(r,c));
-                            break outerLoop;
-                        }
+                for(int r = r0 + 1, c = c0 + 1; r <= 7 && c <= 7; r ++, c ++){
+                    if(board.getTeamColorAt(r,c) == ThisPieceColor){break;}
+                    if(board.getTeamColorAt(r,c) == null){
                         Positions.add(new ChessPosition(r,c));
+                    }else{
+                        Positions.add(new ChessPosition(r,c));
+                        break;
                     }
                 }
-                outerLoop:
-                for(int r = r0 - 1; r >= 0; r --){
-                    for(int c = c0 - 1; c >= 0; c --){
-                        if(board.getTeamColorAt(r,c) == ThisPieceColor){break outerLoop;}
-                        if(board.getTeamColorAt(r,c) != ThisPieceColor){
-                            Positions.add(new ChessPosition(r,c));
-                            break outerLoop;
-                        }
+                for(int r = r0 - 1, c = c0 - 1; r >= 0 && c >= 0; r --, c --){
+                    if(board.getTeamColorAt(r,c) == ThisPieceColor){break;}
+                    if(board.getTeamColorAt(r,c) == null){
                         Positions.add(new ChessPosition(r,c));
+                    }else{
+                        Positions.add(new ChessPosition(r,c));
+                        break;
                     }
                 }
-                outerLoop:
-                for(int r = r0 - 1; r >= 0; r --){
-                    for(int c = c0 + 1; c < 7; c ++){
-                        if(board.getTeamColorAt(r,c) == ThisPieceColor){break outerLoop;}
-                        if(board.getTeamColorAt(r,c) != ThisPieceColor){
-                            Positions.add(new ChessPosition(r,c));
-                            break outerLoop;
-                        }
+                for(int r = r0 + 1, c = c0 - 1; r <= 7 && c >= 0; r ++, c --){
+                    if(board.getTeamColorAt(r,c) == ThisPieceColor){break;}
+                    if(board.getTeamColorAt(r,c) == null){
                         Positions.add(new ChessPosition(r,c));
+                    }else{
+                        Positions.add(new ChessPosition(r,c));
+                        break;
                     }
                 }
-                outerLoop:
-                for(int r = r0 + 1; r < 7; r ++){
-                    for(int c = c0 - 1; c >= 0; c --){
-                        if(board.getTeamColorAt(r,c) == ThisPieceColor){break outerLoop;}
-                        if(board.getTeamColorAt(r,c) != ThisPieceColor){
-                            Positions.add(new ChessPosition(r,c));
-                            break outerLoop;
-                        }
+                for(int r = r0 - 1, c = c0 + 1; r >= 0 && c <= 7; r --, c ++){
+                    if(board.getTeamColorAt(r,c) == ThisPieceColor){break;}
+                    if(board.getTeamColorAt(r,c) == null){
                         Positions.add(new ChessPosition(r,c));
+                    }else{
+                        Positions.add(new ChessPosition(r,c));
+                        break;
                     }
                 }
                 break;
             case PieceType.KNIGHT:
                 System.out.println("hey this guy is a Knight");
+                break;
             case PieceType.ROOK:
                 System.out.println("hey this guy is a Rook");
+                break;
             case PieceType.PAWN:
                 System.out.println("hey this guy is a Pawn");
+                break;
         }
         return Positions;
     }
-
-    private Collection<ChessPosition> BishopsMoves(ChessBoard board, ChessPosition myPosition){
-        int r0 = myPosition.getRow();
-        int c0 = myPosition.getColumn();
-        for(int r = r0 + 1; r < 7; r ++){
-            for(int c = c0 + 1; c < 7; c ++){
-
-            }
-        }
-        for(int r = r0 + 1; r < 7; r ++){
-            for(int c = c0 + 1; c < 7; c ++){
-
-            }
-        }
-        for(int r = r0 + 1; r < 7; r ++){
-            for(int c = c0 + 1; c < 7; c ++){
-
-            }
-        }
-        for(int r = r0 + 1; r < 7; r ++){
-            for(int c = c0 + 1; c < 7; c ++){
-
-            }
-        }
-        return Positions;
-    }
-
 }
