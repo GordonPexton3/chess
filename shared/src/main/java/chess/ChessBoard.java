@@ -9,7 +9,7 @@ package chess;
 public class ChessBoard {
     private final ChessPiece[][] Board = new ChessPiece[8][8];
 
-    public ChessBoard() {
+    public static void ChessBoard() {
         
     }
 
@@ -31,14 +31,14 @@ public class ChessBoard {
      * position
      */
     public ChessPiece getPiece(ChessPosition position) {
-        return Board[position.getRow()][position.getColumn()];
+        return Board[position.getRow() - 1][position.getColumn() - 1];
     }
 
     public ChessGame.TeamColor getTeamColorAt(int r, int c){
-        if (Board[r][c] == null){
+        if (Board[r - 1][c - 1] == null){
             return null;
         }
-        return Board[r][c].getTeamColor();
+        return Board[r - 1][c - 1].getTeamColor();
     }
 
     /**
