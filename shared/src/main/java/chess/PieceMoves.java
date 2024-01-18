@@ -38,7 +38,7 @@ public class PieceMoves {
         Collection<ChessPosition> Positions = new HashSet<>();
         int r0 = myPosition.getRow();
         int c0 = myPosition.getColumn();
-        for(int r = r0 + 1, c = c0 + 1; r <= 7 && c <= 7; r ++, c ++){
+        for(int r = r0 + 1, c = c0 + 1; r <=8  && c <= 8; r ++, c ++){
             if(board.getTeamColorAt(r,c) == ThisPieceColor){break;}
             if(board.getTeamColorAt(r,c) == null){
                 Positions.add(new ChessPosition(r,c));
@@ -47,7 +47,7 @@ public class PieceMoves {
                 break;
             }
         }
-        for(int r = r0 - 1, c = c0 - 1; r >= 0 && c >= 0; r --, c --){
+        for(int r = r0 - 1, c = c0 - 1; r > 0 && c > 0; r --, c --){
             if(board.getTeamColorAt(r,c) == ThisPieceColor){break;}
             if(board.getTeamColorAt(r,c) == null){
                 Positions.add(new ChessPosition(r,c));
@@ -56,7 +56,7 @@ public class PieceMoves {
                 break;
             }
         }
-        for(int r = r0 + 1, c = c0 - 1; r <= 7 && c >= 0; r ++, c --){
+        for(int r = r0 + 1, c = c0 - 1; r <= 8 && c > 0; r ++, c --){
             if(board.getTeamColorAt(r,c) == ThisPieceColor){break;}
             if(board.getTeamColorAt(r,c) == null){
                 Positions.add(new ChessPosition(r,c));
@@ -65,7 +65,7 @@ public class PieceMoves {
                 break;
             }
         }
-        for(int r = r0 - 1, c = c0 + 1; r >= 0 && c <= 7; r --, c ++){
+        for(int r = r0 - 1, c = c0 + 1; r > 0 && c <= 8; r --, c ++){
             if(board.getTeamColorAt(r,c) == ThisPieceColor){break;}
             if(board.getTeamColorAt(r,c) == null){
                 Positions.add(new ChessPosition(r,c));

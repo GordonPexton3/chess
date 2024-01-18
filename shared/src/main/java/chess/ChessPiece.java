@@ -54,9 +54,6 @@ public class ChessPiece {
     public Collection<ChessPosition> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         Collection<ChessPosition> Positions = new HashSet<>();
         ChessPiece piece = board.getPiece(myPosition);
-        int r0 = myPosition.getRow();
-        int c0 = myPosition.getColumn();
-        System.out.print(board);
         switch (piece.getPieceType()) {
             case PieceType.KING:
                 System.out.println("hey this guy is a king");
@@ -65,7 +62,6 @@ public class ChessPiece {
             case PieceType.QUEEN:
                 System.out.println("hey this guy is a Queen");
             case PieceType.BISHOP:
-                System.out.println("hey this guy is a Bishop at " + r0 + ", " + c0);
                 Positions = PieceMoves.BishopMoves(board, myPosition, ThisPieceColor);
                 break;
             case PieceType.KNIGHT:
