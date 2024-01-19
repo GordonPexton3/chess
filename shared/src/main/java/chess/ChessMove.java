@@ -1,7 +1,5 @@
 package chess;
 
-import org.junit.jupiter.api.Assertions;
-
 import java.util.Objects;
 
 /**

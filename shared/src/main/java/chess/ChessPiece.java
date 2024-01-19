@@ -12,10 +12,10 @@ import java.util.Objects;
  */
 public class ChessPiece {
     private final PieceType ThisPieceType;
-    private final ChessGame.TeamColor ThisPieceColor;
+    private final ChessGame.TeamColor thisPieceColor;
     public ChessPiece(ChessGame.TeamColor pieceColor, PieceType type) {
         ThisPieceType = type;
-        ThisPieceColor = pieceColor;
+        thisPieceColor = pieceColor;
     }
 
     /**
@@ -34,7 +34,7 @@ public class ChessPiece {
      * @return Which team this chess piece belongs to
      */
     public ChessGame.TeamColor getTeamColor() {
-        return ThisPieceColor;
+        return thisPieceColor;
     }
 
     /**
@@ -49,12 +49,12 @@ public class ChessPiece {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ChessPiece that = (ChessPiece) o;
-        return ThisPieceType == that.ThisPieceType && ThisPieceColor == that.ThisPieceColor;
+        return ThisPieceType == that.ThisPieceType && thisPieceColor == that.thisPieceColor;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(ThisPieceType, ThisPieceColor);
+        return Objects.hash(ThisPieceType, thisPieceColor);
     }
 
     /**
@@ -71,15 +71,15 @@ public class ChessPiece {
         switch (piece.getPieceType()) {
             case PieceType.KING:
                 System.out.println("hey this guy is a king");
-                moves = PieceMoves.KingMoves(board, myPosition, ThisPieceColor);
+                moves = PieceMoves.KingMoves(board, myPosition, thisPieceColor);
                 break;
             case PieceType.QUEEN:
                 System.out.println("hey this guy is a Queen");
             case PieceType.BISHOP:
-                moves = PieceMoves.bishopMoves(board, myPosition, ThisPieceColor);
+                moves = PieceMoves.bishopMoves(board, myPosition, thisPieceColor);
                 break;
             case PieceType.KNIGHT:
-                System.out.println("hey this guy is a Knight");
+                moves = PieceMoves.knightMoves(board, myPosition, thisPieceColor)
                 break;
             case PieceType.ROOK:
                 System.out.println("hey this guy is a Rook");

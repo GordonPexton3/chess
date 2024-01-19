@@ -15,6 +15,24 @@ public class PieceMoves {
     }
 
     /**
+     * Return a collection of the possible moves for a
+     * Knight
+     */
+    public static Collection<ChessMove> knightMoves(ChessBoard board, ChessPosition myPosition, ChessGame.TeamColor ThisPieceColor){
+        Collection<ChessMove> moves = new HashSet<>();
+        int r0 = myPosition.getRow();
+        int c0 = myPosition.getColumn();
+        for(int r = r0 - 1; r < r0 + 2; r ++){
+            for(int c = c0 - 1; c < c0 + 2; c ++){
+                if (r < 0 || r > 7 || r == r0 || c < 0 || c > 7 || c == c0){break;}
+                if (board.getTeamColorAt(r,c) == ThisPieceColor){break;}
+                moves.add(new ChessMove(myPosition, new ChessPosition(r, c), null));
+            }
+        }
+        return moves;
+    }
+
+    /**
      * Return a collection of the possible moves for a king
      */
     public static Collection<ChessMove> KingMoves(ChessBoard board, ChessPosition myPosition, ChessGame.TeamColor ThisPieceColor){
