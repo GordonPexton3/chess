@@ -22,28 +22,22 @@ public class PieceMoves {
         Collection<ChessMove> moves = new HashSet<>();
         int r0 = myPosition.getRow();
         int c0 = myPosition.getColumn();
-        for(int r = r0 - 1; r < r0 + 2; r ++){
-            for(int c = c0 - 1; c < c0 + 2; c ++){
-                if (r < 0 || r > 7 || r == r0 || c < 0 || c > 7 || c == c0){break;}
-                if (board.getTeamColorAt(r,c) == ThisPieceColor){break;}
-                moves.add(new ChessMove(myPosition, new ChessPosition(r, c), null));
-            }
-        }
         return moves;
     }
 
     /**
      * Return a collection of the possible moves for a king
      */
-    public static Collection<ChessMove> KingMoves(ChessBoard board, ChessPosition myPosition, ChessGame.TeamColor ThisPieceColor){
+    public static Collection<ChessMove> kingMoves(ChessBoard board, ChessPosition myPosition, ChessGame.TeamColor thisPieceColor){
         Collection<ChessMove> moves = new HashSet<>();
         int r0 = myPosition.getRow();
         int c0 = myPosition.getColumn();
-        for(int r = r0 - 1; r < r0 + 2; r ++){
-            for(int c = c0 - 1; c < c0 + 2; c ++){
-                if (r < 0 || r > 7 || r == r0 || c < 0 || c > 7 || c == c0){break;}
-                if (board.getTeamColorAt(r,c) == ThisPieceColor){break;}
-                moves.add(new ChessMove(myPosition, new ChessPosition(r, c), null));
+        for(int r = r0 - 1; r <= r0 + 1; r ++){
+            for(int c = c0 - 1; c <= c0 + 1; c ++){
+                if (!(r <= 0 || r > 8 || c <= 0 || c > 8 || (r == r0 && c == c0)) &&
+                        (board.getTeamColorAt(r,c) != thisPieceColor)){
+                    moves.add(new ChessMove(myPosition, new ChessPosition(r, c), null));
+                }
             }
         }
         return moves;

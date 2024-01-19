@@ -64,7 +64,6 @@ public class TestFactory {
         var testPiece = board.getPiece(startPosition);
         var validMoves = loadMoves(startPosition, endPositions);
         var pieceMoves = new HashSet<>(testPiece.pieceMoves(board, startPosition));
-        System.out.println(pieceMoves);
         Assertions.assertEquals(validMoves, pieceMoves, "Wrong moves");
     }
 

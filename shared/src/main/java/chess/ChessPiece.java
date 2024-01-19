@@ -61,7 +61,7 @@ public class ChessPiece {
      * Calculates all the positions a chess piece can move to
      * Does not take into account moves that are illegal due to leaving the king in
      * danger.
-     * This wants a collection of valid moves. I am going to make that change but
+     * This wants a collection of valid moves. I am going to make that change, but
      * I keep a copy just in case.
      * @return Collection of valid moves
      */
@@ -70,23 +70,19 @@ public class ChessPiece {
         ChessPiece piece = board.getPiece(myPosition);
         switch (piece.getPieceType()) {
             case PieceType.KING:
-                System.out.println("hey this guy is a king");
-                moves = PieceMoves.KingMoves(board, myPosition, thisPieceColor);
+                moves = PieceMoves.kingMoves(board, myPosition, thisPieceColor);
                 break;
             case PieceType.QUEEN:
-                System.out.println("hey this guy is a Queen");
+                break;
             case PieceType.BISHOP:
                 moves = PieceMoves.bishopMoves(board, myPosition, thisPieceColor);
                 break;
             case PieceType.KNIGHT:
-                moves = PieceMoves.knightMoves(board, myPosition, thisPieceColor)
+                moves = PieceMoves.knightMoves(board, myPosition, thisPieceColor);
                 break;
             case PieceType.ROOK:
-                System.out.println("hey this guy is a Rook");
-                break;
+
             case PieceType.PAWN:
-                System.out.println("hey this guy is a Pawn");
-                break;
         }
         return moves;
     }
