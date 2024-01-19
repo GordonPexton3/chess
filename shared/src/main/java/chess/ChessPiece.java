@@ -1,8 +1,8 @@
 package chess;
 
-import javax.print.attribute.standard.MediaSize;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Objects;
 
 /**
  * Represents a single chess piece
@@ -44,25 +44,39 @@ public class ChessPiece {
         return ThisPieceType;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ChessPiece that = (ChessPiece) o;
+        return ThisPieceType == that.ThisPieceType && ThisPieceColor == that.ThisPieceColor;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(ThisPieceType, ThisPieceColor);
+    }
+
     /**
      * Calculates all the positions a chess piece can move to
      * Does not take into account moves that are illegal due to leaving the king in
-     * danger
-     *
+     * danger.
+     * This wants a collection of valid moves. I am going to make that change but
+     * I keep a copy just in case.
      * @return Collection of valid moves
      */
-    public Collection<ChessPosition> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        Collection<ChessPosition> Positions = new HashSet<>();
+    public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
+        Collection<ChessMove> moves = new HashSet<>();
         ChessPiece piece = board.getPiece(myPosition);
         switch (piece.getPieceType()) {
             case PieceType.KING:
                 System.out.println("hey this guy is a king");
-                Positions = PieceMoves.KingMoves(board, myPosition, ThisPieceColor);
+                moves = PieceMoves.KingMoves(board, myPosition, ThisPieceColor);
                 break;
             case PieceType.QUEEN:
                 System.out.println("hey this guy is a Queen");
             case PieceType.BISHOP:
-                Positions = PieceMoves.BishopMoves(board, myPosition, ThisPieceColor);
+                moves = PieceMoves.bishopMoves(board, myPosition, ThisPieceColor);
                 break;
             case PieceType.KNIGHT:
                 System.out.println("hey this guy is a Knight");
@@ -74,6 +88,6 @@ public class ChessPiece {
                 System.out.println("hey this guy is a Pawn");
                 break;
         }
-        return Positions;
+        return moves;
     }
 }

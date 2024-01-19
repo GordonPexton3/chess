@@ -1,5 +1,9 @@
 package chess;
 
+import org.junit.jupiter.api.Assertions;
+
+import java.util.Objects;
+
 /**
  * Represents moving a chess piece on a chessboard
  * <p>
@@ -7,23 +11,30 @@ package chess;
  * signature of the existing methods.
  */
 public class ChessMove {
+    ChessPosition startPosition;
+    ChessPosition endPosition;
+    ChessPiece.PieceType promoType;
 
-    public ChessMove(ChessPosition startPosition, ChessPosition endPosition,
+    public ChessMove(ChessPosition sP, ChessPosition eP,
                      ChessPiece.PieceType promotionPiece) {
+        startPosition = sP;
+        endPosition = eP;
+        promoType = promotionPiece;
     }
+
 
     /**
      * @return ChessPosition of starting location
      */
     public ChessPosition getStartPosition() {
-        throw new RuntimeException("Not implemented");
+        return startPosition;
     }
 
     /**
      * @return ChessPosition of ending location
      */
     public ChessPosition getEndPosition() {
-        throw new RuntimeException("Not implemented");
+        return endPosition;
     }
 
     /**
@@ -33,6 +44,25 @@ public class ChessMove {
      * @return Type of piece to promote a pawn to, or null if no promotion
      */
     public ChessPiece.PieceType getPromotionPiece() {
-        throw new RuntimeException("Not implemented");
+        return promoType;
+    }
+
+    @Override
+    public String toString() {
+        return endPosition.toString();
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ChessMove chessMove = (ChessMove) o;
+        return Objects.equals(startPosition, chessMove.startPosition) && Objects.equals(endPosition, chessMove.endPosition) && promoType == chessMove.promoType;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(startPosition, endPosition, promoType);
     }
 }
