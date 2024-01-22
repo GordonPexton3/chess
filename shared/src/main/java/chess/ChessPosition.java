@@ -9,6 +9,7 @@ import java.util.Objects;
  * signature of the existing methods.
  */
 public class ChessPosition {
+    // these values should be thought of as values from 1-8 not 0-7.
     private int row;
     private int col;
     public ChessPosition(int r, int c) {
