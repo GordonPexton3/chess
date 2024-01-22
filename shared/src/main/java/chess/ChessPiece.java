@@ -13,13 +13,9 @@ import java.util.Objects;
 public class ChessPiece {
     private final PieceType ThisPieceType;
     private final ChessGame.TeamColor thisPieceColor;
-    private boolean moved;
     public ChessPiece(ChessGame.TeamColor pieceColor, PieceType type) {
         ThisPieceType = type;
         thisPieceColor = pieceColor;
-        if (ThisPieceType == PieceType.PAWN){
-            moved = false;
-        }
     }
 
     /**
@@ -32,13 +28,6 @@ public class ChessPiece {
         KNIGHT,
         ROOK,
         PAWN
-    }
-
-    /**
-     * if this is a pawn, you can indicate that it has used its first move
-     */
-    public boolean movedStatus(){
-        return moved;
     }
 
     /**
@@ -84,6 +73,7 @@ public class ChessPiece {
                 moves = PieceMoves.kingMoves(board, myPosition, thisPieceColor);
                 break;
             case PieceType.QUEEN:
+                moves = PieceMoves.queenMoves(board, myPosition, thisPieceColor);
                 break;
             case PieceType.BISHOP:
                 moves = PieceMoves.bishopMoves(board, myPosition, thisPieceColor);
@@ -92,9 +82,11 @@ public class ChessPiece {
                 moves = PieceMoves.knightMoves(board, myPosition, thisPieceColor);
                 break;
             case PieceType.ROOK:
-
+                moves = PieceMoves.rookMoves(board, myPosition, thisPieceColor);
+                break;
             case PieceType.PAWN:
                 moves = PieceMoves.pawnMoves(board, myPosition, thisPieceColor);
+                break;
         }
         return moves;
     }

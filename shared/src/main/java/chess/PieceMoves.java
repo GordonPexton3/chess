@@ -17,11 +17,57 @@ public class PieceMoves {
     /**
      * This is the method that returns the moves that the queen wil make
      */
-    public static Collection<ChessMove> queenMoves(ChessBoard board, ChessPosition myPosition, ChessGame.TeamColor thisPieceColor){
+    public static Collection<ChessMove> queenMoves(ChessBoard board, ChessPosition myPosition, ChessGame.TeamColor thisPieceColor) {
+        Collection<ChessMove> moves = new HashSet<>();
+        moves.addAll(rookMoves(board, myPosition, thisPieceColor));
+        moves.addAll(bishopMoves(board, myPosition, thisPieceColor));
+        return moves;
+    }
+
+    /**
+     * This method returns teh moves that a rook can make
+     */
+    public static Collection<ChessMove> rookMoves(ChessBoard board, ChessPosition myPosition, ChessGame.TeamColor thisPieceColor) {
         Collection<ChessMove> moves = new HashSet<>();
         int r0 = myPosition.getRow();
         int c0 = myPosition.getColumn();
-        ChessPiece piece = board.getPiece(myPosition);
+        for(int r = r0 + 1; r < 9; r++){
+            if(board.getTeamColorAt(r,c0) == thisPieceColor){break;}
+            if(board.getTeamColorAt(r,c0) == null){
+                moves.add(new ChessMove(myPosition, new ChessPosition(r, c0), null));
+            }else{
+                moves.add(new ChessMove(myPosition, new ChessPosition(r, c0), null));
+                break;
+            }
+        }
+        for(int r = r0 - 1; r > 0; r--){
+            if(board.getTeamColorAt(r,c0) == thisPieceColor){break;}
+            if(board.getTeamColorAt(r,c0) == null){
+                moves.add(new ChessMove(myPosition, new ChessPosition(r, c0), null));
+            }else{
+                moves.add(new ChessMove(myPosition, new ChessPosition(r, c0), null));
+                break;
+            }
+        }
+        for(int c = c0 + 1; c < 9; c++){
+            if(board.getTeamColorAt(r0,c) == thisPieceColor){break;}
+            if(board.getTeamColorAt(r0,c) == null){
+                moves.add(new ChessMove(myPosition, new ChessPosition(r0, c), null));
+            }else{
+                moves.add(new ChessMove(myPosition, new ChessPosition(r0, c), null));
+                break;
+            }
+        }
+        for(int c = c0 - 1; c > 0; c--){
+            if(board.getTeamColorAt(r0,c) == thisPieceColor){break;}
+            if(board.getTeamColorAt(r0,c) == null){
+                moves.add(new ChessMove(myPosition, new ChessPosition(r0, c), null));
+            }else{
+                moves.add(new ChessMove(myPosition, new ChessPosition(r0, c), null));
+                break;
+            }
+        }
+        return moves;
     }
 
     /**
