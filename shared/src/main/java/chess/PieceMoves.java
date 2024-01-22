@@ -15,6 +15,53 @@ public class PieceMoves {
     }
 
     /**
+     * This is the method that returns the moves that a pawn can dd
+     */
+    public static Collection<ChessMove> pawnMoves(ChessBoard board, ChessPosition myPosition, ChessGame.TeamColor thisPieceColor){
+        Collection<ChessMove> moves = new HashSet<>();
+        int r0 = myPosition.getRow();
+        int c0 = myPosition.getColumn();
+        ChessPiece piece = board.getPiece(myPosition);
+//        if(!piece.movedStatus()){
+//            if(piece.getTeamColor() == ChessGame.TeamColor.BLACK){
+//                moves.add(new ChessMove(myPosition, new ChessPosition(r0-2, c0), null));
+//            }else{
+//                moves.add(new ChessMove(myPosition, new ChessPosition(r0+2, c0), null));
+//            }
+//        }
+        ChessPosition[] positions = new ChessPosition[3];
+        if (piece.getTeamColor() == ChessGame.TeamColor.BLACK){
+            positions[0] = new ChessPosition(-1,-1);
+            positions[1] = new ChessPosition(-1,0);
+            positions[2] = new ChessPosition(-1,1);
+        }else{
+            positions[0] = new ChessPosition(1,-1);
+            positions[1] = new ChessPosition(1,0);
+            positions[2] = new ChessPosition(1,1);
+        }
+        for(ChessPosition pos : positions){
+            int r = r0 + pos.getRow();
+            int c = c0 + pos.getColumn();
+            // if the numbers are out of bounds go to the next number
+            if(!(r < 9 && r > 0 && c < 9 && c > 0)){continue;}
+            // if it's our piece, can't go there.
+            if(board.getTeamColorAt(r,c) == thisPieceColor){continue;}
+            // if we are going foreword but there is a piece there, can't do it.
+            if(c == c0 && board.getTeamColorAt(r,c) != null){continue;}
+            // if we are going foreword and there is nothing there, that is possible
+            if(c == c0 && board.getTeamColorAt(r,c) == null){
+                moves.add(new ChessMove(myPosition, new ChessPosition(r, c), null));
+            }
+            // if we are not going foreword, but diagonal, and there is a piece there, it must
+            // be an opposing piece and we can go there.
+            if(c != c0 && board.getTeamColorAt(r,c) != null){
+                moves.add(new ChessMove(myPosition, new ChessPosition(r, c), null));
+            }
+        }
+        return moves;
+    }
+
+    /**
      * Return a collection of the possible moves for a
      * Knight
      */
@@ -26,14 +73,14 @@ public class PieceMoves {
             new ChessPosition(1,2), new ChessPosition(-1,2),
             new ChessPosition(-2,1), new ChessPosition(-2,-1),
             new ChessPosition(-1,-2), new ChessPosition(1,-2)};
-        for(int i = 0; i < positions.length; i ++){
-            int r = r0 + positions[i].getRow();
-            int c = c0 + positions[i].getColumn();
+        for(ChessPosition pos : positions){
+            int r = r0 + pos.getRow();
+            int c = c0 + pos.getColumn();
             // if the numbers are out of bounds go to the next number
             if(!(r < 9 && r > 0 && c < 9 && c > 0)){continue;}
             // if it's our piece, can't go there.
             if(board.getTeamColorAt(r,c) == thisPieceColor){continue;}
-            // if its anything else which included nobody being there or it being the other team, you can go there.
+            // if it's anything else which included nobody being there or it being the other team, you can go there.
             moves.add(new ChessMove(myPosition, new ChessPosition(r, c), null));
         }
         return moves;
