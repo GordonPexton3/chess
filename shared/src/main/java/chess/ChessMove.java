@@ -9,23 +9,22 @@ import java.util.Objects;
  * signature of the existing methods.
  */
 public class ChessMove {
-    ChessPosition startPosition;
-    ChessPosition endPosition;
-    ChessPiece.PieceType promoType;
 
-    public ChessMove(ChessPosition sP, ChessPosition eP,
+    private ChessPosition starPosition;
+    private ChessPosition endPosition;
+    private ChessPiece.PieceType promotionPiece;
+    public ChessMove(ChessPosition startPosition, ChessPosition endPosition,
                      ChessPiece.PieceType promotionPiece) {
-        startPosition = sP;
-        endPosition = eP;
-        promoType = promotionPiece;
+        this.starPosition = startPosition;
+        this.endPosition = endPosition;
+        this.promotionPiece = promotionPiece;
     }
-
 
     /**
      * @return ChessPosition of starting location
      */
     public ChessPosition getStartPosition() {
-        return startPosition;
+        return starPosition;
     }
 
     /**
@@ -42,25 +41,28 @@ public class ChessMove {
      * @return Type of piece to promote a pawn to, or null if no promotion
      */
     public ChessPiece.PieceType getPromotionPiece() {
-        return promoType;
+        return promotionPiece;
     }
 
     @Override
-    public String toString() {
-        return endPosition.toString();
+    public String toString(){
+        StringBuilder str = new StringBuilder();
+        str.append(getStartPosition().toString());
+        str.append(" --> ");
+        str.append(endPosition.toString());
+        return str.toString();
     }
-
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ChessMove chessMove = (ChessMove) o;
-        return Objects.equals(startPosition, chessMove.startPosition) && Objects.equals(endPosition, chessMove.endPosition) && promoType == chessMove.promoType;
+        return Objects.equals(starPosition, chessMove.starPosition) && Objects.equals(endPosition, chessMove.endPosition) && promotionPiece == chessMove.promotionPiece;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(startPosition, endPosition, promoType);
+        return Objects.hash(starPosition, endPosition, promotionPiece);
     }
 }

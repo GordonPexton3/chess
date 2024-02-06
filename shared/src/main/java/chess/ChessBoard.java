@@ -2,6 +2,7 @@ package chess;
 
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * A chessboard that can hold and rearrange chess pieces.
@@ -10,10 +11,10 @@ import java.util.Map;
  * signature of the existing methods.
  */
 public class ChessBoard {
-    private ChessPiece[][] Board = new ChessPiece[8][8];
 
-    public static void ChessBoard() {
-        
+    private ChessPiece[][] Board = new ChessPiece[8][8];
+    public ChessBoard() {
+
     }
 
     /**
@@ -27,6 +28,13 @@ public class ChessBoard {
     }
 
     /**
+     * the board should be accessible
+     */
+    public ChessPiece[][] getBoard(){
+        return this.Board;
+    }
+
+    /**
      * Gets a chess piece on the chessboard
      *
      * @param position The position to get the piece from
@@ -37,11 +45,94 @@ public class ChessBoard {
         return Board[position.getRow() - 1][position.getColumn() - 1];
     }
 
-    public ChessGame.TeamColor getTeamColorAt(int r, int c){
-        if (Board[r - 1][c - 1] == null){
-            return null;
+    public ChessPiece getPieceAtIndex(int r, int c) {
+        return Board[r - 1][c - 1];
+    }
+
+    /**
+     * @return a bool if coordinates are on the board
+     */
+    public boolean onBoard(int r, int c){
+        if(r < 9 && r > 0 && c < 9 && c > 0){
+            return true;
         }
-        return Board[r - 1][c - 1].getTeamColor();
+        return false;
+    }
+
+    private final Map<Character, ChessPiece.PieceType> charToPieceType = Map.of(
+            'r', ChessPiece.PieceType.ROOK,
+            'n', ChessPiece.PieceType.KNIGHT,
+            'b', ChessPiece.PieceType.BISHOP,
+            'q', ChessPiece.PieceType.QUEEN,
+            'k', ChessPiece.PieceType.KING,
+            'p', ChessPiece.PieceType.PAWN
+    );
+
+    /**
+     * Sets the board to the default starting board
+     * (How the game of chess normally starts)
+     */
+    public void resetBoard() {
+        // |r|n|b|q|k|b|n|r|
+        // |p|p|p|p|p|p|p|p|
+        Character[] row1 = {'r','n','b','q','k','b','n','r'};
+        Character[] row2 = {'p','p','p','p','p','p','p','p'};
+        // for the black pieces first row
+        for(int c = 0; c < 8; c ++){
+            Board[7][c] = new ChessPiece(ChessGame.TeamColor.BLACK, charToPieceType.get(row1[c]));
+        }
+        // black pieces second row
+        for(int c = 0; c < 8; c ++){
+            Board[6][c] = new ChessPiece(ChessGame.TeamColor.BLACK, charToPieceType.get(row2[c]));
+        }
+        // white pieces first row
+        for(int c = 0; c < 8; c ++){
+            Board[0][c] = new ChessPiece(ChessGame.TeamColor.WHITE, charToPieceType.get(row1[c]));
+        }
+        // white pieces second row
+        for(int c = 0; c < 8; c ++){
+            Board[1][c] = new ChessPiece(ChessGame.TeamColor.WHITE, charToPieceType.get(row2[c]));
+        }
+    }
+
+    private final Map<ChessPiece.PieceType, String> blackPieceTypeToChar = Map.of(
+            ChessPiece.PieceType.ROOK, "R",
+            ChessPiece.PieceType.KNIGHT,"N",
+            ChessPiece.PieceType.BISHOP,"B",
+            ChessPiece.PieceType.QUEEN,"Q",
+            ChessPiece.PieceType.KING,"K" ,
+            ChessPiece.PieceType.PAWN,"P"
+    );
+    private final Map<ChessPiece.PieceType, String> whitePieceTypeToChar = Map.of(
+            ChessPiece.PieceType.ROOK, "r",
+            ChessPiece.PieceType.KNIGHT,"n",
+            ChessPiece.PieceType.BISHOP,"b",
+            ChessPiece.PieceType.QUEEN,"q",
+            ChessPiece.PieceType.KING,"k" ,
+            ChessPiece.PieceType.PAWN,"p"
+    );
+
+    @Override
+    public String toString(){
+        StringBuilder str = new StringBuilder();
+        str.append("\n");
+        for(int r = 8; r > 0; r --){
+            for(int c = 1; c < 9; c ++){
+                str.append("|");
+                if(getPieceAtIndex(r,c) == null){
+                    str.append("_");
+                }else{
+                    ChessPiece piece = getPieceAtIndex(r,c);
+                    if(piece.getTeamColor() == ChessGame.TeamColor.BLACK){
+                        str.append(blackPieceTypeToChar.get(piece.getPieceType()));
+                    }else{
+                        str.append(whitePieceTypeToChar.get(piece.getPieceType()));
+                    }
+                }
+            }
+            str.append("|\n");
+        }
+        return str.toString();
     }
 
     @Override
@@ -49,94 +140,11 @@ public class ChessBoard {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ChessBoard that = (ChessBoard) o;
-        return Arrays.deepEquals(Board, that.Board);
+        return Arrays.deepEquals(getBoard(), that.getBoard());
     }
 
     @Override
     public int hashCode() {
-        return Arrays.deepHashCode(Board);
-    }
-
-    /**
-     * I am using this code from TestFactory. I hope it's not considered cheating
-     * They just coded it so well, I didn't know it was a technique and I would like to use it.
-     */
-    private Map<Character, ChessPiece.PieceType> charToTypeMap = Map.of(
-            'p', ChessPiece.PieceType.PAWN,
-            'n', ChessPiece.PieceType.KNIGHT,
-            'r', ChessPiece.PieceType.ROOK,
-            'q', ChessPiece.PieceType.QUEEN,
-            'k', ChessPiece.PieceType.KING,
-            'b', ChessPiece.PieceType.BISHOP);
-
-    /**
-     * Sets the board to the default starting board
-     * (How the game of chess normally starts)
-     */
-    public void resetBoard() {
-        /*
-        |P|P|P|P|P|P|P|P|
-        |R|N|B|Q|K|B|N|R|
-         */
-        char[] Row1PieceChars = {'r','n','b','q','k','b','n','r'};
-        char[] Row2PieceChars = {'p','p','p','p','p','p','p','p'};
-        for(int r = 1; r <= 2; r ++){
-            for(int c = 1; c <= 8; c ++){
-                if(r == 1) {
-                    Board[r - 1][c - 1] = new ChessPiece(ChessGame.TeamColor.WHITE, charToTypeMap.get(Row1PieceChars[c - 1]));
-                }else{
-                    Board[r - 1][c - 1] = new ChessPiece(ChessGame.TeamColor.WHITE, charToTypeMap.get(Row2PieceChars[c - 1]));
-                }
-            }
-        }
-        for(int r = 8; r >= 7; r --){
-            for(int c = 1; c <= 8; c ++){
-                if(r == 8) {
-                    Board[r - 1][c - 1] = new ChessPiece(ChessGame.TeamColor.BLACK, charToTypeMap.get(Row1PieceChars[c - 1]));
-                }else{
-                    Board[r - 1][c - 1] = new ChessPiece(ChessGame.TeamColor.BLACK, charToTypeMap.get(Row2PieceChars[c - 1]));
-                }
-            }
-        }
-    }
-
-    /**
-     * This allows for a easier representation of board when printed.
-     */
-    @Override
-    public String toString(){
-        StringBuilder str = new StringBuilder();
-        for(int r = 7; r >= 0; r--){
-            for(int c = 0; c < 8; c++){
-                str.append("|");
-                if(Board[r][c] == null){
-                    str.append("_");
-                }else{
-                    ChessPiece piece = Board[r][c];
-                    switch (piece.getPieceType()) {
-                        case ChessPiece.PieceType.KING:
-                            str.append("K");
-                            break;
-                        case ChessPiece.PieceType.QUEEN:
-                            str.append("Q");
-                            break;
-                        case ChessPiece.PieceType.BISHOP:
-                            str.append("B");
-                            break;
-                        case ChessPiece.PieceType.KNIGHT:
-                            str.append("k");
-                            break;
-                        case ChessPiece.PieceType.ROOK:
-                            str.append("R");
-                            break;
-                        case ChessPiece.PieceType.PAWN:
-                            str.append("P");
-                            break;
-                    }
-                }
-            }
-            str.append("|\n");
-        }
-        return str.toString();
+        return Arrays.hashCode(getBoard());
     }
 }

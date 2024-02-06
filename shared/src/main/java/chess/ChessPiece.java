@@ -1,7 +1,6 @@
 package chess;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Objects;
 
 /**
@@ -11,11 +10,12 @@ import java.util.Objects;
  * signature of the existing methods.
  */
 public class ChessPiece {
-    private final PieceType ThisPieceType;
-    private final ChessGame.TeamColor thisPieceColor;
-    public ChessPiece(ChessGame.TeamColor pieceColor, PieceType type) {
-        ThisPieceType = type;
-        thisPieceColor = pieceColor;
+
+    private ChessPiece.PieceType pieceType;
+    private ChessGame.TeamColor pieceColor;
+    public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
+        this.pieceType = type;
+        this.pieceColor = pieceColor;
     }
 
     /**
@@ -34,14 +34,40 @@ public class ChessPiece {
      * @return Which team this chess piece belongs to
      */
     public ChessGame.TeamColor getTeamColor() {
-        return thisPieceColor;
+        return pieceColor;
     }
 
     /**
      * @return which type of chess piece this piece is
      */
     public PieceType getPieceType() {
-        return ThisPieceType;
+        return pieceType;
+    }
+
+    /**
+     * Calculates all the positions a chess piece can move to
+     * Does not take into account moves that are illegal due to leaving the king in
+     * danger
+     *
+     * @return Collection of valid moves
+     */
+    public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
+        return switch(pieceType){
+            case PieceType.BISHOP -> PieceMoves.bishopMoves(board,myPosition);
+            case PieceType.KING -> PieceMoves.kingMoves(board,myPosition);
+            case PieceType.QUEEN -> PieceMoves.queenMoves(board,myPosition);
+            case PieceType.ROOK -> PieceMoves.rookMoves(board,myPosition);
+            case PieceType.PAWN -> PieceMoves.pawnMoves(board,myPosition);
+            case PieceType.KNIGHT -> PieceMoves.knightMoves(board,myPosition);
+        };
+    }
+
+    @Override
+    public String toString() {
+        return "ChessPiece{" +
+                "pieceType=" + pieceType +
+                ", pieceColor=" + pieceColor +
+                '}';
     }
 
     @Override
@@ -49,45 +75,11 @@ public class ChessPiece {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ChessPiece that = (ChessPiece) o;
-        return ThisPieceType == that.ThisPieceType && thisPieceColor == that.thisPieceColor;
+        return pieceType == that.pieceType && pieceColor == that.pieceColor;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(ThisPieceType, thisPieceColor);
-    }
-
-    /**
-     * Calculates all the positions a chess piece can move to
-     * Does not take into account moves that are illegal due to leaving the king in
-     * danger.
-     * This wants a collection of valid moves. I am going to make that change, but
-     * I keep a copy just in case.
-     * @return Collection of valid moves
-     */
-    public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        Collection<ChessMove> moves = new HashSet<>();
-        ChessPiece piece = board.getPiece(myPosition);
-        switch (piece.getPieceType()) {
-            case PieceType.KING:
-                moves = PieceMoves.kingMoves(board, myPosition, thisPieceColor);
-                break;
-            case PieceType.QUEEN:
-                moves = PieceMoves.queenMoves(board, myPosition, thisPieceColor);
-                break;
-            case PieceType.BISHOP:
-                moves = PieceMoves.bishopMoves(board, myPosition, thisPieceColor);
-                break;
-            case PieceType.KNIGHT:
-                moves = PieceMoves.knightMoves(board, myPosition, thisPieceColor);
-                break;
-            case PieceType.ROOK:
-                moves = PieceMoves.rookMoves(board, myPosition, thisPieceColor);
-                break;
-            case PieceType.PAWN:
-                moves = PieceMoves.pawnMoves(board, myPosition, thisPieceColor);
-                break;
-        }
-        return moves;
+        return Objects.hash(pieceType, pieceColor);
     }
 }
