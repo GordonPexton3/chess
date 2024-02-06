@@ -95,7 +95,7 @@ public class ChessBoard {
         }
     }
 
-    private final Map<ChessPiece.PieceType, String> blackPieceTypeToChar = Map.of(
+    private final Map<ChessPiece.PieceType, String> whitePieceTypeToChar = Map.of(
             ChessPiece.PieceType.ROOK, "R",
             ChessPiece.PieceType.KNIGHT,"N",
             ChessPiece.PieceType.BISHOP,"B",
@@ -103,7 +103,7 @@ public class ChessBoard {
             ChessPiece.PieceType.KING,"K" ,
             ChessPiece.PieceType.PAWN,"P"
     );
-    private final Map<ChessPiece.PieceType, String> whitePieceTypeToChar = Map.of(
+    private final Map<ChessPiece.PieceType, String> blackPieceTypeToChar = Map.of(
             ChessPiece.PieceType.ROOK, "r",
             ChessPiece.PieceType.KNIGHT,"n",
             ChessPiece.PieceType.BISHOP,"b",

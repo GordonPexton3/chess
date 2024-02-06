@@ -52,6 +52,16 @@ public class ChessGame {
         BLACK
     }
 
+    private Collection<ChessMove> piecesMoves(ChessPosition startPosition){
+        ChessPiece piece = getBoard().getPiece(startPosition);
+        // if there is no piece there, return a list with no moves in it
+        if(piece == null){
+            return null;
+        }else{ // if there is a piece there, then call its pieceMoves and return that list of moves
+            return piece.pieceMoves(getBoard(),startPosition);
+        }
+    }
+
     /**
      * Gets a valid moves for a piece at the given location
      *
@@ -67,22 +77,21 @@ public class ChessGame {
             return null;
         }else{ // if there is a piece there, then call its pieceMoves and return that list of moves
             Collection<ChessMove> moves = piece.pieceMoves(getBoard(),startPosition);
-            return moves;
-//            Collection<ChessMove> listOfValidMoves = new HashSet<>();
-//            for(ChessMove move : moves){
-//                // make the move
-//                ChessPiece tempPiece = Board.getPiece(move.getEndPosition());
-//                Board.addPiece(move.getEndPosition(),piece);
-//                Board.addPiece(move.getStartPosition(), null);
-//                // if the move doesn't put the board in check, add it
-//                if(!isInCheck(piece.getTeamColor())){
-//                    listOfValidMoves.add(move);
-//                }
-//                // undo the move
-//                Board.addPiece(move.getStartPosition(),piece);
-//                Board.addPiece(move.getEndPosition(), tempPiece);
-//            }
-//            return listOfValidMoves;
+            Collection<ChessMove> listOfValidMoves = new HashSet<>();
+            for(ChessMove move : moves){
+                // make the move
+                ChessPiece tempPiece = Board.getPiece(move.getEndPosition());
+                Board.addPiece(move.getEndPosition(),piece);
+                Board.addPiece(move.getStartPosition(), null);
+                // if the move doesn't put the board in check, add it
+                if(!isInCheck(piece.getTeamColor())){
+                    listOfValidMoves.add(move);
+                }
+                // undo the move
+                Board.addPiece(move.getStartPosition(),piece);
+                Board.addPiece(move.getEndPosition(), tempPiece);
+            }
+            return listOfValidMoves;
         }
     }
 
@@ -127,7 +136,7 @@ public class ChessGame {
         }else{ // you are not in check
             getBoard().addPiece(move.getEndPosition(),piece); // add it in the end position of the move
             getBoard().addPiece(move.getStartPosition(), null); // remove it from the starting position of move
-            // update who's turn it is
+            // update the turn
             if(getTeamTurn() == TeamColor.BLACK){
                 setTeamTurn(TeamColor.WHITE);
             }else{
@@ -154,7 +163,7 @@ public class ChessGame {
             for (ChessPiece piece : row) {
                 if (piece != null) { // if there is a piece there ...
                     if (piece.getTeamColor() != teamColor) { // and it is not on this team ...
-                        for(ChessMove opponentMove: validMoves(new ChessPosition(r,c))){ // for each of its valid moves ...
+                        for(ChessMove opponentMove: piecesMoves(new ChessPosition(r,c))){ // for each of its valid moves ...
                             if(opponentMove.getEndPosition().getRow() == kingPosition.getRow()) {
                                 if(opponentMove.getEndPosition().getColumn() == kingPosition.getColumn()){
                                     return true;
@@ -186,20 +195,27 @@ public class ChessGame {
                 for (ChessPiece piece : row) {
                     if (piece != null) { // if there is a piece there ...
                         if (piece.getTeamColor() == teamColor) { // and it is your piece
-                            Collection<ChessMove> validMoves = validMoves(new ChessPosition(r,c));
+                            Collection<ChessMove> piecesMoves = piecesMoves(new ChessPosition(r,c));
                             // does any of the valid moves get you out of check?
-                            for(ChessMove move : validMoves) {
+                            for(ChessMove move : piecesMoves) {
                                 // perform the move
+                                ChessPiece tempPiece = Board.getPiece(move.getEndPosition());
                                 getBoard().addPiece(move.getEndPosition(),piece);
                                 getBoard().addPiece(move.getStartPosition(), null);
-                                if(!isInCheck(getTeamTurn())){ // the move got the team out of check
+                                if(!isInCheck(piece.getTeamColor())){ // the move got the team out of check
                                     getBoard().addPiece(move.getStartPosition(),piece);
-                                    getBoard().addPiece(move.getEndPosition(), null);
+                                    getBoard().addPiece(move.getEndPosition(), tempPiece);
                                     return false;
                                 }else{ // naw your still in check
                                     // undo the move
                                     getBoard().addPiece(move.getStartPosition(),piece);
-                                    getBoard().addPiece(move.getEndPosition(), null);
+                                    getBoard().addPiece(move.getEndPosition(), tempPiece);
+//                                    // undo the move change as well
+//                                    if(getTeamTurn() == TeamColor.BLACK){
+//                                        setTeamTurn(TeamColor.WHITE);
+//                                    }else{
+//                                        setTeamTurn(TeamColor.BLACK);
+//                                    }
                                 }
                             }
                         }
@@ -230,9 +246,9 @@ public class ChessGame {
             for (ChessPiece piece : row) {
                 if (piece != null) { // if there is a piece there ...
                     if (piece.getTeamColor() == teamColor && teamColor == getTeamTurn()) { // and it is your piece on your turn
-                        Collection<ChessMove> validMoves = validMoves(new ChessPosition(r,c));
+                        Collection<ChessMove> piecesMoves = piecesMoves(new ChessPosition(r,c));
                         // are any of the moves valid?
-                        for(ChessMove move : validMoves){
+                        for(ChessMove move : piecesMoves){
                             // perform the move
                             getBoard().addPiece(move.getEndPosition(),piece);
                             getBoard().addPiece(move.getStartPosition(), null);
