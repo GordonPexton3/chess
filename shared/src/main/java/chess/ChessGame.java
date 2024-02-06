@@ -61,25 +61,28 @@ public class ChessGame {
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         ChessPiece piece = getBoard().getPiece(startPosition);
+        ChessBoard Board = getBoard();
         // if there is no piece there, return a list with no moves in it
         if(piece == null){
             return null;
         }else{ // if there is a piece there, then call its pieceMoves and return that list of moves
             Collection<ChessMove> moves = piece.pieceMoves(getBoard(),startPosition);
-            Collection<ChessMove> validMoves = new HashSet<>();
-            for(ChessMove move : moves){
-                // make the move
-                getBoard().addPiece(move.getEndPosition(),piece);
-                getBoard().addPiece(move.getStartPosition(), null);
-                // if the move doesn't put the board in check, add it
-                if(!isInCheck(piece.getTeamColor())){
-                    validMoves.add(move);
-                }
-                // undo the move
-                getBoard().addPiece(move.getStartPosition(),piece);
-                getBoard().addPiece(move.getEndPosition(), null);
-            }
-            return validMoves;
+            return moves;
+//            Collection<ChessMove> listOfValidMoves = new HashSet<>();
+//            for(ChessMove move : moves){
+//                // make the move
+//                ChessPiece tempPiece = Board.getPiece(move.getEndPosition());
+//                Board.addPiece(move.getEndPosition(),piece);
+//                Board.addPiece(move.getStartPosition(), null);
+//                // if the move doesn't put the board in check, add it
+//                if(!isInCheck(piece.getTeamColor())){
+//                    listOfValidMoves.add(move);
+//                }
+//                // undo the move
+//                Board.addPiece(move.getStartPosition(),piece);
+//                Board.addPiece(move.getEndPosition(), tempPiece);
+//            }
+//            return listOfValidMoves;
         }
     }
 
@@ -106,8 +109,9 @@ public class ChessGame {
         // if the board is in check
         if(isInCheck(getTeamTurn())){
             // perform the move
-            getBoard().addPiece(move.getEndPosition(),piece);
-            getBoard().addPiece(move.getStartPosition(), null);
+            ChessPiece tempPiece = Board.getPiece(move.getEndPosition());
+            Board.addPiece(move.getEndPosition(),piece);
+            Board.addPiece(move.getStartPosition(), null);
             if(!isInCheck(getTeamTurn())){ // the move got the team out of check
                 if(getTeamTurn() == TeamColor.BLACK){
                     setTeamTurn(TeamColor.WHITE);
@@ -117,7 +121,7 @@ public class ChessGame {
             }else{ // naw your still in check
                 // undo the move
                 getBoard().addPiece(move.getStartPosition(),piece);
-                getBoard().addPiece(move.getEndPosition(), null);
+                getBoard().addPiece(move.getEndPosition(), tempPiece);
                 throw new InvalidMoveException();
             }
         }else{ // you are not in check
