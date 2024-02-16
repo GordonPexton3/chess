@@ -2,15 +2,15 @@ package server;
 
 public class GameInteractions {
 
-    public Result ListGames(Request request){
-        return new Result();
+    public Response ListGames(Request request){
+        return new Response();
     }
 
-    public Result CreateGame(Request request){
-        return new Result();
+    public Response CreateGame(Request request){
+        return new Response();
     }
 
-    public Result JoinGame(Request request){
-        return new Result();
+    public Response JoinGame(Request request){
+        return new Response();
     }
 }

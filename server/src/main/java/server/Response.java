@@ -3,7 +3,7 @@ package server;
 import chess.ChessGame;
 import java.util.Vector;
 
-public class Result {
+public class Response {
 
     private String authToken = null; // do this for all of them.
     private String username;
