@@ -10,17 +10,14 @@ public class Authentications {
     public static myResponse register(myRequest req){
         myResponse resp = new myResponse();
         UsersDAO users = UsersDAO.getInstance();
-        if(req.getUsername() == "" || req.getUsername().isEmpty()){
-            resp.setMessage("Needs a username");
-            resp.setStatus(400);
-        }else if(req.getPassword() == "" || req.getPassword().isEmpty()){
-            resp.setMessage("Needs a password");
-            resp.setStatus(400);
-        }else if(req.getEmail() == null || req.getEmail().isEmpty()) {
-            resp.setMessage("Needs an email");
+        if(req.getUsername() == null || req.getUsername().isEmpty() ||
+                req.getPassword() == null || req.getPassword().isEmpty() ||
+                req.getEmail() == null || req.getEmail().isEmpty()
+        ){
+            resp.setMessage("Error: bad request");
             resp.setStatus(400);
         }else if(users.getUser(req.getUsername()) != null){
-            resp.setMessage("Username already exists");
+            resp.setMessage("Error: already taken");
             resp.setStatus(403);
         }else{ // create the user
             users.createUser(req.getUsername(), req.getPassword(), req.getEmail());
@@ -34,11 +31,38 @@ public class Authentications {
     }
 
     public static myResponse login(myRequest req){
-        return new myResponse();
+        myResponse resp = new myResponse();
+        UsersDAO users = UsersDAO.getInstance();
+        if(req.getUsername() == "" || req.getUsername().isEmpty()){
+            resp.setMessage("Needs a username");
+            resp.setStatus(400);
+        }else if(req.getPassword() == "" || req.getPassword().isEmpty()) {
+            resp.setMessage("Needs a password");
+            resp.setStatus(400);
+        }else if(users.getUser(req.getUsername()) == null){
+            resp.setMessage("Error: unauthorized");
+            resp.setStatus(401);
+        }else if(!users.getUser(req.getUsername()).getPassword().equals(req.getPassword())){
+            resp.setMessage("Error: unauthorized");
+            resp.setStatus(401);
+        }else{
+            resp.setAuthToken(new AuthorizationsDAO().createAuth(UUID.randomUUID().toString(),req.getUsername()));
+            resp.setStatus(200);
+        }
+        return resp;
     }
 
     public static myResponse logout(myRequest req){
-        return new myResponse();
+        myResponse resp = new myResponse();
+        AuthorizationsDAO authorizations = new AuthorizationsDAO();
+        if(authorizations.getUsername(req.getAuthToken()) == null){
+            resp.setMessage("Error: unauthorized");
+            resp.setStatus(401);
+        }else{
+            authorizations.deleteAuth(req.getAuthToken());
+            resp.setStatus(200);
+        }
+        return resp;
     }
 
     public static myResponse clearApplication(myRequest req){

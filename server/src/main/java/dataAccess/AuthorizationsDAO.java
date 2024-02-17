@@ -8,11 +8,17 @@ public class AuthorizationsDAO implements AuthDAO{
     private static AuthorizationsDAO instance;
 
     public String getUsername(String authToken){
-        return this.authTokenToUsername.get(authToken);
+        return getInstance().authTokenToUsername.get(authToken);
     }
     @Override
-    public void createAuth(String authToken, String username) {
-        this.authTokenToUsername.put(authToken,username);
+    public String createAuth(String authToken, String username) {
+        getInstance().authTokenToUsername.put(authToken,username);
+        return authToken;
+    }
+
+    @Override
+    public void deleteAuth(String authToken) {
+        getInstance().authTokenToUsername.remove(authToken);
     }
 
     public synchronized static AuthorizationsDAO getInstance(){

@@ -50,8 +50,6 @@ public class Server{
         myResponse response = Authentications.register(request);
         res.status(response.getStatus());
 
-        System.out.println(new Gson().toJson(response));
-
         return new Gson().toJson(response);
     }
 
@@ -63,7 +61,9 @@ public class Server{
     }
 
     private Object logout(spark.Request req, spark.Response res) {
-        myRequest request = new Gson().fromJson(req.body(), myRequest.class);
+        myRequest request = new myRequest();
+        request.setAuthToken(req.headers("Authorization"));
+        System.out.println(request.getAuthToken());
         myResponse response = Authentications.logout(request);
         res.status(response.getStatus());
         return new Gson().toJson(response);
