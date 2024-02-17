@@ -1,19 +1,27 @@
 package server;
 
+import dataAccess.AuthorizationsDAO;
+
+
 public class Authentications {
-    public Response Register(Request request){
-        return new Response();
+    public static myResponse register(myRequest req){
+        myResponse resp = new myResponse();
+        resp.setAuthToken(req.getAuthToken());
+        resp.setUsername(req.getUsername());
+        resp.setMessage("HEY WE LANDED IN REGISTER");
+        AuthorizationsDAO auths = AuthorizationsDAO.getInstance();
+        return resp;
     }
 
-    public Response Login(Request request){
-        return new Response();
+    public static myResponse login(myRequest req){
+        return new myResponse();
     }
 
-    public Response Logout(Request request){
-        return new Response();
+    public static myResponse logout(myRequest req){
+        return new myResponse();
     }
 
-    public Response ClearApplication(Request request){
-        return new Response();
+    public static myResponse clearApplication(myRequest req){
+        return new myResponse();
     }
 }

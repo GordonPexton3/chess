@@ -1,11 +1,15 @@
-package server;
+package model;
 
-public class Request {
-
+public class UserData {
     private String username;
     private String password;
     private String email;
-    private String authToken;
+
+    public UserData(String username, String password, String email) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+    }
 
     public String getUsername() {
         return username;
@@ -14,12 +18,9 @@ public class Request {
     public String getPassword() {
         return password;
     }
+
     public String getEmail() {
         return email;
-    }
-
-    public String getAuthToken() {
-        return authToken;
     }
 
     public void setUsername(String username) {
@@ -32,9 +33,5 @@ public class Request {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public void setAuthToken(String authToken) {
-        this.authToken = authToken;
     }
 }

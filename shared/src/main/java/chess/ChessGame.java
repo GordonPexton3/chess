@@ -11,25 +11,17 @@ import java.util.HashSet;
  */
 public class ChessGame {
 
-    private int turn;
-    private final int BLACK = 0;
-    private final int WHITE = 1;
+    private TeamColor turn;
     private ChessBoard Board;
     public ChessGame() {
-        this.turn = 1;
+        this.turn = TeamColor.WHITE;
     }
 
     /**
      * @return Which team's turn it is
      */
     public TeamColor getTeamTurn() {
-        if(turn == WHITE){
-            //turn = 1;
-            return TeamColor.WHITE;
-        }else{
-            //turn = 0;
-            return TeamColor.BLACK;
-        }
+        return turn;
     }
 
     /**
@@ -38,10 +30,7 @@ public class ChessGame {
      * @param team the team whose turn it is
      */
     public void setTeamTurn(TeamColor team) {
-        switch(team){
-            case TeamColor.BLACK -> turn = BLACK;
-            case TeamColor.WHITE -> turn = WHITE;
-        }
+        this.turn = team;
     }
 
     /**

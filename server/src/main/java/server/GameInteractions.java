@@ -1,16 +1,15 @@
 package server;
 
 public class GameInteractions {
-
-    public Response ListGames(Request request){
-        return new Response();
+    public static myResponse listGames(myRequest request){
+        return new myResponse();
     }
 
-    public Response CreateGame(Request request){
-        return new Response();
+    public static myResponse createGame(myRequest request){
+        return new myResponse();
     }
 
-    public Response JoinGame(Request request){
-        return new Response();
+    public static myResponse joinGame(myRequest request){
+        return new myResponse();
     }
 }
