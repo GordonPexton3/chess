@@ -2,23 +2,31 @@ package dataAccess;
 
 import model.UserData;
 
-import java.util.Vector;
+import java.util.HashMap;
+import java.util.Map;
 
 public class UsersDAO implements UserDAO{
-    private Vector<UserData> users = new Vector<>();
+    private Map<String, UserData> users = new HashMap<>();
     private static UsersDAO instance;
+
+    @Override
+    public UserData getUser(String username) {
+        return users.get(username);
+    }
+
     @Override
     public String getPassword(String username) {
-        for(UserData u: users){
+        for(UserData u: users.values()){
             if(u.getUsername() == username){
                 return u.getPassword();
             }
         }
         return null;
     }
+
     @Override
     public void createUser(String username, String password, String email) {
-        users.add(new UserData(username, password,email));
+        users.put(username, new UserData(username, password,email));
     }
 
     public synchronized static UsersDAO getInstance(){

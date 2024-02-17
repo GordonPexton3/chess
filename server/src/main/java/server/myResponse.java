@@ -5,11 +5,12 @@ import java.util.Vector;
 
 public class myResponse {
 
-    private String authToken = null; // do this for all of them.
+    private String authToken;
     private String username;
     private Vector<ChessGame> games;
     private String gameID;
     private String message;
+    private int status;
 
     public String getAuthToken() {
         return authToken;
@@ -31,6 +32,8 @@ public class myResponse {
         return message;
     }
 
+    public int getStatus() { return status; }
+
     public void setAuthToken(String authToken) {
         this.authToken = authToken;
     }
@@ -50,4 +53,6 @@ public class myResponse {
     public void setMessage(String message) {
         this.message = message;
     }
+
+    public void setStatus(int status){ this.status = status; }
 }
