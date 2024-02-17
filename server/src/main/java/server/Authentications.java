@@ -10,18 +10,18 @@ public class Authentications {
     public static myResponse register(myRequest req){
         myResponse resp = new myResponse();
         UsersDAO users = UsersDAO.getInstance();
-        if(users.getUser(req.getUsername()) != null){ // does the username already exist -> 403 error
-            resp.setMessage("Username already exists");
-            resp.setStatus(403);
-        }else if(req.getUsername() == null){
+        if(req.getUsername() == "" || req.getUsername().isEmpty()){
             resp.setMessage("Needs a username");
             resp.setStatus(400);
-        }else if(req.getPassword() == null){
+        }else if(req.getPassword() == "" || req.getPassword().isEmpty()){
             resp.setMessage("Needs a password");
             resp.setStatus(400);
-        }else if(req.getEmail() == null){
+        }else if(req.getEmail() == null || req.getEmail().isEmpty()) {
             resp.setMessage("Needs an email");
             resp.setStatus(400);
+        }else if(users.getUser(req.getUsername()) != null){
+            resp.setMessage("Username already exists");
+            resp.setStatus(403);
         }else{ // create the user
             users.createUser(req.getUsername(), req.getPassword(), req.getEmail());
             String authToken = UUID.randomUUID().toString();

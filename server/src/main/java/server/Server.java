@@ -46,13 +46,15 @@ public class Server{
         myRequest request = new Gson().fromJson(req.body(), myRequest.class);
         myResponse response = Authentications.register(request);
 
+
+
 //        System.out.println(new Gson().toJson(response));
 //        System.out.println(req.headers());
 
 //        res.status(int status Code);
         System.out.println(new Gson().toJson(response));
 
-        return new Gson().toJson(response);
+        return new Gson().toJson(res);
     }
 
     private Object login(spark.Request req, spark.Response res) {
