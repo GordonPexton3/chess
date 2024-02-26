@@ -55,17 +55,12 @@ public class GameInteractions {
 
     private static boolean colorSpecified(myRequest req, myResponse resp, GameData game){
         String color = req.getPlayerColor();
-        if(color == null){
+        if(color == null || !(color.equals("WHITE") || color.equals("BLACK"))){
             resp.setMessage("You are an observer");
             resp.setStatus(200);
             return false;
         }
-        if(color.equals("WHITE") || color.equals("BLACK")){
             return true;
-        }
-        resp.setMessage("Error: You are an observer");
-        resp.setStatus(200);
-        return false;
     }
 
     private static void joinWithColor(myRequest req, myResponse resp, String color, GameData game){
