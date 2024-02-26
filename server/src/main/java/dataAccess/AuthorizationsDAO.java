@@ -10,6 +10,7 @@ public class AuthorizationsDAO implements AuthDAO{
     public String getUsername(String authToken){
         return getInstance().authTokenToUsername.get(authToken);
     }
+
     @Override
     public String createAuth(String authToken, String username) {
         getInstance().authTokenToUsername.put(authToken,username);
@@ -19,6 +20,11 @@ public class AuthorizationsDAO implements AuthDAO{
     @Override
     public void deleteAuth(String authToken) {
         getInstance().authTokenToUsername.remove(authToken);
+    }
+
+    @Override
+    public void deleteAll() {
+        getInstance().authTokenToUsername.clear();
     }
 
     public synchronized static AuthorizationsDAO getInstance(){

@@ -1,16 +1,17 @@
 package server;
 
-import chess.ChessGame;
+import model.GameData;
+
 import java.util.Vector;
 
 public class myResponse {
 
     private String authToken;
     private String username;
-    private Vector<ChessGame> games;
-    private String gameID;
+    private Vector<GameData> games;
+    private Integer gameID;
     private String message;
-    private int status;
+    private Integer status;
 
     public String getAuthToken() {
         return authToken;
@@ -20,19 +21,17 @@ public class myResponse {
         return username;
     }
 
-    public Vector<ChessGame> getGames() {
+    public Vector<GameData> getGames() {
         return games;
     }
 
-    public String getGameID() {
-        return gameID;
-    }
+    public Integer getGameID() { return gameID; }
 
     public String getMessage() {
         return message;
     }
 
-    public int getStatus() { return status; }
+    public Integer getStatus() { return status; }
 
     public void setAuthToken(String authToken) {
         this.authToken = authToken;
@@ -42,11 +41,11 @@ public class myResponse {
         this.username = username;
     }
 
-    public void setGames(Vector<ChessGame> games) {
+    public void setGames(Vector<GameData> games) {
         this.games = games;
     }
 
-    public void setGameID(String gameID) {
+    public void setGameID(Integer gameID) {
         this.gameID = gameID;
     }
 
@@ -54,5 +53,5 @@ public class myResponse {
         this.message = message;
     }
 
-    public void setStatus(int status){ this.status = status; }
+    public void setStatus(Integer status){ this.status = status; }
 }

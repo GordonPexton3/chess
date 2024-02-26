@@ -1,6 +1,7 @@
 package server;
 
 import dataAccess.AuthorizationsDAO;
+import dataAccess.GamesDAO;
 import dataAccess.UsersDAO;
 
 import java.util.UUID;
@@ -47,6 +48,7 @@ public class Authentications {
             resp.setStatus(401);
         }else{
             resp.setAuthToken(new AuthorizationsDAO().createAuth(UUID.randomUUID().toString(),req.getUsername()));
+            resp.setUsername(req.getUsername());
             resp.setStatus(200);
         }
         return resp;
@@ -55,10 +57,7 @@ public class Authentications {
     public static myResponse logout(myRequest req){
         myResponse resp = new myResponse();
         AuthorizationsDAO authorizations = new AuthorizationsDAO();
-        if(authorizations.getUsername(req.getAuthToken()) == null){
-            resp.setMessage("Error: unauthorized");
-            resp.setStatus(401);
-        }else{
+        if(Authorized(req, resp)){
             authorizations.deleteAuth(req.getAuthToken());
             resp.setStatus(200);
         }
@@ -66,6 +65,20 @@ public class Authentications {
     }
 
     public static myResponse clearApplication(myRequest req){
-        return new myResponse();
+        myResponse resp = new myResponse();
+        AuthorizationsDAO.getInstance().deleteAll();
+        GamesDAO.getInstance().deleteAll();
+        UsersDAO.getInstance().deleteAll();
+        resp.setStatus(200);
+        return resp;
+    }
+
+    private static boolean Authorized(myRequest req, myResponse resp){
+        if(AuthorizationsDAO.getInstance().getUsername(req.getAuthToken()) == null){
+            resp.setMessage("Error: unauthorized");
+            resp.setStatus(401);
+            return false;
+        }
+        return true;
     }
 }

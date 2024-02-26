@@ -48,53 +48,61 @@ public class Server{
 
         myRequest request = new Gson().fromJson(req.body(), myRequest.class);
         myResponse response = Authentications.register(request);
-        res.status(response.getStatus());
-
+        setStatus(res, response);
         return new Gson().toJson(response);
     }
 
     private Object login(spark.Request req, spark.Response res) {
         myRequest request = new Gson().fromJson(req.body(), myRequest.class);
         myResponse response = Authentications.login(request);
-        res.status(response.getStatus());
+        setStatus(res, response);
         return new Gson().toJson(response);
     }
 
     private Object logout(spark.Request req, spark.Response res) {
         myRequest request = new myRequest();
         request.setAuthToken(req.headers("Authorization"));
-        System.out.println(request.getAuthToken());
         myResponse response = Authentications.logout(request);
-        res.status(response.getStatus());
+        setStatus(res, response);
         return new Gson().toJson(response);
     }
 
     private Object clear(spark.Request req, spark.Response res) {
-        myRequest request = new Gson().fromJson(req.body(), myRequest.class);
+        myRequest request = new myRequest();
         myResponse response = Authentications.clearApplication(request);
-        res.status(response.getStatus());
+        setStatus(res, response);
         return new Gson().toJson(response);
     }
 
     private Object listGames(spark.Request req, spark.Response res) {
-        myRequest request = new Gson().fromJson(req.body(), myRequest.class);
+        // The body of the Request is empty so the request object initializes to zero.
+        //myRequest request = new Gson().fromJson(req.body(), myRequest.class);
+        myRequest request = new myRequest();
+        request.setAuthToken(req.headers("Authorization"));
         myResponse response = GameInteractions.listGames(request);
-        res.status(response.getStatus());
+        setStatus(res, response);
         return new Gson().toJson(response);
     }
 
     private Object createGame(spark.Request req, spark.Response res) {
         myRequest request = new Gson().fromJson(req.body(), myRequest.class);
+        request.setAuthToken(req.headers("Authorization"));
         myResponse response = GameInteractions.createGame(request);
-        res.status(response.getStatus());
+        setStatus(res, response);
         return new Gson().toJson(response);
     }
 
     private Object joinGame(spark.Request req, spark.Response res) {
         myRequest request = new Gson().fromJson(req.body(), myRequest.class);
+        request.setAuthToken(req.headers("Authorization"));
         myResponse response = GameInteractions.joinGame(request);
-        res.status(response.getStatus());
+        setStatus(res, response);
         return new Gson().toJson(response);
+    }
+
+    private void setStatus(spark.Response res, myResponse myRes){
+        res.status(myRes.getStatus());
+        myRes.setStatus(null);
     }
 
     public void stop() {

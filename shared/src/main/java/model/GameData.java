@@ -1,18 +1,18 @@
 package model;
 
 public class GameData {
-    private String gameID;
+    private Integer gameID;
     private String gameName;
     private String whiteUsername;
     private String blackUsername;
     private String gameString;
 
-    public GameData(String gameID, String gameName) {
+    public GameData(Integer gameID, String gameName) {
         this.gameID = gameID;
         this.gameName = gameName;
     }
 
-    public String getGameID() {
+    public Integer getGameID() {
         return gameID;
     }
 
@@ -30,7 +30,7 @@ public class GameData {
         return blackUsername;
     }
 
-    public void setGameID(String gameID) {
+    public void setGameID(Integer gameID) {
         this.gameID = gameID;
     }
 
@@ -47,4 +47,5 @@ public class GameData {
     public void setBlackUsername(String blackUsername) {
         this.blackUsername = blackUsername;
     }
+
 }

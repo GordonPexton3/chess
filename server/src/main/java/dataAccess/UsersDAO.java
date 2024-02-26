@@ -11,13 +11,13 @@ public class UsersDAO implements UserDAO{
 
     @Override
     public UserData getUser(String username) {
-        return users.get(username);
+        return getInstance().users.get(username);
     }
 
     @Override
     public String getPassword(String username) {
-        for(UserData u: users.values()){
-            if(u.getUsername() == username){
+        for(UserData u: getInstance().users.values()){
+            if(u.getUsername().equals(username)){
                 return u.getPassword();
             }
         }
@@ -26,7 +26,12 @@ public class UsersDAO implements UserDAO{
 
     @Override
     public void createUser(String username, String password, String email) {
-        users.put(username, new UserData(username, password,email));
+        getInstance().users.put(username, new UserData(username, password,email));
+    }
+
+    @Override
+    public void deleteAll() {
+        getInstance().users.clear();
     }
 
     public synchronized static UsersDAO getInstance(){
