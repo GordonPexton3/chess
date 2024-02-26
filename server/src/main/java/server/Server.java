@@ -23,14 +23,6 @@ public class Server{
     }
 
     private Object register(spark.Request req, spark.Response res) {
-//        System.out.println("Dude this worked!");
-//        System.out.println(req.body());
-//        System.out.println(req.headers("Authorization"));
-//        System.out.println("**********************");
-//        System.out.println(new Gson().toJson(response));
-//        System.out.println(req.headers());
-//        res.status(int status Code);
-
         myRequest request = new Gson().fromJson(req.body(), myRequest.class);
         myResponse response = Authentications.register(request);
         setStatus(res, response);
@@ -60,8 +52,6 @@ public class Server{
     }
 
     private Object listGames(spark.Request req, spark.Response res) {
-        // The body of the Request is empty so the request object initializes to zero.
-        //myRequest request = new Gson().fromJson(req.body(), myRequest.class);
         myRequest request = new myRequest();
         request.setAuthToken(req.headers("Authorization"));
         myResponse response = GameInteractions.listGames(request);
