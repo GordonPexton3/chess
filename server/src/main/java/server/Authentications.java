@@ -56,9 +56,8 @@ public class Authentications {
 
     public static myResponse logout(myRequest req){
         myResponse resp = new myResponse();
-        AuthorizationsDAO authorizations = new AuthorizationsDAO();
         if(Authorized(req, resp)){
-            authorizations.deleteAuth(req.getAuthToken());
+            AuthorizationsDAO.getInstance().deleteAuth(req.getAuthToken());
             resp.setStatus(200);
         }
         return resp;
