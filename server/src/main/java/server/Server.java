@@ -10,21 +10,6 @@ public class Server{
 
         Spark.staticFiles.location("web");
 
-        // Register your endpoints and handle exceptions here.
-
-//        Spark.post("/user", new Route(){
-//            @Override
-//            public Object handle(spark.Request request, Response response) throws Exception {
-//                System.out.println("Dude this worked!");
-//                System.out.println(request.body());
-//                System.out.println(request.headers("Authorization"));
-//                System.out.println(request.headers());
-//                return null;
-//            }
-//        });
-//
-//        Spark.post("/user", (request, response) -> register(request, response));
-
         Spark.post("/user", this::register);
         Spark.post("/session", this::login);
         Spark.delete("/session", this::logout);
