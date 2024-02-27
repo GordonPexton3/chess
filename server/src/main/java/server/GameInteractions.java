@@ -20,7 +20,7 @@ public class GameInteractions {
     public static myResponse createGame(myRequest req){
         myResponse resp = new myResponse();
         if(authorized(req, resp)){
-            int newGameID = generateNewGameID();
+            Integer newGameID = generateNewGameID();
             GamesDAO.getInstance().createGame(newGameID, req.getGameName());
             resp.setGameID(newGameID);
             resp.setStatus(200);

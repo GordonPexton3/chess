@@ -11,17 +11,6 @@ public class GameData {
         this.gameID = gameID;
         this.gameName = gameName;
     }
-
-    public Integer getGameID() {
-        return gameID;
-    }
-
-    public String getGameName() {
-        return gameName;
-    }
-
-    public String getGameString(){ return gameString; }
-
     public String getWhiteUsername() {
         return whiteUsername;
     }

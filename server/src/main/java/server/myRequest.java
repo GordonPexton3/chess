@@ -6,9 +6,9 @@ public class myRequest {
     private String password;
     private String email;
     private String authToken;
+    private Integer gameID;
     private String gameName;
     private String playerColor;
-    private int gameID;
     public String getUsername() {
         return username;
     }
@@ -24,15 +24,7 @@ public class myRequest {
         return authToken;
     }
 
-    public String getGameName() {
-        return gameName;
-    }
-
-    public String getPlayerColor() {
-        return playerColor;
-    }
-
-    public int getGameID() {
+    public Integer getGameID() {
         return gameID;
     }
 
@@ -52,11 +44,11 @@ public class myRequest {
         this.authToken = authToken;
     }
 
-    public void setGameName(String gameName) {
-        this.gameName = gameName;
+    public String getGameName() {
+        return this.gameName;
     }
 
-    public void setPlayerColor(String playerColor) {
-        this.playerColor = playerColor;
+    public String getPlayerColor() {
+        return this.playerColor;
     }
 }
