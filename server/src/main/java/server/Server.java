@@ -45,8 +45,7 @@ public class Server{
     }
 
     private Object clear(spark.Request req, spark.Response res) {
-        myRequest request = new myRequest();
-        myResponse response = Authentications.clearApplication(request);
+        myResponse response = Authentications.clearApplication();
         setStatus(res, response);
         return new Gson().toJson(response);
     }

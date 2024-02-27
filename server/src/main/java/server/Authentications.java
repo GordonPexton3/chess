@@ -12,16 +12,18 @@ public class Authentications {
     public static myResponse register(myRequest req){
         myResponse resp = new myResponse();
         UsersDAO users = UsersDAO.getInstance();
+        // if the username or the password or the email is absent then it a bad request
         if(req.getUsername() == null || req.getUsername().isEmpty() ||
                 req.getPassword() == null || req.getPassword().isEmpty() ||
                 req.getEmail() == null || req.getEmail().isEmpty()
         ){
             resp.setMessage("Error: bad request");
             resp.setStatus(400);
-        }else if(users.getUser(req.getUsername()) != null){
+        }else if(users.getUser(req.getUsername()) != null){ // if the username already produces a person, you can't
+            // have a duplicate username
             resp.setMessage("Error: already taken");
             resp.setStatus(403);
-        }else{ // create the user
+        }else{ // otherwise, create the user.
             users.createUser(req.getUsername(), req.getPassword(), req.getEmail());
             String authToken = UUID.randomUUID().toString();
             new AuthorizationsDAO().createAuth(authToken, req.getUsername());
@@ -35,19 +37,19 @@ public class Authentications {
     public static myResponse login(myRequest req){
         myResponse resp = new myResponse();
         UsersDAO users = UsersDAO.getInstance();
-        if(req.getUsername() == "" || req.getUsername().isEmpty()){
+        if(req.getUsername().isEmpty()){ // if the username is absent
             resp.setMessage("Needs a username");
             resp.setStatus(400);
-        }else if(req.getPassword() == "" || req.getPassword().isEmpty()) {
+        }else if(req.getPassword().isEmpty()) { // if the password is absent
             resp.setMessage("Needs a password");
             resp.setStatus(400);
-        }else if(users.getUser(req.getUsername()) == null){
+        }else if(users.getUser(req.getUsername()) == null){ // if the username isn't on record
             resp.setMessage("Error: unauthorized");
             resp.setStatus(401);
-        }else if(!users.getUser(req.getUsername()).getPassword().equals(req.getPassword())){
+        }else if(!users.getUser(req.getUsername()).getPassword().equals(req.getPassword())){ // if password doesn't match
             resp.setMessage("Error: unauthorized");
             resp.setStatus(401);
-        }else{
+        }else{ // otherwise log them in.
             resp.setAuthToken(new AuthorizationsDAO().createAuth(UUID.randomUUID().toString(),req.getUsername()));
             resp.setUsername(req.getUsername());
             resp.setStatus(200);
@@ -57,14 +59,14 @@ public class Authentications {
 
     public static myResponse logout(myRequest req){
         myResponse resp = new myResponse();
-        if(Authorized(req, resp)){
+        if(userAuthorized(req, resp)){
             AuthorizationsDAO.getInstance().deleteAuth(req.getAuthToken());
             resp.setStatus(200);
         }
         return resp;
     }
 
-    public static myResponse clearApplication(myRequest req){
+    public static myResponse clearApplication(){
         myResponse resp = new myResponse();
         AuthorizationsDAO.getInstance().deleteAll();
         GamesDAO.getInstance().deleteAll();
@@ -73,7 +75,7 @@ public class Authentications {
         return resp;
     }
 
-    private static boolean Authorized(myRequest req, myResponse resp){
+    private static boolean userAuthorized(myRequest req, myResponse resp){
         try{
             AuthorizationsDAO.getInstance().getUsername(req.getAuthToken());
             return true;
