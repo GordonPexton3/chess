@@ -1,6 +1,6 @@
 package server;
 
-public class myRequest {
+public class MyRequest {
 
     private String username;
     private String password;

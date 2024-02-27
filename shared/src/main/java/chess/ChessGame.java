@@ -12,7 +12,7 @@ import java.util.HashSet;
 public class ChessGame {
 
     private TeamColor turn;
-    private ChessBoard Board;
+    private ChessBoard board;
     public ChessGame() {
         this.turn = TeamColor.WHITE;
     }
@@ -199,12 +199,6 @@ public class ChessGame {
                                     // undo the move
                                     getBoard().addPiece(move.getStartPosition(),piece);
                                     getBoard().addPiece(move.getEndPosition(), tempPiece);
-//                                    // undo the move change as well
-//                                    if(getTeamTurn() == TeamColor.BLACK){
-//                                        setTeamTurn(TeamColor.WHITE);
-//                                    }else{
-//                                        setTeamTurn(TeamColor.BLACK);
-//                                    }
                                 }
                             }
                         }
@@ -270,7 +264,7 @@ public class ChessGame {
      * @param board the new board to use
      */
     public void setBoard(ChessBoard board) {
-        Board = board;
+        this.board = board;
     }
 
     /**
@@ -279,7 +273,7 @@ public class ChessGame {
      * @return the chessboard
      */
     public ChessBoard getBoard() {
-        return Board;
+        return board;
     }
 
     /**

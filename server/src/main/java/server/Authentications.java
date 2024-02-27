@@ -9,8 +9,8 @@ import java.util.UUID;
 
 
 public class Authentications {
-    public static myResponse register(myRequest req){
-        myResponse resp = new myResponse();
+    public static MyResponse register(MyRequest req){
+        MyResponse resp = new MyResponse();
         UsersDAO users = UsersDAO.getInstance();
         // if the username or the password or the email is absent then it a bad request
         if(req.getUsername() == null || req.getUsername().isEmpty() ||
@@ -34,8 +34,8 @@ public class Authentications {
         return resp;
     }
 
-    public static myResponse login(myRequest req){
-        myResponse resp = new myResponse();
+    public static MyResponse login(MyRequest req){
+        MyResponse resp = new MyResponse();
         UsersDAO users = UsersDAO.getInstance();
         if(req.getUsername().isEmpty()){ // if the username is absent
             resp.setMessage("Needs a username");
@@ -57,17 +57,17 @@ public class Authentications {
         return resp;
     }
 
-    public static myResponse logout(myRequest req){
-        myResponse resp = new myResponse();
-        if(userAuthorized(req, resp)){
+    public static MyResponse logout(MyRequest req){
+        MyResponse resp = new MyResponse();
+        if(authorized(req, resp)){
             AuthorizationsDAO.getInstance().deleteAuth(req.getAuthToken());
             resp.setStatus(200);
         }
         return resp;
     }
 
-    public static myResponse clearApplication(){
-        myResponse resp = new myResponse();
+    public static MyResponse clearApplication(){
+        MyResponse resp = new MyResponse();
         AuthorizationsDAO.getInstance().deleteAll();
         GamesDAO.getInstance().deleteAll();
         UsersDAO.getInstance().deleteAll();
@@ -75,7 +75,7 @@ public class Authentications {
         return resp;
     }
 
-    private static boolean userAuthorized(myRequest req, myResponse resp){
+    public static boolean authorized(MyRequest req, MyResponse resp){
         try{
             AuthorizationsDAO.getInstance().getUsername(req.getAuthToken());
             return true;

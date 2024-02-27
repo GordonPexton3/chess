@@ -5,10 +5,10 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import server.Authentications;
-import server.myRequest;
-import server.myResponse;
+import server.MyRequest;
+import server.MyResponse;
 
-public class serviceTests {
+public class ServiceTests {
 
     @AfterEach
     public void clearAuthentications(){
@@ -17,11 +17,11 @@ public class serviceTests {
 
     @Test
     public void testEmptyContent() {
-        myRequest req = new myRequest();
+        MyRequest req = new MyRequest();
         req.setUsername("Username Test");
         req.setPassword("123456");
         req.setEmail("This.is.an.email@BRO.AWESOME");
-        myResponse resp = Authentications.register(req);
+        MyResponse resp = Authentications.register(req);
         String expected = "Username Test";
         String actual = resp.getUsername();
         Assertions.assertEquals(expected, actual);

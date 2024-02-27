@@ -8,8 +8,8 @@ import model.GameData;
 import java.util.Random;
 
 public class GameInteractions {
-    public static myResponse listGames(myRequest req){
-        myResponse resp = new myResponse();
+    public static MyResponse listGames(MyRequest req){
+        MyResponse resp = new MyResponse();
         if(authorized(req, resp)){
             resp.setGames(GamesDAO.getInstance().listGames());
             resp.setStatus(200);
@@ -17,8 +17,8 @@ public class GameInteractions {
         return resp;
     }
 
-    public static myResponse createGame(myRequest req){
-        myResponse resp = new myResponse();
+    public static MyResponse createGame(MyRequest req){
+        MyResponse resp = new MyResponse();
         if(authorized(req, resp)){
             Integer newGameID = generateNewGameID();
             GamesDAO.getInstance().createGame(newGameID, req.getGameName());
@@ -40,12 +40,12 @@ public class GameInteractions {
         return testGameID;
     }
 
-    public static myResponse joinGame(myRequest req){
-        myResponse resp = new myResponse();
+    public static MyResponse joinGame(MyRequest req){
+        MyResponse resp = new MyResponse();
         if(authorized(req, resp)){
             if(gameExists(req, resp)) {
                 GameData game = GamesDAO.getInstance().getGame(req.getGameID());
-                if(colorSpecified(req, resp, game)){
+                if(colorSpecified(req, resp)){
                     String color = req.getPlayerColor();
                     joinWithColor(req, resp, color, game);
                 }
@@ -54,7 +54,7 @@ public class GameInteractions {
         return resp;
     }
 
-    private static boolean colorSpecified(myRequest req, myResponse resp, GameData game){
+    private static boolean colorSpecified(MyRequest req, MyResponse resp){
         String color = req.getPlayerColor();
         if(color == null || !(color.equals("WHITE") || color.equals("BLACK"))){
             resp.setMessage("You are an observer");
@@ -64,7 +64,7 @@ public class GameInteractions {
             return true;
     }
 
-    private static void joinWithColor(myRequest req, myResponse resp, String color, GameData game){
+    private static void joinWithColor(MyRequest req, MyResponse resp, String color, GameData game){
         try{
             String username = AuthorizationsDAO.getInstance().getUsername(req.getAuthToken());
             switch(color){
@@ -88,10 +88,12 @@ public class GameInteractions {
                     break;
             }
         }catch(DataAccessException e) {
+            resp.setMessage("ERROR: username not found");
+            resp.setStatus(500);
         }
     }
 
-    private static boolean gameExists(myRequest req, myResponse resp){
+    private static boolean gameExists(MyRequest req, MyResponse resp){
         GameData game = GamesDAO.getInstance().getGame(req.getGameID());
         if(game == null) {
             resp.setMessage("Error: bad request");
@@ -102,14 +104,7 @@ public class GameInteractions {
         }
     }
 
-    private static boolean authorized(myRequest req, myResponse resp){
-        try{
-            AuthorizationsDAO.getInstance().getUsername(req.getAuthToken());
-            return true;
-        }catch (DataAccessException e){
-            resp.setMessage("Error: unauthorized");
-            resp.setStatus(401);
-            return false;
-        }
+    private static boolean authorized(MyRequest req, MyResponse resp){
+        return Authentications.authorized(req, resp);
     }
 }

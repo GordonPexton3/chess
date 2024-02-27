@@ -4,7 +4,7 @@ import model.GameData;
 
 import java.util.Vector;
 
-public class myResponse {
+public class MyResponse {
 
     private String authToken;
     private String username;
@@ -13,22 +13,8 @@ public class myResponse {
     private String message;
     private Integer status;
 
-    public String getAuthToken() {
-        return authToken;
-    }
-
     public String getUsername() {
         return username;
-    }
-
-    public Vector<GameData> getGames() {
-        return games;
-    }
-
-    public Integer getGameID() { return gameID; }
-
-    public String getMessage() {
-        return message;
     }
 
     public Integer getStatus() { return status; }
