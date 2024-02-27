@@ -1,6 +1,7 @@
 package server;
 
 import dataAccess.AuthorizationsDAO;
+import dataAccess.DataAccessException;
 import dataAccess.GamesDAO;
 import dataAccess.UsersDAO;
 
@@ -73,11 +74,13 @@ public class Authentications {
     }
 
     private static boolean Authorized(myRequest req, myResponse resp){
-        if(AuthorizationsDAO.getInstance().getUsername(req.getAuthToken()) == null){
+        try{
+            AuthorizationsDAO.getInstance().getUsername(req.getAuthToken());
+            return true;
+        }catch(DataAccessException e) {
             resp.setMessage("Error: unauthorized");
             resp.setStatus(401);
             return false;
         }
-        return true;
     }
 }

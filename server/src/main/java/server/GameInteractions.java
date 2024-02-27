@@ -1,6 +1,7 @@
 package server;
 
 import dataAccess.AuthorizationsDAO;
+import dataAccess.DataAccessException;
 import dataAccess.GamesDAO;
 import model.GameData;
 
@@ -64,26 +65,29 @@ public class GameInteractions {
     }
 
     private static void joinWithColor(myRequest req, myResponse resp, String color, GameData game){
-        String username = AuthorizationsDAO.getInstance().getUsername(req.getAuthToken());
-        switch(color){
-            case "BLACK":
-                if(game.getBlackUsername() == null){
-                    game.setBlackUsername(username);
-                    resp.setStatus(200);
-                }else{
-                    resp.setMessage("Error: already taken");
-                    resp.setStatus(403);
-                }
-                break;
-            case "WHITE":
-                if(game.getWhiteUsername() == null){
-                    game.setWhiteUsername(username);
-                    resp.setStatus(200);
-                }else{
-                    resp.setMessage("Error: already taken");
-                    resp.setStatus(403);
-                }
-                break;
+        try{
+            String username = AuthorizationsDAO.getInstance().getUsername(req.getAuthToken());
+            switch(color){
+                case "BLACK":
+                    if(game.getBlackUsername() == null){
+                        game.setBlackUsername(username);
+                        resp.setStatus(200);
+                    }else{
+                        resp.setMessage("Error: already taken");
+                        resp.setStatus(403);
+                    }
+                    break;
+                case "WHITE":
+                    if(game.getWhiteUsername() == null){
+                        game.setWhiteUsername(username);
+                        resp.setStatus(200);
+                    }else{
+                        resp.setMessage("Error: already taken");
+                        resp.setStatus(403);
+                    }
+                    break;
+            }
+        }catch(DataAccessException e) {
         }
     }
 
@@ -99,11 +103,13 @@ public class GameInteractions {
     }
 
     private static boolean authorized(myRequest req, myResponse resp){
-        if(AuthorizationsDAO.getInstance().getUsername(req.getAuthToken()) == null){
+        try{
+            AuthorizationsDAO.getInstance().getUsername(req.getAuthToken());
+            return true;
+        }catch (DataAccessException e){
             resp.setMessage("Error: unauthorized");
             resp.setStatus(401);
             return false;
         }
-        return true;
     }
 }
