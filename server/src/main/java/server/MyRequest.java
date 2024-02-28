@@ -28,9 +28,7 @@ public class MyRequest {
         return gameID;
     }
 
-    public void setGameName(String gameName){
-        this.gameName = gameName;
-    }
+    public void setGameName(String gameName){ this.gameName = gameName; }
 
     public void setUsername(String username) {
         this.username = username;

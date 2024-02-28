@@ -65,7 +65,6 @@ public class GameInteractions {
             }catch(DataAccessException e){
                 resp.setMessage("Error: bad request");
                 resp.setStatus(400);
-                return null;
             }
         }
         return resp;

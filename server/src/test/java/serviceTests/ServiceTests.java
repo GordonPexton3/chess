@@ -160,7 +160,7 @@ public class ServiceTests {
         req.setAuthToken(authToken);
         req.setGameID(gameID);
         req.setPlayerColor("BLACK");
-        MyResponse resp = GameInteractions.joinGame(req);
+        GameInteractions.joinGame(req);
         for(GameData games : GameInteractions.listGames(req).getGames()){
             if(games.getGameName().equals("DUDE THIS IS MY GAME")){
                 Assertions.assertEquals(games.getBlackUsername(), "Username Test");

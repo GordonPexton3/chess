@@ -159,7 +159,7 @@ public class PieceMoves {
                     }
                 }
                 // if moving diagonal
-            }else if(c != c0){
+            }else{
                 // if the place is not empty and there is an enemy there
                 if(board.getPieceAtIndex(r,c) != null &&
                         board.getPieceAtIndex(r,c).getTeamColor() != thisPiece.getTeamColor()){
@@ -195,7 +195,7 @@ public class PieceMoves {
         for(ChessPosition pos : positions){
             int r = r0 + pos.getRow();
             int c = c0 + pos.getColumn();
-            // if the place doesn on exist, continue
+            // if the place doesn't on exist, continue
             if(!board.onBoard(r,c)){continue;}
             // if moving foreword
             if(c == c0){
@@ -212,7 +212,7 @@ public class PieceMoves {
                     }
                 }
                 // if moving diagonal
-            }else if(c != c0){
+            }else{
                 // if the place is not empty and there is an enemy there
                 if(board.getPieceAtIndex(r,c) != null &&
                         board.getPieceAtIndex(r,c).getTeamColor() != thisPiece.getTeamColor()){

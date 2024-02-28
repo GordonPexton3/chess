@@ -43,12 +43,7 @@ public class ChessGame {
 
     private Collection<ChessMove> piecesMoves(ChessPosition startPosition){
         ChessPiece piece = getBoard().getPiece(startPosition);
-        // if there is no piece there, return a list with no moves in it
-        if(piece == null){
-            return null;
-        }else{ // if there is a piece there, then call its pieceMoves and return that list of moves
-            return piece.pieceMoves(getBoard(),startPosition);
-        }
+        return piece.pieceMoves(getBoard(),startPosition);
     }
 
     /**
@@ -60,7 +55,7 @@ public class ChessGame {
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         ChessPiece piece = getBoard().getPiece(startPosition);
-        ChessBoard Board = getBoard();
+        ChessBoard board = getBoard();
         // if there is no piece there, return a list with no moves in it
         if(piece == null){
             return null;
@@ -69,16 +64,16 @@ public class ChessGame {
             Collection<ChessMove> listOfValidMoves = new HashSet<>();
             for(ChessMove move : moves){
                 // make the move
-                ChessPiece tempPiece = Board.getPiece(move.getEndPosition());
-                Board.addPiece(move.getEndPosition(),piece);
-                Board.addPiece(move.getStartPosition(), null);
+                ChessPiece tempPiece = board.getPiece(move.getEndPosition());
+                board.addPiece(move.getEndPosition(),piece);
+                board.addPiece(move.getStartPosition(), null);
                 // if the move doesn't put the board in check, add it
                 if(!isInCheck(piece.getTeamColor())){
                     listOfValidMoves.add(move);
                 }
                 // undo the move
-                Board.addPiece(move.getStartPosition(),piece);
-                Board.addPiece(move.getEndPosition(), tempPiece);
+                board.addPiece(move.getStartPosition(),piece);
+                board.addPiece(move.getEndPosition(), tempPiece);
             }
             return listOfValidMoves;
         }
@@ -92,7 +87,7 @@ public class ChessGame {
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
         // TRACE
-        ChessBoard Board = getBoard();
+        ChessBoard board = getBoard();
         ChessPiece piece = getBoard().getPiece(move.getStartPosition());
         // not teams turn to play
         if(getTeamTurn() != piece.getTeamColor()){
@@ -107,9 +102,9 @@ public class ChessGame {
         // if the board is in check
         if(isInCheck(getTeamTurn())){
             // perform the move
-            ChessPiece tempPiece = Board.getPiece(move.getEndPosition());
-            Board.addPiece(move.getEndPosition(),piece);
-            Board.addPiece(move.getStartPosition(), null);
+            ChessPiece tempPiece = board.getPiece(move.getEndPosition());
+            board.addPiece(move.getEndPosition(),piece);
+            board.addPiece(move.getStartPosition(), null);
             if(!isInCheck(getTeamTurn())){ // the move got the team out of check
                 if(getTeamTurn() == TeamColor.BLACK){
                     setTeamTurn(TeamColor.WHITE);
@@ -146,8 +141,8 @@ public class ChessGame {
         ChessPosition kingPosition = getKingPosition(teamColor);
         // iterate through the board ...
         int r = 1;
-        ChessBoard Board = getBoard();
-        for(ChessPiece[] row: Board.getBoard()) {
+        ChessBoard board = getBoard();
+        for(ChessPiece[] row: board.getBoard()) {
             int c = 1;
             for (ChessPiece piece : row) {
                 if (piece != null) { // if there is a piece there ...
@@ -178,8 +173,8 @@ public class ChessGame {
     public boolean isInCheckmate(TeamColor teamColor) {
         if(isInCheck(teamColor)){
             int r = 1;
-            ChessBoard Board = getBoard();
-            for(ChessPiece[] row: Board.getBoard()) {
+            ChessBoard board = getBoard();
+            for(ChessPiece[] row: board.getBoard()) {
                 int c = 1;
                 for (ChessPiece piece : row) {
                     if (piece != null) { // if there is a piece there ...
@@ -188,7 +183,7 @@ public class ChessGame {
                             // does any of the valid moves get you out of check?
                             for(ChessMove move : piecesMoves) {
                                 // perform the move
-                                ChessPiece tempPiece = Board.getPiece(move.getEndPosition());
+                                ChessPiece tempPiece = board.getPiece(move.getEndPosition());
                                 getBoard().addPiece(move.getEndPosition(),piece);
                                 getBoard().addPiece(move.getStartPosition(), null);
                                 if(!isInCheck(piece.getTeamColor())){ // the move got the team out of check
@@ -223,8 +218,8 @@ public class ChessGame {
      */
     public boolean isInStalemate(TeamColor teamColor) {
         int r = 1;
-        ChessBoard Board = getBoard();
-        for(ChessPiece[] row: Board.getBoard()) {
+        ChessBoard board = getBoard();
+        for(ChessPiece[] row: board.getBoard()) {
             int c = 1;
             for (ChessPiece piece : row) {
                 if (piece != null) { // if there is a piece there ...
@@ -283,8 +278,8 @@ public class ChessGame {
      */
     private ChessPosition getKingPosition(ChessGame.TeamColor color){
         int r = 1;
-        ChessBoard Board = getBoard();
-        for(ChessPiece[] row : Board.getBoard()) {
+        ChessBoard board = getBoard();
+        for(ChessPiece[] row : board.getBoard()) {
             int c = 1;
             for (ChessPiece piece : row) {
                 if (piece != null) {
@@ -301,11 +296,7 @@ public class ChessGame {
         return new ChessPosition(-1,-1);
     }
 
-    /**
-     *
-     * @param move
-     * @param color
-     */
+
     private void promotePawns(ChessMove move, TeamColor color){
         if(move.getPromotionPiece() != null){
             if(move.getEndPosition().getRow() == 8 ||
