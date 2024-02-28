@@ -19,6 +19,8 @@ public class GameData {
         return blackUsername;
     }
 
+    public String getGameName(){ return gameName; }
+
     public void setGameID(Integer gameID) {
         this.gameID = gameID;
     }

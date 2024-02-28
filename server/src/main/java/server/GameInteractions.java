@@ -20,12 +20,23 @@ public class GameInteractions {
     public static MyResponse createGame(MyRequest req){
         MyResponse resp = new MyResponse();
         if(authorized(req, resp)){
-            Integer newGameID = generateNewGameID();
-            GamesDAO.getInstance().createGame(newGameID, req.getGameName());
-            resp.setGameID(newGameID);
-            resp.setStatus(200);
+            if(gameNameNotNull(req, resp)){
+                Integer newGameID = generateNewGameID();
+                GamesDAO.getInstance().createGame(newGameID, req.getGameName());
+                resp.setGameID(newGameID);
+                resp.setStatus(200);
+            }
         }
         return resp;
+    }
+
+    private static boolean gameNameNotNull(MyRequest req, MyResponse resp){
+        if(req.getGameName() != null){
+            return true;
+        }
+        resp.setMessage("Error: must give game a name");
+        resp.setStatus(400);
+        return false;
     }
 
     private static int generateNewGameID(){
@@ -94,6 +105,7 @@ public class GameInteractions {
     }
 
     private static boolean gameExists(MyRequest req, MyResponse resp){
+        // TODO make this throw stuff.
         GameData game = GamesDAO.getInstance().getGame(req.getGameID());
         if(game == null) {
             resp.setMessage("Error: bad request");

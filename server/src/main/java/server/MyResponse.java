@@ -19,6 +19,16 @@ public class MyResponse {
 
     public Integer getStatus() { return status; }
 
+    public String getAuthToken(){
+        return authToken;
+    }
+
+    public Vector<GameData> getGames(){ return games; }
+
+    public Integer getGameID(){
+        return gameID;
+    }
+
     public void setAuthToken(String authToken) {
         this.authToken = authToken;
     }

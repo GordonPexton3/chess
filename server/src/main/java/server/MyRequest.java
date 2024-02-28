@@ -28,6 +28,10 @@ public class MyRequest {
         return gameID;
     }
 
+    public void setGameName(String gameName){
+        this.gameName = gameName;
+    }
+
     public void setUsername(String username) {
         this.username = username;
     }
@@ -42,6 +46,14 @@ public class MyRequest {
 
     public void setAuthToken(String authToken) {
         this.authToken = authToken;
+    }
+
+    public void setGameID(Integer gameID){
+        this.gameID = gameID;
+    }
+
+    public void setPlayerColor(String color){
+        this.playerColor = color;
     }
 
     public String getGameName() {
