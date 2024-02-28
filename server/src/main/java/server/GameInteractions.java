@@ -44,7 +44,9 @@ public class GameInteractions {
         int testGameID;
         while(true){
             testGameID = rand.nextInt(9000) + 1000;
-            if(GamesDAO.getInstance().getGame(testGameID) == null){
+            try {
+                GamesDAO.getInstance().getGame(testGameID);
+            }catch(DataAccessException e){
                 break;
             }
         }
@@ -54,12 +56,16 @@ public class GameInteractions {
     public static MyResponse joinGame(MyRequest req){
         MyResponse resp = new MyResponse();
         if(authorized(req, resp)){
-            if(gameExists(req, resp)) {
+            try{
                 GameData game = GamesDAO.getInstance().getGame(req.getGameID());
                 if(colorSpecified(req, resp)){
                     String color = req.getPlayerColor();
                     joinWithColor(req, resp, color, game);
                 }
+            }catch(DataAccessException e){
+                resp.setMessage("Error: bad request");
+                resp.setStatus(400);
+                return null;
             }
         }
         return resp;
@@ -75,44 +81,32 @@ public class GameInteractions {
             return true;
     }
 
-    private static void joinWithColor(MyRequest req, MyResponse resp, String color, GameData game){
-        try{
+    private static void joinWithColor(MyRequest req, MyResponse resp, String color, GameData game) {
+        try {
             String username = AuthorizationsDAO.getInstance().getUsername(req.getAuthToken());
-            switch(color){
+            switch (color) {
                 case "BLACK":
-                    if(game.getBlackUsername() == null){
+                    if (game.getBlackUsername() == null) {
                         game.setBlackUsername(username);
                         resp.setStatus(200);
-                    }else{
+                    } else {
                         resp.setMessage("Error: already taken");
                         resp.setStatus(403);
                     }
                     break;
                 case "WHITE":
-                    if(game.getWhiteUsername() == null){
+                    if (game.getWhiteUsername() == null) {
                         game.setWhiteUsername(username);
                         resp.setStatus(200);
-                    }else{
+                    } else {
                         resp.setMessage("Error: already taken");
                         resp.setStatus(403);
                     }
                     break;
             }
-        }catch(DataAccessException e) {
+        } catch (DataAccessException e) {
             resp.setMessage("ERROR: username not found");
             resp.setStatus(500);
-        }
-    }
-
-    private static boolean gameExists(MyRequest req, MyResponse resp){
-        // TODO make this throw stuff.
-        GameData game = GamesDAO.getInstance().getGame(req.getGameID());
-        if(game == null) {
-            resp.setMessage("Error: bad request");
-            resp.setStatus(400);
-            return false;
-        }else{
-            return true;
         }
     }
 

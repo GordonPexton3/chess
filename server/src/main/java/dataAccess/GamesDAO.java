@@ -10,8 +10,12 @@ public class GamesDAO implements GameDAO{
     private Map<Integer, GameData> idToGameNames = new HashMap<>();
     private static GamesDAO instance;
     @Override
-    public GameData getGame(Integer gameID) {
-        return getInstance().idToGameNames.get(gameID);
+    public GameData getGame(Integer gameID) throws DataAccessException {
+        GameData game = getInstance().idToGameNames.get(gameID);
+        if(game == null){
+            throw new DataAccessException("Game with ID does not exist");
+        }
+        return game;
     }
 
     @Override
