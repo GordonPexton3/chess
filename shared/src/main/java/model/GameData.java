@@ -39,4 +39,7 @@ public class GameData {
         this.blackUsername = blackUsername;
     }
 
+    public Integer getGameID() {
+        return this.gameID;
+    }
 }
