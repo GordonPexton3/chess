@@ -179,4 +179,26 @@ public class ServiceTests {
         MyResponse resp = GameInteractions.joinGame(req);
         Assertions.assertEquals(resp.getStatus(),400);
     }
+
+    @Test
+    public void clearAuthToken(){
+        register();
+        makeGame();
+        MyResponse resp = Authentications.clearApplication();
+        Assertions.assertNull(resp.getAuthToken());
+    }
+
+    @Test
+    public void clearGameList(){
+        makeGame();
+        MyRequest req = new MyRequest();
+        req.setAuthToken(authToken);
+        MyResponse resp = GameInteractions.listGames(req);
+        Assertions.assertFalse(resp.getGames().isEmpty());
+        Authentications.clearApplication();
+        register();
+        req.setAuthToken(authToken);
+        resp = GameInteractions.listGames(req);
+        Assertions.assertTrue(resp.getGames().isEmpty());
+    }
 }

@@ -11,7 +11,7 @@ import java.util.Map;
  */
 public class ChessBoard {
 
-    private ChessPiece[][] Board = new ChessPiece[8][8];
+    private ChessPiece[][] board = new ChessPiece[8][8];
     public ChessBoard() {
 
     }
@@ -23,14 +23,14 @@ public class ChessBoard {
      * @param piece    the piece to add
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
-        Board[position.getRow() - 1][position.getColumn() - 1] = piece;
+        board[position.getRow() - 1][position.getColumn() - 1] = piece;
     }
 
     /**
      * the board should be accessible
      */
     public ChessPiece[][] getBoard(){
-        return this.Board;
+        return this.board;
     }
 
     /**
@@ -41,11 +41,11 @@ public class ChessBoard {
      * position
      */
     public ChessPiece getPiece(ChessPosition position) {
-        return Board[position.getRow() - 1][position.getColumn() - 1];
+        return board[position.getRow() - 1][position.getColumn() - 1];
     }
 
     public ChessPiece getPieceAtIndex(int r, int c) {
-        return Board[r - 1][c - 1];
+        return board[r - 1][c - 1];
     }
 
     /**
@@ -78,19 +78,19 @@ public class ChessBoard {
         Character[] row2 = {'p','p','p','p','p','p','p','p'};
         // for the black pieces first row
         for(int c = 0; c < 8; c ++){
-            Board[7][c] = new ChessPiece(ChessGame.TeamColor.BLACK, charToPieceType.get(row1[c]));
+            board[7][c] = new ChessPiece(ChessGame.TeamColor.BLACK, charToPieceType.get(row1[c]));
         }
         // black pieces second row
         for(int c = 0; c < 8; c ++){
-            Board[6][c] = new ChessPiece(ChessGame.TeamColor.BLACK, charToPieceType.get(row2[c]));
+            board[6][c] = new ChessPiece(ChessGame.TeamColor.BLACK, charToPieceType.get(row2[c]));
         }
         // white pieces first row
         for(int c = 0; c < 8; c ++){
-            Board[0][c] = new ChessPiece(ChessGame.TeamColor.WHITE, charToPieceType.get(row1[c]));
+            board[0][c] = new ChessPiece(ChessGame.TeamColor.WHITE, charToPieceType.get(row1[c]));
         }
         // white pieces second row
         for(int c = 0; c < 8; c ++){
-            Board[1][c] = new ChessPiece(ChessGame.TeamColor.WHITE, charToPieceType.get(row2[c]));
+            board[1][c] = new ChessPiece(ChessGame.TeamColor.WHITE, charToPieceType.get(row2[c]));
         }
     }
 
