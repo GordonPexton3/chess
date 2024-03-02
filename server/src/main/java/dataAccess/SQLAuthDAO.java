@@ -31,7 +31,7 @@ public class SQLAuthDAO implements AuthDAO{
     }
 
     Connection getConnection() throws SQLException {
-        return DriverManager.getConnection("jdbc:mysql://localhost:3306", "root", "monkeypie");
+        return DriverManager.getConnection("jdbc:mysql://localhost:3306", "root", "@240Killer");
     }
 
     void makeSQLCalls() throws SQLException {
