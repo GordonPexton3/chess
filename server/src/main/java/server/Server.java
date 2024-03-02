@@ -19,6 +19,7 @@ public class Server{
         Spark.put("/game", this::joinGame);
 
         Spark.awaitInitialization();
+
         return Spark.port();
     }
 
