@@ -6,9 +6,13 @@ import java.sql.SQLException;
 
 public class SQLAuthDAO implements AuthDAO{
 
+
+    public static void SQLAuthDAO(){
+        try() // TODO make a constructor to try connecting, create, configuring.
+    }
     /*
     Get a connection to the RDBMS.
-    Create the the pet store database if it doesn't exist.
+    Create the pet store database if it doesn't exist.
     Create the pet table if it doesn't exist.
      */
     void configureDatabase() throws SQLException {
@@ -31,7 +35,7 @@ public class SQLAuthDAO implements AuthDAO{
     }
 
     Connection getConnection() throws SQLException {
-        return DriverManager.getConnection("jdbc:mysql://localhost:3306", "root", "@240Killer");
+        return DatabaseManager.getConnection();
     }
 
     void makeSQLCalls() throws SQLException {
