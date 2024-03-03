@@ -3,21 +3,35 @@ package dataAccess;
 import model.UserData;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class SQLUserDAO implements UserDAO{
 
     private static SQLUserDAO instance;
 
-    Connection getConnection() throws SQLException {
-        return DriverManager.getConnection("jdbc:mysql://localhost:3306", "root", "monkeypie");
+    public SQLUserDAO() throws SQLException, DataAccessException {
+        configureDatabase();
     }
 
-    void makeSQLCalls() throws SQLException {
+    private void configureDatabase() throws SQLException, DataAccessException {
+        DatabaseManager.createDatabase();
         try (var conn = getConnection()) {
-            // Execute SQL statements on the connection here
+
+            var createAuthTable = """
+            CREATE TABLE  IF NOT EXISTS users (
+                username VARCHAR(255) NOT NULL,
+                userData VARCHAR(255) NOT NULL,
+                INDEX (username)
+            )""";
+
+            try (var createTableStatement = conn.prepareStatement(createAuthTable)) {
+                createTableStatement.executeUpdate();
+            }
         }
+    }
+
+    private Connection getConnection() throws DataAccessException{
+        return DatabaseManager.getConnection();
     }
 
     @Override
@@ -33,7 +47,7 @@ public class SQLUserDAO implements UserDAO{
 
     @Override
     public void createUser(String username, String password, String email) {
-
+        INSERT INTO pet (name, type) VALUES ('Puddles', 'cat');
     }
 
     @Override
@@ -41,7 +55,7 @@ public class SQLUserDAO implements UserDAO{
 
     }
 
-    public static SQLUserDAO getInstance(){
+    public static SQLUserDAO getInstance() throws SQLException, DataAccessException {
         if(instance == null){
             return new SQLUserDAO();
         }

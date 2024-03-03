@@ -23,9 +23,9 @@ public class SQLAuthDAO implements AuthDAO{
 
             var createAuthTable = """
             CREATE TABLE  IF NOT EXISTS auth (
-                auth_token VARCHAR(255) NOT NULL,
+                authToken VARCHAR(255) NOT NULL,
                 username VARCHAR(255) NOT NULL, 
-                INDEX (auth_token)
+                INDEX (authToken)
             )""";
 
             try (var createTableStatement = conn.prepareStatement(createAuthTable)) {
@@ -38,11 +38,11 @@ public class SQLAuthDAO implements AuthDAO{
         return DatabaseManager.getConnection();
     }
 
-    void makeSQLCalls() throws DataAccessException, SQLException {
-        try (var conn = getConnection()) {
-            // Execute SQL statements on the connection here
-        }
-    }
+//    void makeSQLCalls() throws DataAccessException, SQLException {
+//        try (var conn = getConnection()) {
+//            // Execute SQL statements on the connection here
+//        }
+//    }
 
     @Override
     public String getUsername(String authToken) throws DataAccessException {

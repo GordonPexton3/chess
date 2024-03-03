@@ -20,10 +20,10 @@ public class SQLGameDAO implements GameDAO{
         try (var conn = getConnection()) {
 
             var createAuthTable = """
-            CREATE TABLE  IF NOT EXISTS auth (
-                auth_token VARCHAR(255) NOT NULL,
-                username VARCHAR(255) NOT NULL, 
-                INDEX (auth_token)
+            CREATE TABLE  IF NOT EXISTS games (
+                gameID VARCHAR(255) NOT NULL,
+                gameData VARCHAR(255) NOT NULL, 
+                INDEX (gameID)
             )""";
 
             try (var createTableStatement = conn.prepareStatement(createAuthTable)) {
