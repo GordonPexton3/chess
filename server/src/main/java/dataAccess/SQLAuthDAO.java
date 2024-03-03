@@ -8,14 +8,8 @@ public class SQLAuthDAO implements AuthDAO{
 
     private static SQLAuthDAO instance;
 
-    public SQLAuthDAO() {
-        try{
-            configureDatabase();
-        }catch(SQLException e){
-            System.out.println(e);
-        }catch(DataAccessException e){
-            System.out.println("WHAT DO I DO WITH THIS?" + e);
-        }
+    public SQLAuthDAO() throws SQLException, DataAccessException {
+        configureDatabase();
         /*
         Get a connection to the RDBMS.
         Create the pet store database if it doesn't exist.
@@ -70,7 +64,7 @@ public class SQLAuthDAO implements AuthDAO{
         //"DROP TABLE pet;"
     }
 
-    public static SQLAuthDAO getInstance(){
+    public static SQLAuthDAO getInstance() throws SQLException, DataAccessException {
         if(instance == null){
             return new SQLAuthDAO();
         }

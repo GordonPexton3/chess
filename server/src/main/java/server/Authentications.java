@@ -2,6 +2,7 @@ package server;
 
 import dataAccess.*;
 
+import java.sql.SQLException;
 import java.util.UUID;
 
 
@@ -11,7 +12,7 @@ public class Authentications {
     private static UserDAO users;
     private static GameDAO games;
 
-    public static void makeDAOs(){
+    public static void makeDAOs() throws SQLException, DataAccessException {
         auth = SQLAuthDAO.getInstance();
         users = SQLUserDAO.getInstance();
         games = SQLGameDAO.getInstance();

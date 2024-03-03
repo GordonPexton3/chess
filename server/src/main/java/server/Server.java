@@ -2,7 +2,10 @@ package server;
 
 
 import com.google.gson.Gson;
+import dataAccess.DataAccessException;
 import spark.Spark;
+
+import java.sql.SQLException;
 
 public class Server{
     public int run(int desiredPort) {
@@ -20,9 +23,14 @@ public class Server{
 
         Spark.awaitInitialization();
 
-        Authentications.makeDAOs();
-        GameInteractions.makeDAOs();
-
+        try {
+            Authentications.makeDAOs();
+            GameInteractions.makeDAOs();
+        }catch(SQLException e){
+            throw new RuntimeException("Database Failed to Configure \n" + e);
+        }catch(DataAccessException e){
+            throw new RuntimeException("Database Failed to Configure \n" + e);
+        }
         return Spark.port();
     }
 

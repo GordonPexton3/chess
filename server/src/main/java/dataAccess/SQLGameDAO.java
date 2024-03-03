@@ -11,6 +11,27 @@ public class SQLGameDAO implements GameDAO{
 
     private static SQLGameDAO instance;
 
+    public SQLGameDAO() throws SQLException, DataAccessException {
+        configureDatabase();
+    }
+
+    private void configureDatabase() throws SQLException, DataAccessException {
+        DatabaseManager.createDatabase();
+        try (var conn = getConnection()) {
+
+            var createAuthTable = """
+            CREATE TABLE  IF NOT EXISTS auth (
+                auth_token VARCHAR(255) NOT NULL,
+                username VARCHAR(255) NOT NULL, 
+                INDEX (auth_token)
+            )""";
+
+            try (var createTableStatement = conn.prepareStatement(createAuthTable)) {
+                createTableStatement.executeUpdate();
+            }
+        }
+    }
+
     Connection getConnection() throws SQLException {
         return DriverManager.getConnection("jdbc:mysql://localhost:3306", "root", "monkeypie");
     }
@@ -41,7 +62,7 @@ public class SQLGameDAO implements GameDAO{
 
     }
 
-    public static SQLGameDAO getInstance(){
+    public static SQLGameDAO getInstance() throws SQLException, DataAccessException {
         if(instance == null){
             return new SQLGameDAO();
         }

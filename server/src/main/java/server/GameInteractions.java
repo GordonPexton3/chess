@@ -3,6 +3,7 @@ package server;
 import dataAccess.*;
 import model.GameData;
 
+import java.sql.SQLException;
 import java.util.Random;
 
 public class GameInteractions {
@@ -10,7 +11,7 @@ public class GameInteractions {
     private static AuthDAO auth;
     private static GameDAO games;
 
-    public static void makeDAOs(){
+    public static void makeDAOs() throws SQLException, DataAccessException {
         auth = SQLAuthDAO.getInstance();
         games = SQLGameDAO.getInstance();
     }
