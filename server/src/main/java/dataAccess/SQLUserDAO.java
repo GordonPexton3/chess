@@ -1,5 +1,6 @@
 package dataAccess;
 
+import com.google.gson.Gson;
 import model.UserData;
 
 import java.sql.Connection;
@@ -47,7 +48,21 @@ public class SQLUserDAO implements UserDAO{
 
     @Override
     public void createUser(String username, String password, String email) {
-        INSERT INTO pet (name, type) VALUES ('Puddles', 'cat');
+        try (var conn = getConnection()) {
+            String userDataString = new Gson().toJson(new UserData(username, password,email));
+            var addUser = "INSERT INTO user " +
+                    "(username, userData) VALUES (" +
+                    username + "," +
+                    userDataString +
+                    ")";
+            try (var addUserStatement = conn.prepareStatement(addUser)) {
+                addUserStatement.executeUpdate();
+            }catch(SQLException e){
+                System.out.println("Your SQL code stinks \n" + e);
+            }
+        }catch(SQLException | DataAccessException e){
+            System.out.println("Couldn't tell ya!" + e);
+        }
     }
 
     @Override

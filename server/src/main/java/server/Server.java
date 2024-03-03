@@ -26,11 +26,10 @@ public class Server{
         try {
             Authentications.makeDAOs();
             GameInteractions.makeDAOs();
-        }catch(SQLException e){
-            throw new RuntimeException("Database Failed to Configure \n" + e);
-        }catch(DataAccessException e){
+        }catch(SQLException | DataAccessException e){
             throw new RuntimeException("Database Failed to Configure \n" + e);
         }
+
         return Spark.port();
     }
 
