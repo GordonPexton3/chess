@@ -1,17 +1,23 @@
 package server;
 
-import dataAccess.AuthorizationsDAO;
-import dataAccess.DataAccessException;
-import dataAccess.GamesDAO;
+import dataAccess.*;
 import model.GameData;
 
 import java.util.Random;
 
 public class GameInteractions {
+
+    private static AuthDAO auth;
+    private static GameDAO games;
+
+    public static void makeDAOs(){
+        auth = SQLAuthDAO.getInstance();
+        games = SQLGameDAO.getInstance();
+    }
     public static MyResponse listGames(MyRequest req){
         MyResponse resp = new MyResponse();
         if(authorized(req, resp)){
-            resp.setGames(GamesDAO.getInstance().listGames());
+            resp.setGames(games.listGames());
             resp.setStatus(200);
         }
         return resp;
@@ -22,7 +28,7 @@ public class GameInteractions {
         if(authorized(req, resp)){
             if(gameNameNotNull(req, resp)){
                 Integer newGameID = generateNewGameID();
-                GamesDAO.getInstance().createGame(newGameID, req.getGameName());
+                games.createGame(newGameID, req.getGameName());
                 resp.setGameID(newGameID);
                 resp.setStatus(200);
             }
@@ -45,7 +51,7 @@ public class GameInteractions {
         while(true){
             testGameID = rand.nextInt(9000) + 1000;
             try {
-                GamesDAO.getInstance().getGame(testGameID);
+                games.getGame(testGameID);
             }catch(DataAccessException e){
                 break;
             }
@@ -57,7 +63,7 @@ public class GameInteractions {
         MyResponse resp = new MyResponse();
         if(authorized(req, resp)){
             try{
-                GameData game = GamesDAO.getInstance().getGame(req.getGameID());
+                GameData game = games.getGame(req.getGameID());
                 if(colorSpecified(req, resp)){
                     String color = req.getPlayerColor();
                     joinWithColor(req, resp, color, game);
@@ -82,7 +88,7 @@ public class GameInteractions {
 
     private static void joinWithColor(MyRequest req, MyResponse resp, String color, GameData game) {
         try {
-            String username = AuthorizationsDAO.getInstance().getUsername(req.getAuthToken());
+            String username = auth.getUsername(req.getAuthToken());
             switch (color) {
                 case "BLACK":
                     if (game.getBlackUsername() == null) {

@@ -1,17 +1,24 @@
 package server;
 
-import dataAccess.AuthorizationsDAO;
-import dataAccess.DataAccessException;
-import dataAccess.GamesDAO;
-import dataAccess.UsersDAO;
+import dataAccess.*;
 
 import java.util.UUID;
 
 
 public class Authentications {
+
+    private static AuthDAO auth;
+    private static UserDAO users;
+    private static GameDAO games;
+
+    public static void makeDAOs(){
+        auth = SQLAuthDAO.getInstance();
+        users = SQLUserDAO.getInstance();
+        games = SQLGameDAO.getInstance();
+    }
+
     public static MyResponse register(MyRequest req){
         MyResponse resp = new MyResponse();
-        UsersDAO users = UsersDAO.getInstance();
         // if the username or the password or the email is absent then it a bad request
         if(req.getUsername() == null || req.getUsername().isEmpty() ||
                 req.getPassword() == null || req.getPassword().isEmpty() ||
@@ -36,7 +43,6 @@ public class Authentications {
 
     public static MyResponse login(MyRequest req){
         MyResponse resp = new MyResponse();
-        UsersDAO users = UsersDAO.getInstance();
         if(req.getUsername().isEmpty()){ // if the username is absent
             resp.setMessage("Needs a username");
             resp.setStatus(400);
@@ -60,7 +66,7 @@ public class Authentications {
     public static MyResponse logout(MyRequest req){
         MyResponse resp = new MyResponse();
         if(authorized(req, resp)){
-            AuthorizationsDAO.getInstance().deleteAuth(req.getAuthToken());
+            auth.deleteAuth(req.getAuthToken());
             resp.setStatus(200);
         }
         return resp;
@@ -68,16 +74,16 @@ public class Authentications {
 
     public static MyResponse clearApplication(){
         MyResponse resp = new MyResponse();
-        AuthorizationsDAO.getInstance().deleteAll();
-        GamesDAO.getInstance().deleteAll();
-        UsersDAO.getInstance().deleteAll();
+        auth.deleteAll();
+        games.deleteAll();
+        users.deleteAll();
         resp.setStatus(200);
         return resp;
     }
 
     public static boolean authorized(MyRequest req, MyResponse resp){
         try{
-            AuthorizationsDAO.getInstance().getUsername(req.getAuthToken());
+            auth.getUsername(req.getAuthToken());
             return true;
         }catch(DataAccessException e) {
             resp.setMessage("Error: unauthorized");

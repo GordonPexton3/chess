@@ -20,6 +20,9 @@ public class Server{
 
         Spark.awaitInitialization();
 
+        Authentications.makeDAOs();
+        GameInteractions.makeDAOs();
+
         return Spark.port();
     }
 

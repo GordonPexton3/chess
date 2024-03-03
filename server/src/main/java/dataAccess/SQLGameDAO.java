@@ -5,9 +5,11 @@ import model.GameData;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.Collection;
+import java.util.Vector;
 
 public class SQLGameDAO implements GameDAO{
+
+    private static SQLGameDAO instance;
 
     Connection getConnection() throws SQLException {
         return DriverManager.getConnection("jdbc:mysql://localhost:3306", "root", "monkeypie");
@@ -30,12 +32,19 @@ public class SQLGameDAO implements GameDAO{
     }
 
     @Override
-    public Collection<GameData> listGames() {
+    public Vector<GameData> listGames() {
         return null;
     }
 
     @Override
     public void deleteAll() {
 
+    }
+
+    public static SQLGameDAO getInstance(){
+        if(instance == null){
+            return new SQLGameDAO();
+        }
+        return instance;
     }
 }

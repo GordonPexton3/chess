@@ -6,8 +6,16 @@ import java.sql.SQLException;
 public class SQLAuthDAO implements AuthDAO{
 
 
-    public SQLAuthDAO() throws SQLException, DataAccessException {
-        configureDatabase();
+    private static SQLAuthDAO instance;
+
+    public SQLAuthDAO() {
+        try{
+            configureDatabase();
+        }catch(SQLException e){
+            System.out.println(e);
+        }catch(DataAccessException e){
+            System.out.println("WHAT DO I DO WITH THIS?" + e);
+        }
         /*
         Get a connection to the RDBMS.
         Create the pet store database if it doesn't exist.
@@ -18,28 +26,25 @@ public class SQLAuthDAO implements AuthDAO{
     private void configureDatabase() throws SQLException, DataAccessException {
         DatabaseManager.createDatabase();
         try (var conn = getConnection()) {
-            var createDbStatement = conn.prepareStatement("CREATE DATABASE IF NOT EXISTS auth_data");
-            createDbStatement.executeUpdate();
 
-            conn.setCatalog("auth_data");
-
-            var createPetTable = """
+            var createAuthTable = """
             CREATE TABLE  IF NOT EXISTS auth (
                 auth_token VARCHAR(255) NOT NULL,
-                username VARCHAR(255) NOT NULL,
+                username VARCHAR(255) NOT NULL, 
+                INDEX (auth_token)
             )""";
 
-            try (var createTableStatement = conn.prepareStatement(createPetTable)) {
+            try (var createTableStatement = conn.prepareStatement(createAuthTable)) {
                 createTableStatement.executeUpdate();
             }
         }
     }
 
-    Connection getConnection() throws DataAccessException {
+    private Connection getConnection() throws DataAccessException{
         return DatabaseManager.getConnection();
     }
 
-    void makeSQLCalls() throws SQLException, DataAccessException {
+    void makeSQLCalls() throws DataAccessException, SQLException {
         try (var conn = getConnection()) {
             // Execute SQL statements on the connection here
         }
@@ -62,6 +67,13 @@ public class SQLAuthDAO implements AuthDAO{
 
     @Override
     public void deleteAll() {
+        //"DROP TABLE pet;"
+    }
 
+    public static SQLAuthDAO getInstance(){
+        if(instance == null){
+            return new SQLAuthDAO();
+        }
+        return instance;
     }
 }

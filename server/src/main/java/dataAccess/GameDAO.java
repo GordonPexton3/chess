@@ -2,12 +2,12 @@ package dataAccess;
 
 import model.GameData;
 
-import java.util.Collection;
+import java.util.Vector;
 
 public interface GameDAO {
     GameData getGame (Integer gameID) throws DataAccessException;
     Integer createGame(Integer gameID, String gameName);
-    Collection<GameData> listGames();
+    Vector<GameData> listGames();
     void deleteAll();
 
 }

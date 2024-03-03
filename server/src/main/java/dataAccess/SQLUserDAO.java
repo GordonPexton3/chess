@@ -8,6 +8,8 @@ import java.sql.SQLException;
 
 public class SQLUserDAO implements UserDAO{
 
+    private static SQLUserDAO instance;
+
     Connection getConnection() throws SQLException {
         return DriverManager.getConnection("jdbc:mysql://localhost:3306", "root", "monkeypie");
     }
@@ -20,6 +22,7 @@ public class SQLUserDAO implements UserDAO{
 
     @Override
     public UserData getUser(String username) {
+        // TODO create the user Get User Function
         return null;
     }
 
@@ -36,5 +39,12 @@ public class SQLUserDAO implements UserDAO{
     @Override
     public void deleteAll() {
 
+    }
+
+    public static SQLUserDAO getInstance(){
+        if(instance == null){
+            return new SQLUserDAO();
+        }
+        return instance;
     }
 }
