@@ -1,21 +1,22 @@
 package dataAccess;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class SQLAuthDAO implements AuthDAO{
 
 
-    public static void SQLAuthDAO(){
-        try() // TODO make a constructor to try connecting, create, configuring.
+    public SQLAuthDAO() throws SQLException, DataAccessException {
+        configureDatabase();
+        /*
+        Get a connection to the RDBMS.
+        Create the pet store database if it doesn't exist.
+        Create the pet table if it doesn't exist.
+         */
     }
-    /*
-    Get a connection to the RDBMS.
-    Create the pet store database if it doesn't exist.
-    Create the pet table if it doesn't exist.
-     */
-    void configureDatabase() throws SQLException {
+
+    private void configureDatabase() throws SQLException, DataAccessException {
+        DatabaseManager.createDatabase();
         try (var conn = getConnection()) {
             var createDbStatement = conn.prepareStatement("CREATE DATABASE IF NOT EXISTS auth_data");
             createDbStatement.executeUpdate();
@@ -34,11 +35,11 @@ public class SQLAuthDAO implements AuthDAO{
         }
     }
 
-    Connection getConnection() throws SQLException {
+    Connection getConnection() throws DataAccessException {
         return DatabaseManager.getConnection();
     }
 
-    void makeSQLCalls() throws SQLException {
+    void makeSQLCalls() throws SQLException, DataAccessException {
         try (var conn = getConnection()) {
             // Execute SQL statements on the connection here
         }
