@@ -3,7 +3,6 @@ package dataAccess;
 import model.GameData;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Vector;
 
@@ -28,18 +27,14 @@ public class SQLGameDAO implements GameDAO{
 
             try (var createTableStatement = conn.prepareStatement(createAuthTable)) {
                 createTableStatement.executeUpdate();
+            }catch(SQLException e){
+                System.out.println("Problem with configuring game table");
             }
         }
     }
 
-    Connection getConnection() throws SQLException {
-        return DriverManager.getConnection("jdbc:mysql://localhost:3306", "root", "monkeypie");
-    }
-
-    void makeSQLCalls() throws SQLException {
-        try (var conn = getConnection()) {
-            // Execute SQL statements on the connection here
-        }
+    private Connection getConnection() throws DataAccessException{
+        return DatabaseManager.getConnection();
     }
 
     @Override

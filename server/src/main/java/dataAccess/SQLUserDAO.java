@@ -50,11 +50,11 @@ public class SQLUserDAO implements UserDAO{
     public void createUser(String username, String password, String email) {
         try (var conn = getConnection()) {
             String userDataString = new Gson().toJson(new UserData(username, password,email));
-            var addUser = "INSERT INTO user " +
-                    "(username, userData) VALUES (" +
-                    username + "," +
+            var addUser = "INSERT INTO users " +
+                    "(username, userData) VALUES ('" +
+                    username + "','" +
                     userDataString +
-                    ")";
+                    "');";
             try (var addUserStatement = conn.prepareStatement(addUser)) {
                 addUserStatement.executeUpdate();
             }catch(SQLException e){

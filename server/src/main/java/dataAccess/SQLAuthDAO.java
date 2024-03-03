@@ -30,6 +30,8 @@ public class SQLAuthDAO implements AuthDAO{
 
             try (var createTableStatement = conn.prepareStatement(createAuthTable)) {
                 createTableStatement.executeUpdate();
+            }catch(SQLException e){
+                System.out.println("Problem creating auth database");
             }
         }
     }
