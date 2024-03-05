@@ -3,10 +3,8 @@ package dataAccess;
 import com.google.gson.Gson;
 import model.UserData;
 
-import javax.xml.crypto.Data;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.sql.SQLOutput;
 
 public class SQLUserDAO implements UserDAO{
 
@@ -43,18 +41,18 @@ public class SQLUserDAO implements UserDAO{
     }
 
     @Override
-    public UserData getUser(String username) throws DataAccessException {
+    public UserData getUser(String username){
         var conn = getConnection();
-        try (var preparedStatement = conn.prepareStatement("SELECT id, name, type FROM pet WHERE type=?")) {
-            preparedStatement.setString(1, findType);
+        String query = "SELECT username, userData FROM users WHERE username=?";
+        try (var preparedStatement = conn.prepareStatement(query)) {
+            preparedStatement.setString(1, username);
             try (var rs = preparedStatement.executeQuery()) {
-                while (rs.next()) {
-                    var id = rs.getInt("id");
-                    var name = rs.getString("name");
-                    var type = rs.getString("type");
-
-                    System.out.printf("id: %d, name: %s, type: %s%n", id, name, type);
-                }
+                var userDataString = rs.getString("userData");
+                UserData userData = new Gson().fromJson(userDataString, UserData.class);
+                System.out.println(userDataString);
+                return userData;
+            }catch(SQLException e){
+                return null;
             }
         }catch(SQLException e){
             System.out.println("Your request stinks in getUser SQLUserDAO\n" + e);
@@ -81,7 +79,7 @@ public class SQLUserDAO implements UserDAO{
             }catch(SQLException e){
                 System.out.println("Your SQL code stinks \n" + e);
             }
-        }catch(SQLException | DataAccessException e){
+        }catch(SQLException e){
             System.out.println("Couldn't tell ya!" + e);
         }
     }

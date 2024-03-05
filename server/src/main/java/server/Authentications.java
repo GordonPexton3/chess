@@ -34,7 +34,7 @@ public class Authentications {
         }else{ // otherwise, create the user.
             users.createUser(req.getUsername(), req.getPassword(), req.getEmail());
             String authToken = UUID.randomUUID().toString();
-            new AuthorizationsDAO().createAuth(authToken, req.getUsername());
+            auth.createAuth(authToken, req.getUsername());
             resp.setUsername(req.getUsername());
             resp.setAuthToken(authToken);
             resp.setStatus(200);
@@ -57,7 +57,7 @@ public class Authentications {
             resp.setMessage("Error: unauthorized");
             resp.setStatus(401);
         }else{ // otherwise log them in.
-            resp.setAuthToken(new AuthorizationsDAO().createAuth(UUID.randomUUID().toString(),req.getUsername()));
+            resp.setAuthToken(auth.createAuth(UUID.randomUUID().toString(),req.getUsername()));
             resp.setUsername(req.getUsername());
             resp.setStatus(200);
         }

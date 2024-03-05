@@ -1,19 +1,33 @@
 package serviceTests;
 
+import dataAccess.DataAccessException;
 import model.GameData;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import server.Authentications;
 import server.GameInteractions;
 import server.MyRequest;
 import server.MyResponse;
 
+import java.sql.SQLException;
 import java.util.Vector;
 
 public class ServiceTests {
 
     private String authToken;
     private Integer gameID;
+
+    @BeforeEach
+    public void makeDAOs(){
+        try {
+            Authentications.makeDAOs();
+            GameInteractions.makeDAOs();
+        }catch(SQLException | DataAccessException e){
+            throw new RuntimeException("Database Failed to Configure \n" + e);
+        }
+    }
+
     private void register(){
         MyRequest req = new MyRequest();
         req.setUsername("Username Test");
