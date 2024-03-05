@@ -17,9 +17,8 @@ public class AuthorizationsDAO implements AuthDAO{
     }
 
     @Override
-    public String createAuth(String authToken, String username) {
+    public void createAuth(String authToken, String username) {
         getInstance().authTokenToUsername.put(authToken,username);
-        return authToken;
     }
 
     @Override

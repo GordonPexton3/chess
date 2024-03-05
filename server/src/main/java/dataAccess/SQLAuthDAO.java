@@ -36,15 +36,14 @@ public class SQLAuthDAO implements AuthDAO{
         }
     }
 
-    private Connection getConnection() throws DataAccessException{
-        return DatabaseManager.getConnection();
+    private Connection getConnection(){
+        try{
+            return DatabaseManager.getConnection();
+        }catch (DataAccessException e){
+            System.out.println("Error in get Connection\n" + e);
+            throw new RuntimeException(e);
+        }
     }
-
-//    void makeSQLCalls() throws DataAccessException, SQLException {
-//        try (var conn = getConnection()) {
-//            // Execute SQL statements on the connection here
-//        }
-//    }
 
     @Override
     public String getUsername(String authToken) throws DataAccessException {
@@ -52,8 +51,21 @@ public class SQLAuthDAO implements AuthDAO{
     }
 
     @Override
-    public String createAuth(String username, String authToken) {
-        return null;
+    public void createAuth(String username, String authToken) {
+        try(var conn = getConnection()){
+            var addUser = "INSERT INTO auth " +
+                    "(authToken, username) VALUES ('" +
+                    authToken + "','" +
+                    username +
+                    "');";
+            try (var addAuthStatement = conn.prepareStatement(addUser)) {
+                addAuthStatement.executeUpdate();
+            }catch(SQLException e){
+                System.out.println("Your SQL code stinks in createAuth\n" + e);
+            }
+        }catch (SQLException e){
+            System.out.println("In create Auth" + e);
+        }
     }
 
     @Override

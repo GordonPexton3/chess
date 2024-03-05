@@ -57,7 +57,9 @@ public class Authentications {
             resp.setMessage("Error: unauthorized");
             resp.setStatus(401);
         }else{ // otherwise log them in.
-            resp.setAuthToken(auth.createAuth(UUID.randomUUID().toString(),req.getUsername()));
+            String authToken = UUID.randomUUID().toString();
+            auth.createAuth(authToken,req.getUsername());
+            resp.setAuthToken(authToken);
             resp.setUsername(req.getUsername());
             resp.setStatus(200);
         }
