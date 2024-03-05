@@ -89,7 +89,7 @@ public class SQLUserDAO implements UserDAO{
                 addDeleteStatement.executeUpdate();
             }
         }catch(SQLException e){
-            throw new RuntimeException("Problem in delete all" + e);
+            throw new RuntimeException("Problem in delete all\n" + e);
         }
     }
 

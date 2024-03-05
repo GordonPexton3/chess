@@ -21,8 +21,8 @@ public class ServiceTests {
         Authentications.clearApplication();
     }
 
-    @BeforeAll
-    public static void makeDAOs(){
+    @BeforeEach
+    public void makeDAOs(){
         try {
             Authentications.makeDAOs();
             GameInteractions.makeDAOs();
@@ -200,6 +200,7 @@ public class ServiceTests {
         makeGame();
         MyResponse resp = Authentications.clearApplication();
         Assertions.assertNull(resp.getAuthToken());
+        makeDAOs();
     }
 
     @Test
@@ -210,6 +211,7 @@ public class ServiceTests {
         MyResponse resp = GameInteractions.listGames(req);
         Assertions.assertFalse(resp.getGames().isEmpty());
         Authentications.clearApplication();
+        makeDAOs();
         register();
         req.setAuthToken(authToken);
         resp = GameInteractions.listGames(req);

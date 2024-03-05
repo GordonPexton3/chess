@@ -30,9 +30,15 @@ public class GamesDAO implements GameDAO{
     }
 
     @Override
+    public void updateGame(Integer gameID, GameData gameDataObject) {
+    }
+
+    @Override
     public void deleteAll() {
         getInstance().idToGameNames.clear();
     }
+
+
 
     public synchronized static GamesDAO getInstance(){
         if(instance == null){

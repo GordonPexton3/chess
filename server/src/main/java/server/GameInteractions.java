@@ -8,8 +8,8 @@ import java.util.Random;
 
 public class GameInteractions {
 
-    private static AuthDAO auth;
-    private static GameDAO games;
+    private static SQLAuthDAO auth;
+    private static SQLGameDAO games;
 
     public static void makeDAOs() throws SQLException, DataAccessException {
         auth = SQLAuthDAO.getInstance();

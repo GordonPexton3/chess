@@ -99,18 +99,16 @@ public class SQLGameDAO implements GameDAO{
     public void updateGame(Integer gameID, GameData gameDataObject){
         try(var conn = getConnection()){
             String gameDataString = new Gson().toJson(gameDataObject);
-            String updateStatement = "";
-            try(var preparedStatement = conn.prepareStatement(query)) {
-                var rs = preparedStatement.executeQuery();
-                while(rs.next()){
-                    String gameDataString = rs.getString("gameData");
-                    gamesList.add(new Gson().fromJson(gameDataString, GameData.class));
-                }
+            String updateString = "UPDATE games SET gameData=? WHERE gameID=?";
+            try (var updateGameStatement = conn.prepareStatement(updateString)) {
+                updateGameStatement.setString(1, gameDataString);
+                updateGameStatement.setInt(2, gameID);
+
+                updateGameStatement.executeUpdate();
             }
         } catch (SQLException e) {
             throw new RuntimeException("Problems in SQL getGame\n" + e);
         }
-
     }
 
     @Override
@@ -119,11 +117,9 @@ public class SQLGameDAO implements GameDAO{
             var deleteAll = "DROP TABLE games;";
             try (var addDeleteStatement = conn.prepareStatement(deleteAll)) {
                 addDeleteStatement.executeUpdate();
-            }catch(SQLException e){
-                System.out.println("Look in deleteAll\n" + e);
             }
         }catch(SQLException e){
-            throw new RuntimeException("Problem in delete all" + e);
+            throw new RuntimeException("Problem in delete all\n" + e);
         }
     }
 
