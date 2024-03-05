@@ -86,7 +86,16 @@ public class SQLUserDAO implements UserDAO{
 
     @Override
     public void deleteAll() {
-
+        try(var conn = getConnection()){
+            var deleteAll = "DROP TABLE users;";
+            try (var addDeleteStatement = conn.prepareStatement(deleteAll)) {
+                addDeleteStatement.executeUpdate();
+            }catch(SQLException e){
+                System.out.println("Look in deleteAll\n" + e);
+            }
+        }catch(SQLException e){
+            throw new RuntimeException("Problem in delete all" + e);
+        }
     }
 
     public static SQLUserDAO getInstance() throws SQLException, DataAccessException {

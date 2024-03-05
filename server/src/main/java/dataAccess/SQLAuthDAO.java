@@ -10,11 +10,6 @@ public class SQLAuthDAO implements AuthDAO{
 
     public SQLAuthDAO() throws SQLException, DataAccessException {
         configureDatabase();
-        /*
-        Get a connection to the RDBMS.
-        Create the pet store database if it doesn't exist.
-        Create the pet table if it doesn't exist.
-         */
     }
 
     private void configureDatabase() throws SQLException, DataAccessException {
@@ -24,7 +19,7 @@ public class SQLAuthDAO implements AuthDAO{
             var createAuthTable = """
             CREATE TABLE  IF NOT EXISTS auth (
                 authToken VARCHAR(255) NOT NULL,
-                username VARCHAR(255) NOT NULL, 
+                username VARCHAR(255) NOT NULL,
                 INDEX (authToken)
             )""";
 
@@ -75,7 +70,16 @@ public class SQLAuthDAO implements AuthDAO{
 
     @Override
     public void deleteAll() {
-        //"DROP TABLE pet;"
+        try(var conn = getConnection()){
+            var deleteAll = "DROP TABLE auth;";
+            try (var addDeleteStatement = conn.prepareStatement(deleteAll)) {
+                addDeleteStatement.executeUpdate();
+            }catch(SQLException e){
+                System.out.println("Look in deleteAll\n" + e);
+            }
+        }catch(SQLException e){
+            throw new RuntimeException("Problem in delete all" + e);
+        }
     }
 
     public static SQLAuthDAO getInstance() throws SQLException, DataAccessException {

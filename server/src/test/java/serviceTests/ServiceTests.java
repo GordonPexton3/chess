@@ -2,9 +2,7 @@ package serviceTests;
 
 import dataAccess.DataAccessException;
 import model.GameData;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import server.Authentications;
 import server.GameInteractions;
 import server.MyRequest;
@@ -18,8 +16,13 @@ public class ServiceTests {
     private String authToken;
     private Integer gameID;
 
-    @BeforeEach
-    public void makeDAOs(){
+    @AfterEach
+    public void clearAll(){
+        Authentications.clearApplication();
+    }
+
+    @BeforeAll
+    public static void makeDAOs(){
         try {
             Authentications.makeDAOs();
             GameInteractions.makeDAOs();
@@ -45,12 +48,6 @@ public class ServiceTests {
         MyResponse resp = GameInteractions.createGame(req);
         gameID = resp.getGameID();
     }
-
-
-//    @BeforeEach
-//    public void clearAll(){
-//        Authentications.clearApplication();
-//    }
 
     @Test
     public void registerReturnUsername() {
