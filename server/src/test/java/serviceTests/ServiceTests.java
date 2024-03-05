@@ -40,7 +40,8 @@ public class ServiceTests {
         authToken = resp.getAuthToken();
     }
 
-    private void makeGame(){
+    @Test
+    public void makeGame(){
         register();
         MyRequest req = new MyRequest();
         req.setAuthToken(authToken);
@@ -75,6 +76,7 @@ public class ServiceTests {
 
     @Test
     public void loginReturnsAuthToken(){
+        register();
         MyRequest req = new MyRequest();
         req.setUsername("Username Test");
         req.setPassword("123456");
@@ -96,16 +98,18 @@ public class ServiceTests {
 
     @Test
     public void logout(){
+        register();
         MyRequest req = new MyRequest();
         req.setAuthToken(authToken);
         MyResponse resp = Authentications.logout(req);
         int actual = resp.getStatus();
-        int expected = 401;
-        Assertions.assertEquals(actual, expected);
+        int expected = 200;
+        Assertions.assertEquals(expected, actual);
     }
 
     @Test
     public void logoutTwice(){
+        logout();
         MyRequest req = new MyRequest();
         req.setAuthToken(authToken);
         MyResponse resp = Authentications.logout(req);
@@ -173,7 +177,7 @@ public class ServiceTests {
         GameInteractions.joinGame(req);
         for(GameData games : GameInteractions.listGames(req).getGames()){
             if(games.getGameName().equals("DUDE THIS IS MY GAME")){
-                Assertions.assertEquals(games.getBlackUsername(), "Username Test");
+                Assertions.assertEquals("Username Test", games.getBlackUsername());
                 break;
             }
         }
@@ -210,10 +214,5 @@ public class ServiceTests {
         req.setAuthToken(authToken);
         resp = GameInteractions.listGames(req);
         Assertions.assertTrue(resp.getGames().isEmpty());
-    }
-
-    @Test
-    public void toDatabaseAndBack(){
-        register();
     }
 }

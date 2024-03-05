@@ -94,6 +94,7 @@ public class GameInteractions {
                 case "BLACK":
                     if (game.getBlackUsername() == null) {
                         game.setBlackUsername(username);
+                        games.updateGame(req.getGameID(), game);
                         resp.setStatus(200);
                     } else {
                         resp.setMessage("Error: already taken");
@@ -103,6 +104,7 @@ public class GameInteractions {
                 case "WHITE":
                     if (game.getWhiteUsername() == null) {
                         game.setWhiteUsername(username);
+                        games.updateGame(req.getGameID(), game);
                         resp.setStatus(200);
                     } else {
                         resp.setMessage("Error: already taken");

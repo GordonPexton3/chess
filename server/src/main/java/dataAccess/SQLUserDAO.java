@@ -17,15 +17,13 @@ public class SQLUserDAO implements UserDAO{
     private void configureDatabase() throws SQLException, DataAccessException {
         DatabaseManager.createDatabase();
         try (var conn = getConnection()) {
-
             var createAuthTable = """
             CREATE TABLE  IF NOT EXISTS users (
                 username VARCHAR(255) NOT NULL,
                 userData VARCHAR(255) NOT NULL,
                 INDEX (username)
             )""";
-
-            try (var createTableStatement = conn.prepareStatement(createAuthTable)) {
+            try(var createTableStatement = conn.prepareStatement(createAuthTable)){
                 createTableStatement.executeUpdate();
             }
         }
@@ -42,27 +40,28 @@ public class SQLUserDAO implements UserDAO{
 
     @Override
     public UserData getUser(String username){
-        var conn = getConnection();
-        String query = "SELECT username, userData FROM users WHERE username=?";
-        try (var preparedStatement = conn.prepareStatement(query)) {
-            preparedStatement.setString(1, username);
-            try (var rs = preparedStatement.executeQuery()) {
-                var userDataString = rs.getString("userData");
-                UserData userData = new Gson().fromJson(userDataString, UserData.class);
-                System.out.println(userDataString);
-                return userData;
-            }catch(SQLException e){
-                return null;
+        try(var conn = getConnection()){
+            String query = "SELECT username, userData FROM users WHERE username=?";
+            try(var preparedStatement = conn.prepareStatement(query)) {
+                preparedStatement.setString(1, username);
+                var rs = preparedStatement.executeQuery();
+                if(rs.next()){
+                    String userDataString = rs.getString("userData");
+                    UserData userData = new Gson().fromJson(userDataString, UserData.class);
+                    return userData;
+                }else{
+                    return null;
+                }
             }
-        }catch(SQLException e){
-            System.out.println("Your request stinks in getUser SQLUserDAO\n" + e);
-            throw new RuntimeException(e);
+        } catch (SQLException e) {
+            throw new RuntimeException("Problems in Get User\n" + e);
         }
     }
 
         @Override
     public String getPassword(String username) {
-        return null;
+        UserData userData = getUser(username);
+        return userData.getPassword();
     }
 
     @Override
@@ -74,13 +73,11 @@ public class SQLUserDAO implements UserDAO{
                     username + "','" +
                     userDataString +
                     "');";
-            try (var addUserStatement = conn.prepareStatement(addUser)) {
+            try(var addUserStatement = conn.prepareStatement(addUser)){
                 addUserStatement.executeUpdate();
-            }catch(SQLException e){
-                System.out.println("Your SQL code stinks \n" + e);
             }
         }catch(SQLException e){
-            System.out.println("Couldn't tell ya!" + e);
+            System.out.println("Problems in create user\n" + e);
         }
     }
 
@@ -88,10 +85,8 @@ public class SQLUserDAO implements UserDAO{
     public void deleteAll() {
         try(var conn = getConnection()){
             var deleteAll = "DROP TABLE users;";
-            try (var addDeleteStatement = conn.prepareStatement(deleteAll)) {
+            try(var addDeleteStatement = conn.prepareStatement(deleteAll)){
                 addDeleteStatement.executeUpdate();
-            }catch(SQLException e){
-                System.out.println("Look in deleteAll\n" + e);
             }
         }catch(SQLException e){
             throw new RuntimeException("Problem in delete all" + e);
