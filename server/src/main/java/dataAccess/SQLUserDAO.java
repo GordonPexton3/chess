@@ -6,7 +6,7 @@ import model.UserData;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-public class SQLUserDAO implements UserDAO{
+public class SQLUserDAO{
 
     private static SQLUserDAO instance;
 
@@ -38,7 +38,7 @@ public class SQLUserDAO implements UserDAO{
         }
     }
 
-    @Override
+
     public UserData getUser(String username){
         try(var conn = getConnection()){
             String query = "SELECT username, userData FROM users WHERE username=?";
@@ -57,13 +57,13 @@ public class SQLUserDAO implements UserDAO{
         }
     }
 
-        @Override
+
     public String getPassword(String username) {
         UserData userData = getUser(username);
         return userData.getPassword();
     }
 
-    @Override
+
     public void createUser(String username, String password, String email) {
         try (var conn = getConnection()) {
             String userDataString = new Gson().toJson(new UserData(username, password,email));
@@ -80,7 +80,7 @@ public class SQLUserDAO implements UserDAO{
         }
     }
 
-    @Override
+
     public void deleteAll() {
         try(var conn = getConnection()){
             var deleteAll = "DROP TABLE users;";

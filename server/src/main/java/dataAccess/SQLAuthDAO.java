@@ -3,7 +3,7 @@ package dataAccess;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-public class SQLAuthDAO implements AuthDAO{
+public class SQLAuthDAO{
 
 
     private static SQLAuthDAO instance;
@@ -36,7 +36,7 @@ public class SQLAuthDAO implements AuthDAO{
         }
     }
 
-    @Override
+
     public String getUsername(String authToken) throws DataAccessException {
         try(var conn = getConnection()){
             String query = "SELECT authToken, username FROM auth WHERE authToken=?";
@@ -54,7 +54,7 @@ public class SQLAuthDAO implements AuthDAO{
         throw new DataAccessException("Username does not exist");
     }
 
-    @Override
+
     public void createAuth(String username, String authToken){
         try(var conn = getConnection()){
             var addUser = "INSERT INTO auth " +
@@ -70,7 +70,7 @@ public class SQLAuthDAO implements AuthDAO{
         }
     }
 
-    @Override
+
     public void deleteAuth(String authToken) {
         try(var conn = getConnection()){
             var deleteAuth = "DELETE FROM auth WHERE authToken=?";
@@ -83,7 +83,7 @@ public class SQLAuthDAO implements AuthDAO{
         }
     }
 
-    @Override
+
     public void deleteAll() {
         try(var conn = getConnection()){
             var deleteAll = "DROP TABLE auth;";

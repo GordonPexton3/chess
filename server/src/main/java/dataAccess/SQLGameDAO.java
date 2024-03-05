@@ -7,7 +7,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Vector;
 
-public class SQLGameDAO implements GameDAO{
+public class SQLGameDAO{
 
     private static SQLGameDAO instance;
 
@@ -38,7 +38,7 @@ public class SQLGameDAO implements GameDAO{
         }
     }
 
-    @Override
+
     public GameData getGame(Integer gameID) throws DataAccessException {
         try(var conn = getConnection()){
             String query = "SELECT gameID, gameData FROM games WHERE gameID=?";
@@ -57,7 +57,7 @@ public class SQLGameDAO implements GameDAO{
         }
     }
 
-    @Override
+
     public Integer createGame(Integer gameID, String gameName) {
         try (var conn = getConnection()) {
             String gameData = new Gson().toJson(new GameData(gameID, gameName));
@@ -76,7 +76,7 @@ public class SQLGameDAO implements GameDAO{
         throw new RuntimeException("Problems in createGame\n");
     }
 
-    @Override
+
     public Vector<GameData> listGames() {
         Vector<GameData> gamesList = new Vector<>();
         try(var conn = getConnection()){
@@ -94,7 +94,7 @@ public class SQLGameDAO implements GameDAO{
         return gamesList;
     }
 
-    @Override
+
     public void updateGame(Integer gameID, GameData gameDataObject){
         try(var conn = getConnection()){
             String gameDataString = new Gson().toJson(gameDataObject);
@@ -110,7 +110,7 @@ public class SQLGameDAO implements GameDAO{
         }
     }
 
-    @Override
+
     public void deleteAll() {
         try(var conn = getConnection()){
             var deleteAll = "DROP TABLE games;";
