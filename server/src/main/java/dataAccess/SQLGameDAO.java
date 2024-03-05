@@ -58,7 +58,7 @@ public class SQLGameDAO{
     }
 
 
-    public Integer createGame(Integer gameID, String gameName) {
+    public void createGame(Integer gameID, String gameName) {
         try (var conn = getConnection()) {
             String gameData = new Gson().toJson(new GameData(gameID, gameName));
             var addGame = "INSERT INTO games " +
@@ -68,7 +68,6 @@ public class SQLGameDAO{
                     "');";
             try(var addUserStatement = conn.prepareStatement(addGame)){
                 addUserStatement.executeUpdate();
-                return gameID;
             }
         }catch(SQLException e){
             System.out.println("Problems in createGame\n" + e);

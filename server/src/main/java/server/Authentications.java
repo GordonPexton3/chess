@@ -53,7 +53,7 @@ public class Authentications {
         }else if(users.getUser(req.getUsername()) == null){ // if the username isn't on record
             resp.setMessage("Error: unauthorized");
             resp.setStatus(401);
-        }else if(!users.getUser(req.getUsername()).getPassword().equals(req.getPassword())){ // if password doesn't match
+        }else if(!users.getPassword(req.getUsername()).equals(req.getPassword())){ // if password doesn't match
             resp.setMessage("Error: unauthorized");
             resp.setStatus(401);
         }else{ // otherwise log them in.
