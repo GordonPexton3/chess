@@ -39,7 +39,7 @@ public class SQLUserDAO{
     }
 
 
-    public UserData getUser(String username){
+    public UserData getUser(String username) throws DataAccessException{
         try(var conn = getConnection()){
             String query = "SELECT username, userData FROM users WHERE username=?";
             try(var preparedStatement = conn.prepareStatement(query)) {
@@ -49,7 +49,7 @@ public class SQLUserDAO{
                     String userDataString = rs.getString("userData");
                     return new Gson().fromJson(userDataString, UserData.class);
                 }else{
-                    return null;
+                    throw new DataAccessException("User doesn't exist");
                 }
             }
         } catch (SQLException e) {
@@ -59,8 +59,10 @@ public class SQLUserDAO{
 
 
     public String getPassword(String username) {
-        UserData userData = getUser(username);
-        return userData.getPassword();
+        try{
+            UserData userData = getUser(username);
+            return userData.getPassword();
+        }
     }
 
 
@@ -87,8 +89,6 @@ public class SQLUserDAO{
             try(var addDeleteStatement = conn.prepareStatement(deleteAll)){
                 addDeleteStatement.executeUpdate();
             }
-        }catch(SQLException e){
-            throw new RuntimeException("Problem in delete all\n" + e);
         }
     }
 

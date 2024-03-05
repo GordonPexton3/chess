@@ -27,17 +27,12 @@ public class SQLAuthDAO{
         }
     }
 
-    private Connection getConnection(){
-        try{
-            return DatabaseManager.getConnection();
-        }catch (DataAccessException e){
-            System.out.println("Error in get Connection\n" + e);
-            throw new RuntimeException(e);
-        }
+    private Connection getConnection() throws DataAccessException {
+        return DatabaseManager.getConnection();
     }
 
 
-    public String getUsername(String authToken) throws DataAccessException {
+    public String getUsername(String authToken) throws DataAccessException, SQLException {
         try(var conn = getConnection()){
             String query = "SELECT authToken, username FROM auth WHERE authToken=?";
             try(var preparedStatement = conn.prepareStatement(query)){
@@ -47,51 +42,41 @@ public class SQLAuthDAO{
                     return rs.getString("username");
                 }
             }
-        }catch(SQLException e) {
-            System.out.println("problem in getUsername\n" + e);
-            throw new RuntimeException(e);
         }
-        throw new DataAccessException("Username does not exist");
     }
 
 
-    public void createAuth(String username, String authToken){
-        try(var conn = getConnection()){
+    public void createAuth(String username, String authToken) throws SQLException{
+        try(var conn = getConnection()) {
             var addUser = "INSERT INTO auth " +
                     "(authToken, username) VALUES ('" +
                     username + "','" +
                     authToken +
                     "');";
-            try(var addAuthStatement = conn.prepareStatement(addUser)){
+            try (var addAuthStatement = conn.prepareStatement(addUser)) {
                 addAuthStatement.executeUpdate();
             }
-        }catch (SQLException e){
-            throw new RuntimeException("In create Auth\n" + e);
         }
     }
 
 
-    public void deleteAuth(String authToken) {
+    public void deleteAuth(String authToken) throws SQLException {
         try(var conn = getConnection()){
             var deleteAuth = "DELETE FROM auth WHERE authToken=?";
             try (var preparedStatement = conn.prepareStatement(deleteAuth)){
                 preparedStatement.setString(1, authToken);
                 preparedStatement.executeUpdate();
             }
-        }catch(SQLException e){
-            throw new RuntimeException("Problem in deleteAuth" + e);
         }
     }
 
 
-    public void deleteAll() {
+    public void deleteAll() throws SQLException {
         try(var conn = getConnection()){
             var deleteAll = "DROP TABLE auth;";
             try (var addDeleteStatement = conn.prepareStatement(deleteAll)){
                 addDeleteStatement.executeUpdate();
             }
-        }catch(SQLException e){
-            throw new RuntimeException("Problem in delete all\n" + e);
         }
     }
 
