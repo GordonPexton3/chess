@@ -21,7 +21,7 @@ public class SQLGameDAO implements GameDAO{
             var createAuthTable = """
             CREATE TABLE  IF NOT EXISTS games (
                 gameID INT NOT NULL,
-                gameData VARCHAR(255) NOT NULL, 
+                gameData VARCHAR(255) NOT NULL,
                 INDEX (gameID)
             )""";
             try(var createTableStatement = conn.prepareStatement(createAuthTable)){
@@ -47,8 +47,7 @@ public class SQLGameDAO implements GameDAO{
                 var rs = preparedStatement.executeQuery();
                 if(rs.next()){
                     String gameDataString = rs.getString("gameData");
-                    GameData gameDataObject = new Gson().fromJson(gameDataString, GameData.class);
-                    return gameDataObject;
+                    return new Gson().fromJson(gameDataString, GameData.class);
                 }else{
                     throw new DataAccessException("Game doesn't exist");
                 }
@@ -125,7 +124,8 @@ public class SQLGameDAO implements GameDAO{
 
     public static SQLGameDAO getInstance() throws SQLException, DataAccessException {
         if(instance == null){
-            return new SQLGameDAO();
+            instance = new SQLGameDAO();
+            return instance;
         }
         return instance;
     }

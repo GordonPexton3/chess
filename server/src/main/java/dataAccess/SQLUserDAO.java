@@ -47,8 +47,7 @@ public class SQLUserDAO implements UserDAO{
                 var rs = preparedStatement.executeQuery();
                 if(rs.next()){
                     String userDataString = rs.getString("userData");
-                    UserData userData = new Gson().fromJson(userDataString, UserData.class);
-                    return userData;
+                    return new Gson().fromJson(userDataString, UserData.class);
                 }else{
                     return null;
                 }
@@ -95,7 +94,8 @@ public class SQLUserDAO implements UserDAO{
 
     public static SQLUserDAO getInstance() throws SQLException, DataAccessException {
         if(instance == null){
-            return new SQLUserDAO();
+            instance = new SQLUserDAO();
+            return instance;
         }
         return instance;
     }
