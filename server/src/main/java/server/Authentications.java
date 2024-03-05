@@ -8,9 +8,9 @@ import java.util.UUID;
 
 public class Authentications {
 
-    private static AuthDAO auth;
-    private static UserDAO users;
-    private static GameDAO games;
+    private static SQLAuthDAO auth;
+    private static SQLUserDAO users;
+    private static SQLGameDAO games;
 
     public static void makeDAOs() throws SQLException, DataAccessException {
         auth = SQLAuthDAO.getInstance();

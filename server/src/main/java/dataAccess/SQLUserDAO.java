@@ -3,8 +3,10 @@ package dataAccess;
 import com.google.gson.Gson;
 import model.UserData;
 
+import javax.xml.crypto.Data;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.SQLOutput;
 
 public class SQLUserDAO implements UserDAO{
 
@@ -31,17 +33,36 @@ public class SQLUserDAO implements UserDAO{
         }
     }
 
-    private Connection getConnection() throws DataAccessException{
-        return DatabaseManager.getConnection();
+    private Connection getConnection(){
+        try{
+            return DatabaseManager.getConnection();
+        }catch (DataAccessException e){
+            System.out.println("Error in get Connection\n" + e);
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
-    public UserData getUser(String username) {
-        // TODO create the user Get User Function
-        return null;
+    public UserData getUser(String username) throws DataAccessException {
+        var conn = getConnection();
+        try (var preparedStatement = conn.prepareStatement("SELECT id, name, type FROM pet WHERE type=?")) {
+            preparedStatement.setString(1, findType);
+            try (var rs = preparedStatement.executeQuery()) {
+                while (rs.next()) {
+                    var id = rs.getInt("id");
+                    var name = rs.getString("name");
+                    var type = rs.getString("type");
+
+                    System.out.printf("id: %d, name: %s, type: %s%n", id, name, type);
+                }
+            }
+        }catch(SQLException e){
+            System.out.println("Your request stinks in getUser SQLUserDAO\n" + e);
+            throw new RuntimeException(e);
+        }
     }
 
-    @Override
+        @Override
     public String getPassword(String username) {
         return null;
     }

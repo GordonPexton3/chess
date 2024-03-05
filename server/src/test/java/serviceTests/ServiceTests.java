@@ -2,7 +2,6 @@ package serviceTests;
 
 import model.GameData;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import server.Authentications;
 import server.GameInteractions;
@@ -34,10 +33,10 @@ public class ServiceTests {
     }
 
 
-    @BeforeEach
-    public void clearAll(){
-        Authentications.clearApplication();
-    }
+//    @BeforeEach
+//    public void clearAll(){
+//        Authentications.clearApplication();
+//    }
 
     @Test
     public void registerReturnUsername() {
@@ -200,5 +199,10 @@ public class ServiceTests {
         req.setAuthToken(authToken);
         resp = GameInteractions.listGames(req);
         Assertions.assertTrue(resp.getGames().isEmpty());
+    }
+
+    @Test
+    public void toDatabaseAndBack(){
+        register();
     }
 }
