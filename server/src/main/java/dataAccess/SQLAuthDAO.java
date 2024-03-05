@@ -43,10 +43,11 @@ public class SQLAuthDAO{
                 }
             }
         }
+        throw new DataAccessException("Not Authorized");
     }
 
 
-    public void createAuth(String username, String authToken) throws SQLException{
+    public void createAuth(String username, String authToken) throws SQLException, DataAccessException{
         try(var conn = getConnection()) {
             var addUser = "INSERT INTO auth " +
                     "(authToken, username) VALUES ('" +
@@ -60,7 +61,7 @@ public class SQLAuthDAO{
     }
 
 
-    public void deleteAuth(String authToken) throws SQLException {
+    public void deleteAuth(String authToken) throws SQLException, DataAccessException {
         try(var conn = getConnection()){
             var deleteAuth = "DELETE FROM auth WHERE authToken=?";
             try (var preparedStatement = conn.prepareStatement(deleteAuth)){
@@ -71,7 +72,7 @@ public class SQLAuthDAO{
     }
 
 
-    public void deleteAll() throws SQLException {
+    public void deleteAll() throws SQLException, DataAccessException {
         try(var conn = getConnection()){
             var deleteAll = "DROP TABLE auth;";
             try (var addDeleteStatement = conn.prepareStatement(deleteAll)){

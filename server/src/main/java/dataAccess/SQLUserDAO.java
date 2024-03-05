@@ -29,17 +29,12 @@ public class SQLUserDAO{
         }
     }
 
-    private Connection getConnection(){
-        try{
-            return DatabaseManager.getConnection();
-        }catch (DataAccessException e){
-            System.out.println("Error in get Connection\n" + e);
-            throw new RuntimeException(e);
-        }
+    private Connection getConnection() throws DataAccessException {
+        return DatabaseManager.getConnection();
     }
 
 
-    public UserData getUser(String username) throws DataAccessException{
+    public UserData getUser(String username) throws DataAccessException, SQLException {
         try(var conn = getConnection()){
             String query = "SELECT username, userData FROM users WHERE username=?";
             try(var preparedStatement = conn.prepareStatement(query)) {
@@ -52,21 +47,17 @@ public class SQLUserDAO{
                     throw new DataAccessException("User doesn't exist");
                 }
             }
-        } catch (SQLException e) {
-            throw new RuntimeException("Problems in Get User\n" + e);
         }
     }
 
 
-    public String getPassword(String username) {
-        try{
-            UserData userData = getUser(username);
-            return userData.getPassword();
-        }
+    public String getPassword(String username) throws DataAccessException, SQLException {
+        UserData userData = getUser(username);
+        return userData.getPassword();
     }
 
 
-    public void createUser(String username, String password, String email) {
+    public void createUser(String username, String password, String email) throws SQLException, DataAccessException {
         try (var conn = getConnection()) {
             String userDataString = new Gson().toJson(new UserData(username, password,email));
             var addUser = "INSERT INTO users " +
@@ -77,13 +68,11 @@ public class SQLUserDAO{
             try(var addUserStatement = conn.prepareStatement(addUser)){
                 addUserStatement.executeUpdate();
             }
-        }catch(SQLException e){
-            System.out.println("Problems in create user\n" + e);
         }
     }
 
 
-    public void deleteAll() {
+    public void deleteAll() throws SQLException, DataAccessException {
         try(var conn = getConnection()){
             var deleteAll = "DROP TABLE users;";
             try(var addDeleteStatement = conn.prepareStatement(deleteAll)){

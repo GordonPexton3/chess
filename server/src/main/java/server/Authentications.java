@@ -25,15 +25,15 @@ public class Authentications {
         MyResponse resp = new MyResponse();
         if(goodRegisterRequest(req,resp)){
             if(usernameNotTake(req,resp)){
-                users.createUser(req.getUsername(), req.getPassword(), req.getEmail());
-                String authToken = UUID.randomUUID().toString();
                 try{
+                    users.createUser(req.getUsername(), req.getPassword(), req.getEmail());
+                    String authToken = UUID.randomUUID().toString();
                     auth.createAuth(authToken,req.getUsername());
                     resp.setAuthToken(authToken);
                     resp.setUsername(req.getUsername());
                     resp.setStatus(200);
-                }catch(SQLException e){
-                    resp.setMessage("ERROR:" + e);
+                }catch(SQLException |DataAccessException e){
+                    resp.setMessage("Problem in Authentications:register\n" + e);
                     resp.setStatus(500);
                 }
             }
@@ -62,6 +62,10 @@ public class Authentications {
             return false;
         }catch(DataAccessException e){
             return true;
+        }catch(SQLException e){
+            resp.setMessage("Problem in Authentications:usernameNotTaken\n" + e);
+            resp.setStatus(500);
+            return false;
         }
     }
 
@@ -76,7 +80,7 @@ public class Authentications {
                         resp.setAuthToken(authToken);
                         resp.setUsername(req.getUsername());
                         resp.setStatus(200);
-                    }catch(SQLException e){
+                    }catch(SQLException | DataAccessException e){
                         resp.setMessage("ERROR:" + e);
                         resp.setStatus(500);
                     }
@@ -87,12 +91,20 @@ public class Authentications {
     }
 
     private static boolean passwordMatches(MyRequest req, MyResponse resp) {
-        if(users.getPassword(req.getUsername()).equals(req.getPassword())) {
-            return true;
+        try{
+            if(users.getPassword(req.getUsername()).equals(req.getPassword())) {
+                return true;
+            }
+            return false;
+        }catch(DataAccessException e){
+            resp.setMessage("Error: unauthorized");
+            resp.setStatus(401);
+            return false;
+        }catch(SQLException e){
+            resp.setMessage("Problem in Authentications:passwordMatches\n" + e);
+            resp.setStatus(500);
+            return false;
         }
-        resp.setMessage("Error: unauthorized");
-        resp.setStatus(401);
-        return false;
     }
 
     private static boolean usernameOnRecord(MyRequest req, MyResponse resp) {
@@ -102,6 +114,10 @@ public class Authentications {
         }catch(DataAccessException e){
             resp.setMessage("Error: unauthorized");
             resp.setStatus(401);
+            return false;
+        }catch(SQLException e){
+            resp.setMessage("Problem in clearApplication\n" + e);
+            resp.setStatus(500);
             return false;
         }
     }
@@ -122,19 +138,30 @@ public class Authentications {
     public static MyResponse logout(MyRequest req){
         MyResponse resp = new MyResponse();
         if(authorized(req, resp)){
-            auth.deleteAuth(req.getAuthToken());
-            resp.setStatus(200);
+            try {
+                auth.deleteAuth(req.getAuthToken());
+                resp.setStatus(200);
+            }catch(SQLException | DataAccessException e){
+                resp.setMessage("Problem in clearApplication\n" + e);
+                resp.setStatus(500);
+            }
         }
         return resp;
     }
 
     public static MyResponse clearApplication(){
         MyResponse resp = new MyResponse();
-        auth.deleteAll();
-        games.deleteAll();
-        users.deleteAll();
-        resp.setStatus(200);
-        return resp;
+        try {
+            auth.deleteAll();
+            games.deleteAll();
+            users.deleteAll();
+            resp.setStatus(200);
+            return resp;
+        }catch(SQLException | DataAccessException e){
+            resp.setMessage("Problem in clearApplication\n" + e);
+            resp.setStatus(500);
+            return resp;
+        }
     }
 
     public static boolean authorized(MyRequest req, MyResponse resp){
@@ -144,6 +171,10 @@ public class Authentications {
         }catch(DataAccessException e) {
             resp.setMessage("Error: unauthorized");
             resp.setStatus(401);
+            return false;
+        }catch(SQLException e){
+            resp.setMessage("Error: " + e);
+            resp.setStatus(500);
             return false;
         }
     }

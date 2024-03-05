@@ -30,16 +30,12 @@ public class SQLGameDAO{
         }
     }
 
-    private Connection getConnection(){
-        try{
-            return DatabaseManager.getConnection();
-        }catch (DataAccessException e){
-            throw new RuntimeException("Error in get Connection\n" + e);
-        }
+    private Connection getConnection() throws DataAccessException{
+        return DatabaseManager.getConnection();
     }
 
 
-    public GameData getGame(Integer gameID) throws DataAccessException {
+    public GameData getGame(Integer gameID) throws DataAccessException, SQLException {
         try(var conn = getConnection()){
             String query = "SELECT gameID, gameData FROM games WHERE gameID=?";
             try(var preparedStatement = conn.prepareStatement(query)) {
@@ -52,13 +48,11 @@ public class SQLGameDAO{
                     throw new DataAccessException("Game doesn't exist");
                 }
             }
-        } catch (SQLException e) {
-            throw new RuntimeException("Problems in SQL getGame\n" + e);
         }
     }
 
 
-    public void createGame(Integer gameID, String gameName) {
+    public void createGame(Integer gameID, String gameName) throws SQLException, DataAccessException {
         try (var conn = getConnection()) {
             String gameData = new Gson().toJson(new GameData(gameID, gameName));
             var addGame = "INSERT INTO games " +
@@ -69,14 +63,11 @@ public class SQLGameDAO{
             try(var addUserStatement = conn.prepareStatement(addGame)){
                 addUserStatement.executeUpdate();
             }
-        }catch(SQLException e){
-            System.out.println("Problems in createGame\n" + e);
         }
-        throw new RuntimeException("Problems in createGame\n");
     }
 
 
-    public Vector<GameData> listGames() {
+    public Vector<GameData> listGames() throws SQLException, DataAccessException {
         Vector<GameData> gamesList = new Vector<>();
         try(var conn = getConnection()){
             String query = "SELECT gameID, gameData FROM games";
@@ -87,14 +78,12 @@ public class SQLGameDAO{
                     gamesList.add(new Gson().fromJson(gameDataString, GameData.class));
                 }
             }
-        } catch (SQLException e) {
-            throw new RuntimeException("Problems in SQL getGame\n" + e);
         }
         return gamesList;
     }
 
 
-    public void updateGame(Integer gameID, GameData gameDataObject){
+    public void updateGame(Integer gameID, GameData gameDataObject) throws SQLException, DataAccessException{
         try(var conn = getConnection()){
             String gameDataString = new Gson().toJson(gameDataObject);
             String updateString = "UPDATE games SET gameData=? WHERE gameID=?";
@@ -104,20 +93,16 @@ public class SQLGameDAO{
 
                 updateGameStatement.executeUpdate();
             }
-        } catch (SQLException e) {
-            throw new RuntimeException("Problems in SQL getGame\n" + e);
         }
     }
 
 
-    public void deleteAll() {
-        try(var conn = getConnection()){
+    public void deleteAll() throws SQLException, DataAccessException{
+        try(var conn = getConnection()) {
             var deleteAll = "DROP TABLE games;";
             try (var addDeleteStatement = conn.prepareStatement(deleteAll)) {
                 addDeleteStatement.executeUpdate();
             }
-        }catch(SQLException e){
-            throw new RuntimeException("Problem in delete all\n" + e);
         }
     }
 
