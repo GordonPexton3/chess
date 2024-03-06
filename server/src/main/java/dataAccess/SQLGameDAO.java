@@ -102,6 +102,7 @@ public class SQLGameDAO{
             var deleteAll = "DROP TABLE games;";
             try (var addDeleteStatement = conn.prepareStatement(deleteAll)) {
                 addDeleteStatement.executeUpdate();
+                instance = null;
             }
         }
     }

@@ -77,6 +77,7 @@ public class SQLUserDAO{
             var deleteAll = "DROP TABLE users;";
             try(var addDeleteStatement = conn.prepareStatement(deleteAll)){
                 addDeleteStatement.executeUpdate();
+                instance = null;
             }
         }
     }

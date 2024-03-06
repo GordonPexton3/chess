@@ -92,10 +92,7 @@ public class Authentications {
 
     private static boolean passwordMatches(MyRequest req, MyResponse resp) {
         try{
-            if(users.getPassword(req.getUsername()).equals(req.getPassword())) {
-                return true;
-            }
-            return false;
+            return users.getPassword(req.getUsername()).equals(req.getPassword());
         }catch(DataAccessException e){
             resp.setMessage("Error: unauthorized");
             resp.setStatus(401);
@@ -142,7 +139,7 @@ public class Authentications {
                 auth.deleteAuth(req.getAuthToken());
                 resp.setStatus(200);
             }catch(SQLException | DataAccessException e){
-                resp.setMessage("Problem in clearApplication\n" + e);
+                resp.setMessage("Problem in Authentications::logout\n" + e);
                 resp.setStatus(500);
             }
         }

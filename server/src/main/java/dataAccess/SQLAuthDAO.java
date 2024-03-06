@@ -77,6 +77,7 @@ public class SQLAuthDAO{
             var deleteAll = "DROP TABLE auth;";
             try (var addDeleteStatement = conn.prepareStatement(deleteAll)){
                 addDeleteStatement.executeUpdate();
+                instance = null;
             }
         }
     }

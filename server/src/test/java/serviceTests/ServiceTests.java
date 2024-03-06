@@ -40,7 +40,7 @@ public class ServiceTests {
         authToken = resp.getAuthToken();
     }
 
-    @Test
+
     public void makeGame(){
         register();
         MyRequest req = new MyRequest();

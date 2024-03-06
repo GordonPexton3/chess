@@ -1,6 +1,8 @@
 package server;
 
-import dataAccess.*;
+import dataAccess.DataAccessException;
+import dataAccess.SQLAuthDAO;
+import dataAccess.SQLGameDAO;
 import model.GameData;
 
 import java.sql.SQLException;
@@ -18,8 +20,13 @@ public class GameInteractions {
     public static MyResponse listGames(MyRequest req){
         MyResponse resp = new MyResponse();
         if(authorized(req, resp)){
-            resp.setGames(games.listGames());
-            resp.setStatus(200);
+            try {
+                resp.setGames(games.listGames());
+                resp.setStatus(200);
+            }catch(SQLException | DataAccessException e){
+                resp.setMessage("Problem in GameInteractions::listGames\n"+e);
+                resp.setStatus(500);
+            }
         }
         return resp;
     }
@@ -28,10 +35,15 @@ public class GameInteractions {
         MyResponse resp = new MyResponse();
         if(authorized(req, resp)){
             if(gameNameNotNull(req, resp)){
-                Integer newGameID = generateNewGameID();
-                games.createGame(newGameID, req.getGameName());
-                resp.setGameID(newGameID);
-                resp.setStatus(200);
+                try {
+                    Integer newGameID = generateNewGameID(resp);
+                    games.createGame(newGameID, req.getGameName());
+                    resp.setGameID(newGameID);
+                    resp.setStatus(200);
+                }catch(SQLException | DataAccessException e){
+                    resp.setMessage("Problem in GameInteractions::createGame\n"+e);
+                    resp.setStatus(500);
+                }
             }
         }
         return resp;
@@ -46,7 +58,7 @@ public class GameInteractions {
         return false;
     }
 
-    private static int generateNewGameID(){
+    private static int generateNewGameID(MyResponse resp){
         Random rand = new Random();
         int testGameID;
         while(true){
@@ -55,6 +67,9 @@ public class GameInteractions {
                 games.getGame(testGameID);
             }catch(DataAccessException e){
                 break;
+            }catch(SQLException e){
+                resp.setMessage("Problem in GameInteractions::generateNewGameID\n"+e);
+                resp.setStatus(500);
             }
         }
         return testGameID;
@@ -72,6 +87,9 @@ public class GameInteractions {
             }catch(DataAccessException e){
                 resp.setMessage("Error: bad request");
                 resp.setStatus(400);
+            }catch(SQLException e){
+                resp.setMessage("Problem in GameInteractions::joinGame\n"+e);
+                resp.setStatus(500);
             }
         }
         return resp;
@@ -112,8 +130,8 @@ public class GameInteractions {
                     }
                     break;
             }
-        } catch (DataAccessException e) {
-            resp.setMessage("ERROR: username not found");
+        } catch (DataAccessException | SQLException e) {
+            resp.setMessage("Problem in GameInteractions::joinWithColor"+e);
             resp.setStatus(500);
         }
     }
