@@ -1,4 +1,4 @@
-package serviceTests;
+package dataAccessTests;
 
 import dataAccess.DataAccessException;
 import model.GameData;
@@ -13,7 +13,7 @@ import server.MyResponse;
 import java.sql.SQLException;
 import java.util.Vector;
 
-public class dataAccessTests {
+public class DataAccessTests {
 
     private String authToken;
     private Integer gameID;
