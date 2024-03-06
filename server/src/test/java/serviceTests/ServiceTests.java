@@ -1,14 +1,17 @@
 package serviceTests;
 
+import dataAccess.DataAccessException;
 import model.GameData;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import server.Authentications;
 import server.GameInteractions;
 import server.MyRequest;
 import server.MyResponse;
 
+import java.sql.SQLException;
 import java.util.Vector;
 
 public class ServiceTests {
@@ -21,19 +24,19 @@ public class ServiceTests {
         Authentications.clearApplication();
     }
 
-//    @BeforeEach
-//    public void makeDAOs(){
-//        try {
-//            Authentications.makeDAOs();
-//            GameInteractions.makeDAOs();
-//        }catch(SQLException | DataAccessException e){
-//            throw new RuntimeException("Database Failed to Configure \n" + e);
-//        }
-//    }
+    @BeforeEach
+    public void makeDAOs(){
+        try {
+            Authentications.makeDAOs();
+            GameInteractions.makeDAOs();
+        }catch(SQLException | DataAccessException e){
+            throw new RuntimeException("Database Failed to Configure \n" + e);
+        }
+    }
 
     private void register(){
         MyRequest req = new MyRequest();
-        req.setUsername("Username Test");
+        req.setUsername("UsernameTest");
         req.setPassword("123456");
         req.setEmail("This.is.an.email@BRO.AWESOME");
         MyResponse resp = Authentications.register(req);
@@ -45,7 +48,7 @@ public class ServiceTests {
         register();
         MyRequest req = new MyRequest();
         req.setAuthToken(authToken);
-        req.setGameName("DUDE THIS IS MY GAME");
+        req.setGameName("myGameName");
         MyResponse resp = GameInteractions.createGame(req);
         gameID = resp.getGameID();
     }
@@ -53,11 +56,11 @@ public class ServiceTests {
     @Test
     public void registerReturnUsername() {
         MyRequest req = new MyRequest();
-        req.setUsername("Username Test");
+        req.setUsername("UsernameTest");
         req.setPassword("123456");
         req.setEmail("This.is.an.email@BRO.AWESOME");
         MyResponse resp = Authentications.register(req);
-        String expected = "Username Test";
+        String expected = "UsernameTest";
         String actual = resp.getUsername();
         Assertions.assertEquals(expected, actual);
     }
@@ -65,7 +68,7 @@ public class ServiceTests {
     @Test
     public void registerWithNoPassword(){
         MyRequest req = new MyRequest();
-        req.setUsername("Username Test1");
+        req.setUsername("UsernameTest1");
         req.setPassword("1234567");
         req.setEmail("");
         MyResponse resp = Authentications.register(req);
@@ -78,7 +81,7 @@ public class ServiceTests {
     public void loginReturnsAuthToken(){
         register();
         MyRequest req = new MyRequest();
-        req.setUsername("Username Test");
+        req.setUsername("UsernameTest");
         req.setPassword("123456");
         MyResponse resp = Authentications.login(req);
         authToken = resp.getAuthToken();
@@ -88,7 +91,7 @@ public class ServiceTests {
     @Test
     public void loginFailsWhenPasswordIncorrect(){
         MyRequest req = new MyRequest();
-        req.setUsername("Username Test");
+        req.setUsername("UsernameTest");
         req.setPassword("1");
         MyResponse resp = Authentications.login(req);
         int status = resp.getStatus();
@@ -136,7 +139,7 @@ public class ServiceTests {
         MyResponse resp = GameInteractions.listGames(req);
         boolean foundIt = false;
         for(GameData game : resp.getGames()){
-            if(game.getGameName().equals("DUDE THIS IS MY GAME")){
+            if(game.getGameName().equals("myGameName")){
                 foundIt = true;
                 break;
             }
@@ -149,7 +152,7 @@ public class ServiceTests {
         register();
         MyRequest req = new MyRequest();
         req.setAuthToken(authToken);
-        req.setGameName("DUDE THIS IS MY GAME");
+        req.setGameName("myGameName");
         MyResponse resp = GameInteractions.createGame(req);
         Integer gameID = resp.getGameID();
         Assertions.assertNotNull(gameID);
@@ -176,8 +179,8 @@ public class ServiceTests {
         req.setPlayerColor("BLACK");
         GameInteractions.joinGame(req);
         for(GameData games : GameInteractions.listGames(req).getGames()){
-            if(games.getGameName().equals("DUDE THIS IS MY GAME")){
-                Assertions.assertEquals("Username Test", games.getBlackUsername());
+            if(games.getGameName().equals("myGameName")){
+                Assertions.assertEquals("UsernameTest", games.getBlackUsername());
                 break;
             }
         }

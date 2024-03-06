@@ -64,7 +64,7 @@ public class SQLUserDAO{
     public void createUser(String username, String password, String email) throws SQLException, DataAccessException {
         try (var conn = getConnection()) {
             if (username.matches("[a-zA-Z]+") &&
-                    password.matches("[a-zA-Z]+")){
+                    password.matches("[a-zA-Z0-9]+")){
                 String userDataString = new Gson().toJson(new UserData(username, password, email));
                 var addUser = "INSERT INTO users " +
                         "(username, userData) VALUES ('" +
