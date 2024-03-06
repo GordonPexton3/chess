@@ -217,4 +217,17 @@ public class ServiceTests {
         resp = GameInteractions.listGames(req);
         Assertions.assertTrue(resp.getGames().isEmpty());
     }
+
+    @Test
+    public void incorrectPasswordFormat(){
+        MyRequest req = new MyRequest();
+        req.setUsername("DROP TABLE games;");
+        req.setPassword("DROP TABLE users");
+        req.setEmail("DROP TABLE auth");
+        MyResponse resp = Authentications.register(req);
+        String expected = "Problem in Authentications:usernameNotTaken\n" +
+                "java.sql.SQLException: Username isn't acceptable";
+        String actual = resp.getMessage();
+        Assertions.assertEquals(expected, actual);
+    }
 }

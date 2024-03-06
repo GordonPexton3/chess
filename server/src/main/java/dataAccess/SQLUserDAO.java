@@ -38,13 +38,17 @@ public class SQLUserDAO{
         try(var conn = getConnection()){
             String query = "SELECT username, userData FROM users WHERE username=?";
             try(var preparedStatement = conn.prepareStatement(query)) {
-                preparedStatement.setString(1, username);
-                var rs = preparedStatement.executeQuery();
-                if(rs.next()){
-                    String userDataString = rs.getString("userData");
-                    return new Gson().fromJson(userDataString, UserData.class);
+                if (username.matches("[a-zA-Z]+")) {
+                    preparedStatement.setString(1, username);
+                    var rs = preparedStatement.executeQuery();
+                    if (rs.next()) {
+                        String userDataString = rs.getString("userData");
+                        return new Gson().fromJson(userDataString, UserData.class);
+                    } else {
+                        throw new DataAccessException("User doesn't exist");
+                    }
                 }else{
-                    throw new DataAccessException("User doesn't exist");
+                    throw new SQLException("Username isn't acceptable");
                 }
             }
         }
@@ -59,14 +63,20 @@ public class SQLUserDAO{
 
     public void createUser(String username, String password, String email) throws SQLException, DataAccessException {
         try (var conn = getConnection()) {
-            String userDataString = new Gson().toJson(new UserData(username, password,email));
-            var addUser = "INSERT INTO users " +
-                    "(username, userData) VALUES ('" +
-                    username + "','" +
-                    userDataString +
-                    "');";
-            try(var addUserStatement = conn.prepareStatement(addUser)){
-                addUserStatement.executeUpdate();
+            if (username.matches("[a-zA-Z]+") &&
+                    password.matches("[a-zA-Z]+") &&
+                    email.matches("[a-zA-Z]+")){
+                String userDataString = new Gson().toJson(new UserData(username, password, email));
+                var addUser = "INSERT INTO users " +
+                        "(username, userData) VALUES ('" +
+                        username + "','" +
+                        userDataString +
+                        "');";
+                try (var addUserStatement = conn.prepareStatement(addUser)) {
+                    addUserStatement.executeUpdate();
+                }
+            }else{
+                throw new SQLException("username, password, or email is incorrect format");
             }
         }
     }

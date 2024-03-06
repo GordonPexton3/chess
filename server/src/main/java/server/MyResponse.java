@@ -29,6 +29,8 @@ public class MyResponse {
         return gameID;
     }
 
+    public String getMessage(){ return message; }
+
     public void setAuthToken(String authToken) {
         this.authToken = authToken;
     }

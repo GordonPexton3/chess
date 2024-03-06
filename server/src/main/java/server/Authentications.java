@@ -32,7 +32,7 @@ public class Authentications {
                     resp.setAuthToken(authToken);
                     resp.setUsername(req.getUsername());
                     resp.setStatus(200);
-                }catch(SQLException |DataAccessException e){
+                }catch(SQLException | DataAccessException e){
                     resp.setMessage("Problem in Authentications:register\n" + e);
                     resp.setStatus(500);
                 }
