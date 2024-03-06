@@ -238,7 +238,7 @@ public class DataAccessTests { // I need 36 tests
     @Test
     public void configureGame() {
         try {
-            SQLGameDAO games = SQLGameDAO.getInstance();
+            SQLGameDAO.getInstance();
         }catch(SQLException | DataAccessException e){
             Assertions.fail();
         }
@@ -247,7 +247,7 @@ public class DataAccessTests { // I need 36 tests
     @Test
     public void configureUser() {
         try {
-            SQLUserDAO user = SQLUserDAO.getInstance();
+            SQLUserDAO.getInstance();
         }catch(SQLException | DataAccessException e){
             Assertions.fail();
         }
@@ -256,7 +256,7 @@ public class DataAccessTests { // I need 36 tests
     @Test
     public void configureAuth() {
         try {
-            SQLAuthDAO auth = SQLAuthDAO.getInstance();
+            SQLAuthDAO.getInstance();
         }catch(SQLException | DataAccessException e){
             Assertions.fail();
         }
@@ -322,7 +322,7 @@ public class DataAccessTests { // I need 36 tests
         try{
             SQLUserDAO user = SQLUserDAO.getInstance();
             user.deleteAll();
-            UserData userObject = user.getUser("TestUsername");
+            user.getUser("TestUsername");
             Assertions.fail();
         } catch (SQLException | DataAccessException e) {
             Assertions.assertTrue(true);
@@ -405,8 +405,8 @@ public class DataAccessTests { // I need 36 tests
             game.createGame(2364, "THIS IS A GAME NAME");
             GameData gameDataObject = game.getGame(2364);
             gameDataObject.setWhiteUsername("THIS IS ME");
-            game.updateGame(0000,gameDataObject);
-            GameData newGameDataObject = game.getGame(2364);
+            game.updateGame(0,gameDataObject);
+            game.getGame(2364);
             Assertions.fail();
         }catch(SQLException | DataAccessException e) {
             Assertions.assertTrue(true);
@@ -415,21 +415,35 @@ public class DataAccessTests { // I need 36 tests
 
     @Test
     public void listGamesEmpty(){
-
+        try {
+            SQLGameDAO game = SQLGameDAO.getInstance();
+            Assertions.assertTrue(game.listGames().isEmpty());
+        }catch(SQLException | DataAccessException e) {
+            Assertions.fail();
+        }
     }
 
     @Test
     public void findGameInList(){
-
+        createGame();
+        try {
+            SQLGameDAO game = SQLGameDAO.getInstance();
+            Vector<GameData> games = game.listGames();
+            Assertions.assertEquals(games.getFirst().getGameName(),"THIS IS A GAME NAME");
+        }catch(SQLException | DataAccessException e) {
+            Assertions.fail();
+        }
     }
 
     @Test
     public void getGameFail(){
-
-    }
-
-    @Test
-    public void invalidGameID(){
-
+        createGame();
+        try {
+            SQLGameDAO game = SQLGameDAO.getInstance();
+            game.getGame(1236);
+            Assertions.fail();
+        }catch(SQLException | DataAccessException e) {
+            Assertions.assertTrue(true);
+        }
     }
 }
