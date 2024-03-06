@@ -84,6 +84,7 @@ public class SQLGameDAO{
 
 
     public void updateGame(Integer gameID, GameData gameDataObject) throws SQLException, DataAccessException{
+        getGame(gameID);
         try(var conn = getConnection()){
             String gameDataString = new Gson().toJson(gameDataObject);
             String updateString = "UPDATE games SET gameData=? WHERE gameID=?";

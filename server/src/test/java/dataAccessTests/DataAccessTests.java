@@ -1,7 +1,11 @@
 package dataAccessTests;
 
 import dataAccess.DataAccessException;
+import dataAccess.SQLAuthDAO;
+import dataAccess.SQLGameDAO;
+import dataAccess.SQLUserDAO;
 import model.GameData;
+import model.UserData;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,7 +17,7 @@ import server.MyResponse;
 import java.sql.SQLException;
 import java.util.Vector;
 
-public class DataAccessTests {
+public class DataAccessTests { // I need 36 tests
 
     private String authToken;
     private Integer gameID;
@@ -42,7 +46,6 @@ public class DataAccessTests {
         MyResponse resp = Authentications.register(req);
         authToken = resp.getAuthToken();
     }
-
 
     public void makeGame(){
         register();
@@ -230,5 +233,203 @@ public class DataAccessTests {
                 "java.sql.SQLException: Username isn't acceptable";
         String actual = resp.getMessage();
         Assertions.assertEquals(expected, actual);
+    }
+
+    @Test
+    public void configureGame() {
+        try {
+            SQLGameDAO games = SQLGameDAO.getInstance();
+        }catch(SQLException | DataAccessException e){
+            Assertions.fail();
+        }
+    }
+
+    @Test
+    public void configureUser() {
+        try {
+            SQLUserDAO user = SQLUserDAO.getInstance();
+        }catch(SQLException | DataAccessException e){
+            Assertions.fail();
+        }
+    }
+
+    @Test
+    public void configureAuth() {
+        try {
+            SQLAuthDAO auth = SQLAuthDAO.getInstance();
+        }catch(SQLException | DataAccessException e){
+            Assertions.fail();
+        }
+    }
+
+    @Test
+    public void createUser(){
+        try {
+            SQLUserDAO user = SQLUserDAO.getInstance();
+            user.createUser("TestUsername", "1234567890", "THIS IS AN EMAIL");
+        }catch(SQLException | DataAccessException e) {
+            Assertions.fail();
+        }
+    }
+
+    @Test
+    public void createGame(){
+        try {
+            SQLGameDAO game = SQLGameDAO.getInstance();
+            game.createGame(2364, "THIS IS A GAME NAME");
+        }catch(SQLException | DataAccessException e) {
+            Assertions.fail();
+        }
+    }
+
+    @Test
+    public void createAuth(){
+        try {
+            SQLAuthDAO auth = SQLAuthDAO.getInstance();
+            auth.createAuth("ThisIsATestToken", "TestUsername");
+        }catch(SQLException | DataAccessException e) {
+            Assertions.fail();
+        }
+    }
+
+    @Test
+    public void createUserFail(){
+        try {
+            SQLUserDAO user = SQLUserDAO.getInstance();
+            user.createUser("Test Username", "1234567890", "THIS IS AN EMAIL");
+            Assertions.fail();
+        }catch(SQLException | DataAccessException e) {
+            Assertions.assertTrue(true);
+        }
+    }
+
+    @Test
+    public void getUser(){
+        createUser();
+        try{
+            SQLUserDAO user = SQLUserDAO.getInstance();
+            UserData userObject = user.getUser("TestUsername");
+            Assertions.assertEquals("1234567890", userObject.getPassword());
+            Assertions.assertEquals( "THIS IS AN EMAIL",userObject.getEmail());
+        } catch (SQLException | DataAccessException e) {
+            Assertions.fail();
+        }
+    }
+
+    @Test
+    public void getDeletedUser(){
+        createUser();
+        try{
+            SQLUserDAO user = SQLUserDAO.getInstance();
+            user.deleteAll();
+            UserData userObject = user.getUser("TestUsername");
+            Assertions.fail();
+        } catch (SQLException | DataAccessException e) {
+            Assertions.assertTrue(true);
+        }
+    }
+
+
+
+    @Test
+    public void getAuth(){
+        createAuth();
+        try {
+            SQLAuthDAO auth = SQLAuthDAO.getInstance();
+            String actual = auth.getUsername("ThisIsATestToken");
+            String expected = "TestUsername";
+            Assertions.assertEquals(expected, actual);
+        }catch(SQLException | DataAccessException e) {
+            Assertions.fail();
+        }
+    }
+
+    @Test
+    public void deleteAuth(){
+        createAuth();
+        try {
+            SQLAuthDAO auth = SQLAuthDAO.getInstance();
+            auth.deleteAuth("ThisIsATestToken");
+            auth.getUsername("ThisIsATestToken");
+            Assertions.fail();
+        }catch(SQLException | DataAccessException e) {
+            Assertions.assertTrue(true);
+        }
+    }
+
+    @Test
+    public void deleteAllAuth(){
+        createAuth();
+        try {
+            SQLAuthDAO auth = SQLAuthDAO.getInstance();
+            auth.deleteAll();
+            auth.getUsername("ThisIsATestToken");
+            Assertions.fail();
+        }catch(SQLException | DataAccessException e) {
+            Assertions.assertTrue(true);
+        }
+    }
+
+    @Test
+    public void getDeletedGame(){
+        try {
+            SQLGameDAO game = SQLGameDAO.getInstance();
+            game.createGame(2364, "THIS IS A GAME NAME");
+            game.deleteAll();
+            game.getGame(2364);
+            Assertions.fail();
+        }catch(SQLException | DataAccessException e) {
+            Assertions.assertTrue(true);
+        }
+    }
+
+    @Test
+    public void updateGame(){
+        try {
+            SQLGameDAO game = SQLGameDAO.getInstance();
+            game.createGame(2364, "THIS IS A GAME NAME");
+            GameData gameDataObject = game.getGame(2364);
+            gameDataObject.setWhiteUsername("THIS IS ME");
+            game.updateGame(2364,gameDataObject);
+            GameData newGameDataObject = game.getGame(2364);
+            Assertions.assertEquals(gameDataObject.getWhiteUsername(),newGameDataObject.getWhiteUsername());
+        }catch(SQLException | DataAccessException e) {
+            Assertions.fail();
+        }
+    }
+
+    @Test
+    public void updateNonExistingGame(){
+        try {
+            SQLGameDAO game = SQLGameDAO.getInstance();
+            game.createGame(2364, "THIS IS A GAME NAME");
+            GameData gameDataObject = game.getGame(2364);
+            gameDataObject.setWhiteUsername("THIS IS ME");
+            game.updateGame(0000,gameDataObject);
+            GameData newGameDataObject = game.getGame(2364);
+            Assertions.fail();
+        }catch(SQLException | DataAccessException e) {
+            Assertions.assertTrue(true);
+        }
+    }
+
+    @Test
+    public void listGamesEmpty(){
+
+    }
+
+    @Test
+    public void findGameInList(){
+
+    }
+
+    @Test
+    public void getGameFail(){
+
+    }
+
+    @Test
+    public void invalidGameID(){
+
     }
 }

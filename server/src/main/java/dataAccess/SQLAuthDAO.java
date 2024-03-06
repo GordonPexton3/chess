@@ -47,12 +47,12 @@ public class SQLAuthDAO{
     }
 
 
-    public void createAuth(String username, String authToken) throws SQLException, DataAccessException{
+    public void createAuth(String authToken, String username) throws SQLException, DataAccessException{
         try(var conn = getConnection()) {
             var addUser = "INSERT INTO auth " +
                     "(authToken, username) VALUES ('" +
-                    username + "','" +
-                    authToken +
+                    authToken + "','" +
+                    username +
                     "');";
             try (var addAuthStatement = conn.prepareStatement(addUser)) {
                 addAuthStatement.executeUpdate();
