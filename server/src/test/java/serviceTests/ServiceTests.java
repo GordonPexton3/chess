@@ -2,7 +2,6 @@ package serviceTests;
 
 import dataAccess.DataAccessException;
 import model.GameData;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,7 +18,7 @@ public class ServiceTests {
     private String authToken;
     private Integer gameID;
 
-    @AfterEach
+
     public void clearAll(){
         Authentications.clearApplication();
     }
@@ -32,6 +31,7 @@ public class ServiceTests {
         }catch(SQLException | DataAccessException e){
             throw new RuntimeException("Database Failed to Configure \n" + e);
         }
+        clearAll();
     }
 
     private void register(){
