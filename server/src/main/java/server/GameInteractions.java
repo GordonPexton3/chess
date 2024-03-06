@@ -13,10 +13,20 @@ public class GameInteractions {
     private static SQLAuthDAO auth;
     private static SQLGameDAO games;
 
+//    static {
+//        try {
+//            auth = SQLAuthDAO.getInstance();
+//            games = SQLGameDAO.getInstance();
+//        }catch(SQLException | DataAccessException e){
+//            System.out.println("We got some problems here");
+//        }
+//    }
+
     public static void makeDAOs() throws SQLException, DataAccessException {
         auth = SQLAuthDAO.getInstance();
         games = SQLGameDAO.getInstance();
     }
+
     public static MyResponse listGames(MyRequest req){
         MyResponse resp = new MyResponse();
         if(authorized(req, resp)){

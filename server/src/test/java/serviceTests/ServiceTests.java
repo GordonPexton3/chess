@@ -1,14 +1,14 @@
 package serviceTests;
 
-import dataAccess.DataAccessException;
 import model.GameData;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import server.Authentications;
 import server.GameInteractions;
 import server.MyRequest;
 import server.MyResponse;
 
-import java.sql.SQLException;
 import java.util.Vector;
 
 public class ServiceTests {
@@ -21,15 +21,15 @@ public class ServiceTests {
         Authentications.clearApplication();
     }
 
-    @BeforeEach
-    public void makeDAOs(){
-        try {
-            Authentications.makeDAOs();
-            GameInteractions.makeDAOs();
-        }catch(SQLException | DataAccessException e){
-            throw new RuntimeException("Database Failed to Configure \n" + e);
-        }
-    }
+//    @BeforeEach
+//    public void makeDAOs(){
+//        try {
+//            Authentications.makeDAOs();
+//            GameInteractions.makeDAOs();
+//        }catch(SQLException | DataAccessException e){
+//            throw new RuntimeException("Database Failed to Configure \n" + e);
+//        }
+//    }
 
     private void register(){
         MyRequest req = new MyRequest();
@@ -200,7 +200,6 @@ public class ServiceTests {
         makeGame();
         MyResponse resp = Authentications.clearApplication();
         Assertions.assertNull(resp.getAuthToken());
-        makeDAOs();
     }
 
     @Test
@@ -211,7 +210,6 @@ public class ServiceTests {
         MyResponse resp = GameInteractions.listGames(req);
         Assertions.assertFalse(resp.getGames().isEmpty());
         Authentications.clearApplication();
-        makeDAOs();
         register();
         req.setAuthToken(authToken);
         resp = GameInteractions.listGames(req);

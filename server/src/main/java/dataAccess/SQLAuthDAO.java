@@ -74,7 +74,7 @@ public class SQLAuthDAO{
 
     public void deleteAll() throws SQLException, DataAccessException {
         try(var conn = getConnection()){
-            var deleteAll = "DROP TABLE auth;";
+            var deleteAll = "TRUNCATE TABLE auth;";
             try (var addDeleteStatement = conn.prepareStatement(deleteAll)){
                 addDeleteStatement.executeUpdate();
                 instance = null;

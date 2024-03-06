@@ -64,8 +64,7 @@ public class SQLUserDAO{
     public void createUser(String username, String password, String email) throws SQLException, DataAccessException {
         try (var conn = getConnection()) {
             if (username.matches("[a-zA-Z]+") &&
-                    password.matches("[a-zA-Z]+") &&
-                    email.matches("[a-zA-Z]+")){
+                    password.matches("[a-zA-Z]+")){
                 String userDataString = new Gson().toJson(new UserData(username, password, email));
                 var addUser = "INSERT INTO users " +
                         "(username, userData) VALUES ('" +
@@ -84,7 +83,7 @@ public class SQLUserDAO{
 
     public void deleteAll() throws SQLException, DataAccessException {
         try(var conn = getConnection()){
-            var deleteAll = "DROP TABLE users;";
+            var deleteAll = "TRUNCATE TABLE users;";
             try(var addDeleteStatement = conn.prepareStatement(deleteAll)){
                 addDeleteStatement.executeUpdate();
                 instance = null;

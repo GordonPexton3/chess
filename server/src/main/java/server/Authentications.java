@@ -15,6 +15,7 @@ public class Authentications {
     private static SQLUserDAO users;
     private static SQLGameDAO games;
 
+
     public static void makeDAOs() throws SQLException, DataAccessException {
         auth = SQLAuthDAO.getInstance();
         users = SQLUserDAO.getInstance();
@@ -92,7 +93,10 @@ public class Authentications {
 
     private static boolean passwordMatches(MyRequest req, MyResponse resp) {
         try{
-            return users.getPassword(req.getUsername()).equals(req.getPassword());
+            if(!users.getPassword(req.getUsername()).equals(req.getPassword())){
+                throw new DataAccessException("Password does not match");
+            }
+            return true;
         }catch(DataAccessException e){
             resp.setMessage("Error: unauthorized");
             resp.setStatus(401);

@@ -99,7 +99,7 @@ public class SQLGameDAO{
 
     public void deleteAll() throws SQLException, DataAccessException{
         try(var conn = getConnection()) {
-            var deleteAll = "DROP TABLE games;";
+            var deleteAll = "TRUNCATE TABLE games;";
             try (var addDeleteStatement = conn.prepareStatement(deleteAll)) {
                 addDeleteStatement.executeUpdate();
                 instance = null;
