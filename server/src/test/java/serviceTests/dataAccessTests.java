@@ -13,7 +13,7 @@ import server.MyResponse;
 import java.sql.SQLException;
 import java.util.Vector;
 
-public class ServiceTests {
+public class dataAccessTests {
 
     private String authToken;
     private Integer gameID;
