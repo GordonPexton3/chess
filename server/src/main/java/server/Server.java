@@ -62,7 +62,6 @@ public class Server{
     }
 
     private Object listGames(spark.Request req, spark.Response res) {
-        System.out.println("Listed Games");
         MyRequest request = new MyRequest();
         request.setAuthToken(req.headers("Authorization"));
         MyResponse response = GameInteractions.listGames(request);
@@ -71,7 +70,6 @@ public class Server{
     }
 
     private Object createGame(spark.Request req, spark.Response res) {
-        System.out.println("Created Games");
         MyRequest request = new Gson().fromJson(req.body(), MyRequest.class);
         request.setAuthToken(req.headers("Authorization"));
         MyResponse response = GameInteractions.createGame(request);
@@ -80,7 +78,6 @@ public class Server{
     }
 
     private Object joinGame(spark.Request req, spark.Response res) {
-        System.out.println("Joined Games");
         MyRequest request = new Gson().fromJson(req.body(), MyRequest.class);
         request.setAuthToken(req.headers("Authorization"));
         MyResponse response = GameInteractions.joinGame(request);
