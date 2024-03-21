@@ -42,11 +42,16 @@ public class ServerFacade {
             connection.setReadTimeout(5000);
             connection.setRequestMethod(method);
             connection.addRequestProperty("Authorization", req.getAuthToken());
-            if(method != "GET"){
+//            connection.setDoOutput(true);
+            if(!method.equals("GET")){
                 connection.setDoOutput(true);
             }
             connection.connect();
-            if(method != "GET"){
+//            try (OutputStream requestBody = connection.getOutputStream();) {
+//                String reqString = new Gson().toJson(req);
+//                requestBody.write(reqString.getBytes());
+//            }
+            if(!method.equals("GET")){
                 try (OutputStream requestBody = connection.getOutputStream();) {
                     String reqString = new Gson().toJson(req);
                     requestBody.write(reqString.getBytes());
