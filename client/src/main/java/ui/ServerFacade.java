@@ -47,7 +47,7 @@ public class ServerFacade {
             }
             connection.connect();
             if(!method.equals("GET")){
-                try (OutputStream requestBody = connection.getOutputStream();) {
+                try (OutputStream requestBody = connection.getOutputStream()) {
                     String reqString = new Gson().toJson(req);
                     requestBody.write(reqString.getBytes());
                 }

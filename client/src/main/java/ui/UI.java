@@ -1,6 +1,5 @@
 package ui;
 
-import chess.ChessGame;
 import model.GameData;
 import server.MyRequest;
 import server.MyResponse;
@@ -10,13 +9,13 @@ import java.util.Vector;
 
 public class UI {
 
-    private ChessGame thisGame;
-    private int gameID;
+//    private ChessGame thisGame;
+//    private int gameID;
     private boolean logout;
     private String authToken;
-    private final ServerFacade serverFacade;
+    private ServerFacade serverFacade;
 
-    public UI(int port)  {
+    public void run(int port){
         this.serverFacade = new ServerFacade(port);
         preLogin();
     }
@@ -151,7 +150,7 @@ public class UI {
         }
         MyResponse resp = serverFacade.joinGame(req);
         if(resp.getStatus() == 200){
-            DrawBoard db = new DrawBoard();
+            new DrawBoard();
         }else{
             System.out.println(resp.getMessage());
         }
@@ -177,7 +176,7 @@ public class UI {
             System.out.println("2. Join as Black Player");
             int result;
             try{
-                result = Integer.valueOf(scanner.nextLine());
+                result = Integer.parseInt(scanner.nextLine());
             }catch(NumberFormatException e){
                 result = 0;
             }
@@ -193,7 +192,7 @@ public class UI {
         }
         MyResponse resp = serverFacade.joinGame(req);
         if(resp.getStatus() == 200){
-            DrawBoard db = new DrawBoard();
+            new DrawBoard();
         }else{
             System.out.println(resp.getMessage());
         }
@@ -222,9 +221,9 @@ public class UI {
         req.setGameName(scanner.nextLine());
         MyResponse resp = serverFacade.createGame(req);
         if(resp.getStatus() == 200){
-            this.gameID = resp.getGameID();
-            DrawBoard db = new DrawBoard();
-            this.thisGame = new ChessGame();
+//            int gameID = resp.getGameID();
+//            DrawBoard db = new DrawBoard();
+            new DrawBoard();
         }else{
             System.out.println(resp.getMessage());
         }

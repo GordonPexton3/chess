@@ -119,9 +119,9 @@ public class ServerFacadeTests {
         req.setUsername("UserTest");
         req.setPassword("PasswordTest");
         req.setEmail("EmailTest");
-        MyResponse resp = SF.register(req);
+        SF.register(req);
         req.setAuthToken("IncorrectAuthToken");
-        resp = SF.logout(req);
+        MyResponse resp = SF.logout(req);
         if(resp.getStatus() == 200){
             Assertions.fail();
         }else{
@@ -178,7 +178,7 @@ public class ServerFacadeTests {
         req.setGameID(resp.getGameID());
         resp = SF.joinGame(req);
         if(resp.getStatus() == 200) {
-            Assertions.assertTrue(resp.getMessage().equals("You are an observer"));
+            Assertions.assertEquals("You are an observer", resp.getMessage());
         }else{
             Assertions.fail();
         }
@@ -190,7 +190,7 @@ public class ServerFacadeTests {
         registerAUser(req);
         req.setGameName("GameNameTest");
         SF.createGame(req);
-        req.setGameID(0000);
+        req.setGameID(0);
         MyResponse resp = SF.joinGame(req);
         if(resp.getStatus() == 200) {
             Assertions.fail();
@@ -211,7 +211,7 @@ public class ServerFacadeTests {
         resp = SF.listGames(req);
         if(resp.getStatus() == 200) {
             Vector<GameData> games = resp.getGames();
-            Assertions.assertTrue(games.get(0).getBlackUsername().equals("UserTest"));
+            Assertions.assertEquals("UserTest", games.getFirst().getBlackUsername());
         }else{
             Assertions.fail();
         }
