@@ -46,9 +46,11 @@ public class ServerFacade {
                 connection.setDoOutput(true);
             }
             connection.connect();
-            try (OutputStream requestBody = connection.getOutputStream();) {
-                String reqString = new Gson().toJson(req);
-                requestBody.write(reqString.getBytes());
+            if(method != "GET"){
+                try (OutputStream requestBody = connection.getOutputStream();) {
+                    String reqString = new Gson().toJson(req);
+                    requestBody.write(reqString.getBytes());
+                }
             }
             try (InputStream respBody = connection.getInputStream()) {
                 InputStreamReader inputStreamReader = new InputStreamReader(respBody);

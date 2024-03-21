@@ -156,13 +156,48 @@ public class ServerFacadeTests {
     public void listGames(){
         MyRequest req = new MyRequest();
         registerAUser(req);
+        req.setGameName("GameNameTest");
+        SF.createGame(req);
         MyResponse resp = SF.listGames(req);
-        if(resp.getStatus() == 200){
+        if(resp.getStatus() == 200) {
+            Assertions.assertFalse(resp.getGames().isEmpty());
+        }else{
+            Assertions.fail();
+        }
+    }
+
+    @Test
+    public void joinGameObserver(){
+        MyRequest req = new MyRequest();
+        registerAUser(req);
+        req.setGameName("GameNameTest");
+        MyResponse resp = SF.createGame(req);
+        req.setGameID(resp.getGameID());
+        resp = SF.joinGame(req);
+        if(resp.getStatus() == 200) {
+            Assertions.assertTrue(resp.getMessage().equals("You are an observer"));
+        }else{
+            Assertions.fail();
+        }
+    }
+
+    @Test
+    public void joinGameObserverFail(){
+        MyRequest req = new MyRequest();
+        registerAUser(req);
+        req.setGameName("GameNameTest");
+        SF.createGame(req);
+        req.setGameID(0000);
+        MyResponse resp = SF.joinGame(req);
+        if(resp.getStatus() == 200) {
             Assertions.fail();
         }else{
             Assertions.assertTrue(true);
         }
     }
+
+    @Test
+
 
     private void registerAUser(MyRequest req){
         req.setUsername("UserTest");
