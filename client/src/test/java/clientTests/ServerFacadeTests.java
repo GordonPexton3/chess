@@ -1,11 +1,14 @@
 package clientTests;
 
+import model.GameData;
 import org.junit.jupiter.api.*;
 import server.Authentications;
 import server.MyRequest;
 import server.MyResponse;
 import server.Server;
 import ui.ServerFacade;
+
+import java.util.Vector;
 
 
 public class ServerFacadeTests {
@@ -208,7 +211,7 @@ public class ServerFacadeTests {
         resp = SF.listGames(req);
         if(resp.getStatus() == 200) {
             Vector<GameData> games = resp.getGames();
-
+            Assertions.assertTrue(games.get(0).getBlackUsername().equals("UserTest"));
         }else{
             Assertions.fail();
         }
