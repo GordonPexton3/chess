@@ -34,8 +34,6 @@ public class Server{
     }
 
     private Object register(spark.Request req, spark.Response res) {
-        System.out.println(req.headers());
-        System.out.println(req.headers("Authentications"));
         MyRequest request = new Gson().fromJson(req.body(), MyRequest.class);
         MyResponse response = Authentications.register(request);
         setStatus(res, response);
