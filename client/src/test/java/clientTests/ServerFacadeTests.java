@@ -62,4 +62,113 @@ public class ServerFacadeTests {
             Assertions.assertTrue(true);
         }
     }
+
+    @Test
+    public void login(){
+        MyRequest req = new MyRequest();
+        req.setUsername("UserTest");
+        req.setPassword("PasswordTest");
+        req.setEmail("EmailTest");
+        SF.register(req);
+        MyResponse resp = SF.login(req);
+        if(resp.getStatus() == 200){
+            Assertions.assertTrue(true);
+        }else{
+            Assertions.fail();
+        }
+    }
+
+    @Test
+    public void loginFailure(){
+        MyRequest req = new MyRequest();
+        req.setUsername("UserTest");
+        req.setPassword("PasswordTest");
+        req.setEmail("EmailTest");
+        SF.register(req);
+        req.setPassword("IncorrectPasswordTest");
+        MyResponse resp = SF.login(req);
+        if(resp.getStatus() == 200){
+            Assertions.fail();
+        }else{
+            Assertions.assertTrue(true);
+        }
+    }
+
+    @Test
+    public void logout(){
+        MyRequest req = new MyRequest();
+        req.setUsername("UserTest");
+        req.setPassword("PasswordTest");
+        req.setEmail("EmailTest");
+        MyResponse resp = SF.register(req);
+        req.setAuthToken(resp.getAuthToken());
+        resp = SF.logout(req);
+        if(resp.getStatus() == 200){
+            Assertions.assertTrue(true);
+        }else{
+            Assertions.fail();
+        }
+    }
+
+    @Test
+    public void logoutFailure(){
+        MyRequest req = new MyRequest();
+        req.setUsername("UserTest");
+        req.setPassword("PasswordTest");
+        req.setEmail("EmailTest");
+        MyResponse resp = SF.register(req);
+        req.setAuthToken("IncorrectAuthToken");
+        resp = SF.logout(req);
+        if(resp.getStatus() == 200){
+            Assertions.fail();
+        }else{
+            Assertions.assertTrue(true);
+        }
+    }
+
+    @Test
+    public void createGame(){
+        MyRequest req = new MyRequest();
+        registerAUser(req);
+        req.setGameName("GameNameTest");
+        MyResponse resp = SF.createGame(req);
+        if(resp.getStatus() == 200 && resp.getGameID() != null){
+            Assertions.assertTrue(true);
+        }else{
+            Assertions.fail();
+        }
+    }
+
+    @Test
+    public void createGameFail(){
+        MyRequest req = new MyRequest();
+        registerAUser(req);
+        req.setGameName(null);
+        MyResponse resp = SF.createGame(req);
+        if(resp.getStatus() == 200 && resp.getGameID() != null){
+            Assertions.fail();
+        }else{
+            Assertions.assertTrue(true);
+        }
+    }
+
+    @Test
+    public void listGames(){
+        MyRequest req = new MyRequest();
+        registerAUser(req);
+        MyResponse resp = SF.listGames(req);
+        if(resp.getStatus() == 200){
+            Assertions.fail();
+        }else{
+            Assertions.assertTrue(true);
+        }
+    }
+
+    private void registerAUser(MyRequest req){
+        req.setUsername("UserTest");
+        req.setPassword("PasswordTest");
+        req.setEmail("EmailTest");
+        req.setAuthToken(SF.register(req).getAuthToken());
+    }
+
 }

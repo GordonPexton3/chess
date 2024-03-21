@@ -22,18 +22,10 @@ public class ServerFacade {
     public MyResponse register(MyRequest req) {
         return sendRequest("/user", "POST", req);
     }
-
     public MyResponse login(MyRequest req) {
         return sendRequest("/session", "POST", req);
     }
-
-    public MyResponse logout(MyRequest req){
-        return sendRequest("/session", "DELETE", req);
-    }
-
-//    public MyResponse clear(MyRequest req){
-//        return sendRequest("/db", "DELETE", req);
-//    }
+    public MyResponse logout(MyRequest req){ return sendRequest("/session", "DELETE", req);}
     public MyResponse listGames(MyRequest req){
         return sendRequest("/game", "GET", req);
     }
@@ -43,7 +35,6 @@ public class ServerFacade {
     public MyResponse joinGame(MyRequest req){
         return sendRequest("/game", "PUT", req);
     }
-//
     private MyResponse sendRequest(String path, String method, MyRequest req) {
         try {
             URL url = new URL(urlString + path);
@@ -51,7 +42,9 @@ public class ServerFacade {
             connection.setReadTimeout(5000);
             connection.setRequestMethod(method);
             connection.addRequestProperty("Authorization", req.getAuthToken());
-            connection.setDoOutput(true);
+            if(method != "GET"){
+                connection.setDoOutput(true);
+            }
             connection.connect();
             try (OutputStream requestBody = connection.getOutputStream();) {
                 String reqString = new Gson().toJson(req);
