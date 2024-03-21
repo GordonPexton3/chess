@@ -197,7 +197,22 @@ public class ServerFacadeTests {
     }
 
     @Test
+    public void joinGameAsBlack(){
+        MyRequest req = new MyRequest();
+        registerAUser(req);
+        req.setGameName("GameNameTest");
+        MyResponse resp = SF.createGame(req);
+        req.setGameID(resp.getGameID());
+        req.setPlayerColor("BLACK");
+        SF.joinGame(req);
+        resp = SF.listGames(req);
+        if(resp.getStatus() == 200) {
+            Vector<GameData> games = resp.getGames();
 
+        }else{
+            Assertions.fail();
+        }
+    }
 
     private void registerAUser(MyRequest req){
         req.setUsername("UserTest");
