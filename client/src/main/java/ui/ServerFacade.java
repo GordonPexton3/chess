@@ -22,9 +22,7 @@ public class ServerFacade {
     public MyResponse register(MyRequest req) {
         return sendRequest("/user", "POST", req);
     }
-    public MyResponse login(MyRequest req) {
-        return sendRequest("/session", "POST", req);
-    }
+    public MyResponse login(MyRequest req) { return sendRequest("/session", "POST", req); }
     public MyResponse logout(MyRequest req){ return sendRequest("/session", "DELETE", req);}
     public MyResponse listGames(MyRequest req){
         return sendRequest("/game", "GET", req);

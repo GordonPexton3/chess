@@ -25,7 +25,7 @@ public class SQLGameDAO{
 //                INDEX (gameID)
 //            )""";
             var createAuthTable = """
-            CREATE TABLE  IF NOT EXISTS games (
+            CREATE TABLE IF NOT EXISTS games (
                 gameID INT NOT NULL,
                 gameData BLOB NOT NULL,
                 INDEX (gameID)
