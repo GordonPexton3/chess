@@ -1,30 +1,61 @@
 package ui;
 
-import chess.*;
+import chess.ChessGame;
+import chess.ChessMove;
+import chess.ChessPiece;
+import chess.ChessPosition;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import static ui.EscapeSequences.*;
 public class DrawBoard {
 
     private final String[] rows = {" a ", " b ", " c ", " d ", " e ", " f ", " g ", " h "};
-    private final ChessPiece[][] board;
+    private ChessPiece[][] board;
+    private boolean drawMoves = false;
+    private List<ChessPosition> piecePositions;
 
-    public DrawBoard() {
+    public void drawBoard(ChessGame chessGame) {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
-        ChessBoard chessBoard = new ChessBoard();
-        chessBoard.resetBoard();
-        board = chessBoard.getBoard();
+        this.board = chessGame.getChessBoard().getBoard();
 
-        drawRedUpBoard(out);
-        drawBlueUpBoard(out);
+        if(chessGame.getTeamTurn() == ChessGame.TeamColor.WHITE){
+            drawBoardBlackPlayer(out);
+            drawBoardWhitePlayer(out);
+        }else if(chessGame.getTeamTurn() == ChessGame.TeamColor.BLACK){
+            drawBoardWhitePlayer(out);
+            drawBoardBlackPlayer(out);
+        }
         out.print(RESET_BG_COLOR);
         out.print(RESET_TEXT_COLOR);
     }
 
-    private void drawRedUpBoard(PrintStream out) {
+    public void drawMovesOnBoard(ChessGame chessGame, ChessPosition pos){
+        drawMoves = true;
+        Collection<ChessMove> moves = chessGame.piecesMoves(pos);
+        var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
+        this.board = chessGame.getChessBoard().getBoard();
+        piecePositions = new ArrayList<>();
+        for (ChessMove move: moves){
+            piecePositions.add(move.getEndPosition());
+        }
+        if(chessGame.getTeamTurn() == ChessGame.TeamColor.WHITE){
+            invertPiecePositions();
+            drawBoardWhitePlayer(out);
+        }else if(chessGame.getTeamTurn() == ChessGame.TeamColor.BLACK){
+            drawBoardBlackPlayer(out);
+        }
+        drawMoves = false;
+        out.print(RESET_BG_COLOR);
+        out.print(RESET_TEXT_COLOR);
+    }
+
+    private void drawBoardWhitePlayer(PrintStream out) {
         out.println(SET_BG_COLOR_BLACK);
         borderHtoA(out);
         for (int r = 0; r <= 7 ; r++){
@@ -32,10 +63,9 @@ public class DrawBoard {
         }
         borderHtoA(out);
         out.println(SET_BG_COLOR_BLACK);
-
     }
 
-    private void drawBlueUpBoard(PrintStream out) {
+    private void drawBoardBlackPlayer(PrintStream out) {
         borderAtoH(out);
         for (int r = 0; r <= 7 ; r++){
             drawRow(out,r,false);
@@ -50,18 +80,31 @@ public class DrawBoard {
         printEdge(out, redUp, r);
         boolean toggle;
         toggle = r % 2 == 1;
-        for(int c = 0; c <= 7; c++){
+        for(int c = 7; c >= 0; c--){
             if(toggle){
-                squareColor = SET_BG_COLOR_WHITE;
+                squareColor = normalOrMovesColor(SET_BG_COLOR_WHITE, r, c);
                 toggle = false;
             }else{
-                squareColor = SET_BG_COLOR_BLACK;
+                squareColor = normalOrMovesColor(SET_BG_COLOR_BLACK, r, c);
                 toggle = true;
             }
             printPiece(out,squareColor, chessBoard, r, c);
         }
         printEdge(out, redUp, r);
         out.println(SET_BG_COLOR_BLACK);
+    }
+
+    private String normalOrMovesColor(String originalColor, int r, int c){
+        if(drawMoves){
+            if(piecePositions.contains(new ChessPosition(r + 1,c + 1))){
+                if(originalColor == SET_BG_COLOR_WHITE){
+                    return SET_BG_COLOR_GREEN;
+                } else if (originalColor == SET_BG_COLOR_BLACK) {
+                    return SET_BG_COLOR_DARK_GREEN;
+                }
+            }
+        }
+        return originalColor;
     }
 
     private void printPiece(PrintStream out, String squareColor, ChessPiece[][] chessBoard, int r, int c){
@@ -96,6 +139,15 @@ public class DrawBoard {
             chessBoard = this.board;
         }
         return chessBoard;
+    }
+
+    private void invertPiecePositions(){
+        List<ChessPosition> newPositions = new ArrayList<>();
+        for(ChessPosition pos: piecePositions){
+            newPositions.add(new ChessPosition(9 - pos.getRow(), 9 - pos.getColumn()));
+        }
+        this.piecePositions = newPositions;
+
     }
 
     private ChessPiece[][] invert(ChessPiece[][] board) {

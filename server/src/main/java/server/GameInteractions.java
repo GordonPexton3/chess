@@ -1,5 +1,8 @@
 package server;
 
+import chess.ChessGame;
+import chess.ChessMove;
+import chess.InvalidMoveException;
 import dataAccess.DataAccessException;
 import dataAccess.SQLAuthDAO;
 import dataAccess.SQLGameDAO;
@@ -12,16 +15,6 @@ public class GameInteractions {
 
     private static SQLAuthDAO auth;
     private static SQLGameDAO games;
-
-//    static {
-//        try {
-//            auth = SQLAuthDAO.getInstance();
-//            games = SQLGameDAO.getInstance();
-//        }catch(SQLException | DataAccessException e){
-//            System.out.println("We got some problems here");
-//        }
-//    }
-
     public static void makeDAOs() throws SQLException, DataAccessException {
         auth = SQLAuthDAO.getInstance();
         games = SQLGameDAO.getInstance();
@@ -144,6 +137,20 @@ public class GameInteractions {
             resp.setMessage("Problem in GameInteractions::joinWithColor"+e);
             resp.setStatus(500);
         }
+    }
+
+    public static GameData makeMove(int gameID, ChessMove move) throws InvalidMoveException  {
+        try {
+            GameData gameData = games.getGame(gameID);
+            ChessGame chessGame = gameData.getChessGame();
+            chessGame.makeMove(move);
+            gameData.setChessGame(chessGame);
+            games.updateGame(gameID, gameData);
+            return gameData;
+        } catch (DataAccessException | SQLException e) {
+            System.out.println("Make Move in Game interaction problem" + e);
+        }
+        return null;
     }
 
     private static boolean authorized(MyRequest req, MyResponse resp){
