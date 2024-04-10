@@ -33,8 +33,34 @@ public class WSServer {
     }
 
     private void joinObserver(Session session, JoinObserver command) {
-//        GameInteractions.joinGame();
-//        session.getRemote().sendString(message);
+        ServerMessage response;
+        try{
+            MyRequest req = new MyRequest();
+            req.setGameID(command.getGameID());
+            req.setAuthToken(command.getAuthString());
+            MyResponse resp = GameInteractions.joinGame(req);
+            if (resp.getStatus() != 200){
+                throw new Exception();
+            }
+            GameData updatedGameData = GameInteractions.getGame(req);
+            if(updatedGameData == null){
+                throw new Exception();
+            }
+            String msg = command.getUserID() + "joined game " + command.getUserID();
+            response = new Notification(ServerMessage.ServerMessageType.NOTIFICATION,msg);
+            sendToAllButRoot(response, command.getGameID(), session);
+
+            response = new LoadGame(ServerMessage.ServerMessageType.LOAD_GAME,updatedGameData);
+            sendToAllRelated(response, command.getGameID());
+
+        }catch(Exception e){
+            response = new MyError(ServerMessage.ServerMessageType.ERROR,e.toString());
+            try {
+                session.getRemote().sendString(new Gson().toJson(response));
+            }catch(IOException a){
+                System.out.println("There is a problem with casting your error to a json and returning it: " + a);
+            }
+        }
     }
 
     private void joinPlayer(Session session, JoinPlayer command) {

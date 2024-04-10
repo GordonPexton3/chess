@@ -34,6 +34,18 @@ public class GameInteractions {
         return resp;
     }
 
+    public static GameData getGame(MyRequest req){
+        MyResponse resp = new MyResponse();
+        if(authorized(req, resp)){
+            try {
+                return games.getGame(req.getGameID());
+            }catch(SQLException | DataAccessException e){
+                return null;
+            }
+        }
+        return null;
+    }
+
     public static MyResponse createGame(MyRequest req){
         MyResponse resp = new MyResponse();
         if(authorized(req, resp)){

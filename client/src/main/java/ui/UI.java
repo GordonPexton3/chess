@@ -14,6 +14,7 @@ public class UI {
     private boolean logout;
     private String authToken;
     private ServerFacade serverFacade;
+    private final Scanner scanner = new Scanner(System.in);
 
     public void run(int port){
         this.serverFacade = new ServerFacade(port);
@@ -29,7 +30,6 @@ public class UI {
             System.out.println("3. Login");
             System.out.println("4. Register");
             System.out.printf("Type your numbers%n>>> ");
-            Scanner scanner = new Scanner(System.in);
             String line = scanner.nextLine();
             int result;
             try{
@@ -58,7 +58,6 @@ public class UI {
     private void login() {
         MyRequest req = new MyRequest();
         req.setAuthToken(this.authToken);
-        Scanner scanner = new Scanner(System.in);
         System.out.printf("To login, please provide your username%n>>> ");
         req.setUsername(scanner.nextLine());
         System.out.printf("and your password%n>>> ");
@@ -74,7 +73,6 @@ public class UI {
 
     private void register() {
         MyRequest req = new MyRequest();
-        Scanner scanner = new Scanner(System.in);
         System.out.printf("To register, please provide your username%n>>> ");
         req.setUsername(scanner.nextLine());
         System.out.printf("and your password%n>>> ");
@@ -101,7 +99,6 @@ public class UI {
             System.out.println("5. Join Games");
             System.out.println("6. Join Observer");
             System.out.printf("Type your numbers%n>>> ");
-            Scanner scanner = new Scanner(System.in);
             String line = scanner.nextLine();
             int result;
             try{
@@ -134,34 +131,30 @@ public class UI {
     }
 
     private void joinObserver() throws Error{
-        MyRequest req = new MyRequest();
-        req.setAuthToken(this.authToken);
-        Scanner scanner = new Scanner(System.in);
-        System.out.printf("What is the number of the game you want to join as observer%n>>> ");
-        GameData selectedGameData;
         try {
+            MyRequest req = new MyRequest();
+            req.setAuthToken(this.authToken);
+
+            System.out.printf("What is the number of the game you want to join as observer%n>>> ");
             int selectedGameNumber = Integer.parseInt(scanner.nextLine());
-            selectedGameData = this.games.get(selectedGameNumber);
+            GameData selectedGameData = this.games.get(selectedGameNumber);
             req.setGameID(selectedGameData.getGameID());
+            MyResponse resp = serverFacade.joinGame(req);
+            if(resp.getStatus() == 200){
+                new GamePlay(selectedGameData.getGameID(), authToken);
+            }else{
+                System.out.println(resp.getMessage());
+            }
         } catch (NumberFormatException e) {
             System.out.println("please put in a game number as appears in the game list");
-            throw new Error();
         } catch (NullPointerException e){
             System.out.println("That number does not refer to an existing game.");
-            throw new Error();
-        }
-        MyResponse resp = serverFacade.joinGame(req);
-        if(resp.getStatus() == 200){
-            new GamePlay(resp.getGameID(), authToken);
-        }else{
-            System.out.println(resp.getMessage());
         }
     }
 
     private void joinGame() {
         MyRequest req = new MyRequest();
         req.setAuthToken(this.authToken);
-        Scanner scanner = new Scanner(System.in);
         System.out.printf("What is the number of the game you want to join as player%n>>> ");
         try {
             req.setGameID(this.games.get(Integer.valueOf(scanner.nextLine())).getGameID());
@@ -239,7 +232,6 @@ public class UI {
     private void createGame() {
         MyRequest req = new MyRequest();
         req.setAuthToken(this.authToken);
-        Scanner scanner = new Scanner(System.in);
         System.out.printf("What is your game name%n>>> ");
         req.setGameName(scanner.nextLine());
         MyResponse resp = serverFacade.createGame(req);

@@ -2,93 +2,92 @@ package ui;
 
 import chess.ChessMove;
 import chess.ChessPosition;
-import com.google.gson.Gson;
-import webSocketMessages.serverMessages.ServerMessage;
+import server.GameInteractions;
+import server.MyRequest;
 import webSocketMessages.userCommands.MakeMove;
 import webSocketMessages.userCommands.UserGameCommand;
 
-import javax.websocket.ContainerProvider;
-import javax.websocket.MessageHandler;
-import javax.websocket.Session;
-import javax.websocket.WebSocketContainer;
-import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
 public class GamePlay {
-    public Session session;
-    private DrawBoard db = new DrawBoard();
-    private Scanner scanner = new Scanner(System.in);
-    private int gameID;
-    private String teamColor;
-    private String authToken;
+    private final DrawBoard db = new DrawBoard();
+    private final Scanner scanner = new Scanner(System.in);
+    private WSClient ws;
+    private final String authToken;
+    private final int gameID;
+    private final MyRequest req = new MyRequest();
 
     public GamePlay(int gameID, String authToken) {
-        configureWSConnection();
-//        this.teamColor = teamColor;
-        this.authToken = authToken;
+        try{
+            ws = new WSClient();
+        }catch(Exception e){
+            System.out.println("The websocket didn't connect: " + e);
+        }
         this.gameID = gameID;
+        this.authToken = authToken;
+        req.setAuthToken(authToken);
+        req.setGameID(gameID);
         run();
     }
 
     private void run(){
-//        db.drawBoard(chessGame);
+        db.drawBoard(GameInteractions.getGame(req).getChessGame());
         boolean leave = false;
         boolean resign = false;
         System.out.print("Help (h) ");
         while(!leave && !resign) {
             System.out.printf("%n>>> ");
             String response = scanner.nextLine();
-            if (response.equals("h")) {
-                System.out.println("you can type any of the following ...");
-                System.out.println("Redraw Chess Board");
-                System.out.println("Leave");
-                System.out.println("Make Move");
-                System.out.println("Resign");
-                System.out.println("Highlight Legal Moves");
-            } else if (response.equals("Redraw Chess Board")) {
-//                db.drawBoard(chessGame);
-            } else if (response.equals("Leave")) {
-                leave = true;
-            } else if (response.equals("Make Move")) {
-                makeMoves();
-            } else if (response.equals("Resign")) {
-                resign = true;
-            } else if (response.equals("Highlight Legal Moves")) {
-                highlightMoves();
-            } else {
-                System.out.println("Input invalid. Try it again. This isn't hard. You can do it.");
+            switch (response) {
+                case "h" -> {
+                    System.out.println("you can type any of the following ...");
+                    System.out.println("Redraw Chess Board");
+                    System.out.println("Leave");
+                    System.out.println("Make Move");
+                    System.out.println("Resign");
+                    System.out.println("Highlight Legal Moves");
+                }
+                case "Redraw Chess Board" -> db.drawBoard(GameInteractions.getGame(req).getChessGame());
+                case "Leave" -> leave = true;
+                case "Make Move" -> makeMoves();
+                case "Resign" -> resign = true;
+                case "Highlight Legal Moves" -> highlightMoves();
+                default -> System.out.println("Input invalid. Try it again. This isn't hard. You can do it.");
             }
         }
     }
 
     private void highlightMoves() {
-        System.out.println("What is the position of the piece");
-        String piecePositionString = scanner.nextLine();
-        List<Integer> piecePositionList = parseInputToCoordinates(piecePositionString);
-        ChessPosition piecePosition = new ChessPosition(piecePositionList.get(0), piecePositionList.get(1));
+//        System.out.println("What is the position of the piece");
+//        String piecePositionString = scanner.nextLine();
+//        List<Integer> piecePositionList = parseInputToCoordinates(piecePositionString);
+//        ChessPosition piecePosition = new ChessPosition(piecePositionList.get(0), piecePositionList.get(1));
 //        db.drawMovesOnBoard(chessGame, piecePosition);
     }
 
-    private int makeMoves() {
-        System.out.println("Starting Coordinate");
-        String startingCoordinateStr = scanner.nextLine();
-        List<Integer> startCoordinates = parseInputToCoordinates(startingCoordinateStr);
-        if (startCoordinates == null) { return 0; }
+    private void makeMoves() {
+        try{
+            System.out.println("Starting Coordinate");
+            String startingCoordinateStr = scanner.nextLine();
+            List<Integer> startCoordinates = parseInputToCoordinates(startingCoordinateStr);
+            if (startCoordinates == null) { throw new Exception(); }
 
-        System.out.println("Ending Coordinate");
-        String endingCoordinateStr = scanner.nextLine();
-        List<Integer> endingCoordinate = parseInputToCoordinates(endingCoordinateStr);
-        if (endingCoordinate == null) { return 0;}
+            System.out.println("Ending Coordinate");
+            String endingCoordinateStr = scanner.nextLine();
+            List<Integer> endingCoordinate = parseInputToCoordinates(endingCoordinateStr);
+            if (endingCoordinate == null) { throw new Exception();}
 
-        ChessPosition startingPosition = new ChessPosition(startCoordinates.get(0), startCoordinates.get(1));
-        ChessPosition endPosition = new ChessPosition(endingCoordinate.get(0), endingCoordinate.get(1));
-        ChessMove move = new ChessMove(startingPosition, endPosition, null);
-        UserGameCommand command = new MakeMove(authToken,gameID,move);
-        send(command);
-        return 0;
+            ChessPosition startingPosition = new ChessPosition(startCoordinates.get(0), startCoordinates.get(1));
+            ChessPosition endPosition = new ChessPosition(endingCoordinate.get(0), endingCoordinate.get(1));
+            ChessMove move = new ChessMove(startingPosition, endPosition, null);
+            UserGameCommand command = new MakeMove(authToken,gameID,move);
+            ws.send(command);
+        }catch(Exception e){
+            System.out.println("Problem in makeMoves GamePlay");
+        }
     }
 
     private List<Integer> parseInputToCoordinates(String startingCoordinateStr){
@@ -105,48 +104,6 @@ public class GamePlay {
         }
         return Arrays.asList(startRow, startCol);
     }
-
-    private void configureWSConnection() {
-        try{
-            URI uri = new URI("ws://localhost:8080/connect");
-            WebSocketContainer container = ContainerProvider.getWebSocketContainer();
-            this.session = container.connectToServer(this, uri);
-
-            this.session.addMessageHandler((MessageHandler.Whole<String>) message -> {
-
-                ServerMessage serverMessage = new Gson().fromJson(message, ServerMessage.class);
-                switch (serverMessage.getServerMessageType()){
-                    case ServerMessage.ServerMessageType.ERROR -> ERROR(serverMessage);
-                    case ServerMessage.ServerMessageType.LOAD_GAME -> loadGame(serverMessage);
-                    case ServerMessage.ServerMessageType.NOTIFICATION -> notification(serverMessage);
-                }
-            });
-        }catch (Exception e){
-            System.out.println("Something broke in this class with connecting to the server");
-        }
-    }
-
-    private void notification(ServerMessage serverMessage) {
-
-    }
-
-    private void loadGame(ServerMessage serverMessage) {
-
-    }
-
-    private void ERROR(ServerMessage serverMessage) {
-
-    }
-
-    public void send(UserGameCommand command) {
-        try{
-            String strMsg = new Gson().toJson(command);
-            this.session.getBasicRemote().sendText(strMsg);
-        }catch(Exception e){
-            System.out.println("Something broke sending a message " + e);
-        }
-    }
-
     private final Map<Character, Integer> numCharToInt = Map.of(
             '1',8,
             '2',7,

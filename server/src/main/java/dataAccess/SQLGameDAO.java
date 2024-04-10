@@ -18,10 +18,16 @@ public class SQLGameDAO{
     private void configureDatabase() throws SQLException, DataAccessException {
         DatabaseManager.createDatabase();
         try (var conn = getConnection()) {
+//            var createAuthTable = """
+//            CREATE TABLE  IF NOT EXISTS games (
+//                gameID INT NOT NULL,
+//                gameData VARCHAR(255) NOT NULL,
+//                INDEX (gameID)
+//            )""";
             var createAuthTable = """
             CREATE TABLE  IF NOT EXISTS games (
                 gameID INT NOT NULL,
-                gameData VARCHAR(255) NOT NULL,
+                gameData BLOB NOT NULL,
                 INDEX (gameID)
             )""";
             try(var createTableStatement = conn.prepareStatement(createAuthTable)){
