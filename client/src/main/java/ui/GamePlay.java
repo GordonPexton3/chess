@@ -3,7 +3,11 @@ package ui;
 import chess.ChessGame;
 import chess.ChessMove;
 import chess.ChessPosition;
+import com.google.gson.Gson;
 import server.MyRequest;
+import webSocketMessages.serverMessages.LoadGame;
+import webSocketMessages.serverMessages.MyError;
+import webSocketMessages.serverMessages.Notification;
 import webSocketMessages.serverMessages.ServerMessage;
 import webSocketMessages.userCommands.*;
 
@@ -14,17 +18,20 @@ import java.util.Scanner;
 
 public class GamePlay implements ServerMessageObserver {
     private final DrawBoard db = new DrawBoard();
+    private final Gson gson = new Gson();
     private final Scanner scanner = new Scanner(System.in);
     private WSClient ws;
     private final String authToken;
     private final int gameID;
     private final MyRequest req = new MyRequest();
     private final String username;
+    private ChessGame lastGameState;
     private final ChessGame.TeamColor playerColor;
+    private String messageBuffer;
 
     public GamePlay(int gameID, String authToken, String username, ChessGame.TeamColor playerColor) {
         try{
-            ws = new WSClient();
+            ws = new WSClient(this);
         }catch(Exception e){
             System.out.println("The websocket didn't connect: " + e);
         }
@@ -47,8 +54,6 @@ public class GamePlay implements ServerMessageObserver {
             command = new JoinPlayer(authToken, gameID, playerColor);
         }
         ws.send(command);
-        while(ws.getLastGameState() == null){};
-        db.drawBoard(ws.getLastGameState());
     }
 
     private void run(){
@@ -88,7 +93,7 @@ public class GamePlay implements ServerMessageObserver {
         String piecePositionString = scanner.nextLine();
         List<Integer> piecePositionList = parseInputToCoordinates(piecePositionString);
         ChessPosition piecePosition = new ChessPosition(piecePositionList.get(0), piecePositionList.get(1));
-        db.drawMovesOnBoard(ws.getLastGameState(), piecePosition);
+        db.drawMovesOnBoard(lastGameState, piecePosition);
     }
 
     private void makeMoves() {
@@ -149,7 +154,27 @@ public class GamePlay implements ServerMessageObserver {
     );
 
     @Override
-    public void notify(ServerMessage message, String jsonMessage) {
+    public void notify(ServerMessage serverMessage, String jsonMessage) {
+        switch (serverMessage.getServerMessageType()){
+            case ServerMessage.ServerMessageType.ERROR -> Error(jsonMessage);
+            case ServerMessage.ServerMessageType.LOAD_GAME -> loadGame(jsonMessage);
+            case ServerMessage.ServerMessageType.NOTIFICATION -> notification(jsonMessage);
+        }
+    }
 
+    private void notification(String message) {
+        Notification notification = gson.fromJson(message, Notification.class);
+        messageBuffer = notification.getMessage();
+        System.out.println("Notification" + messageBuffer);
+    }
+    private void loadGame(String message) {
+        LoadGame loadGame = gson.fromJson(message, LoadGame.class);
+        lastGameState = loadGame.getGame().getChessGame();
+        db.drawBoard(lastGameState);
+    }
+    private void Error(String message) {
+        MyError error = gson.fromJson(message, MyError.class);
+        messageBuffer = error.getErrorMessage();
+        System.out.println(messageBuffer);
     }
 }

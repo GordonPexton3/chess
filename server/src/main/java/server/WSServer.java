@@ -22,11 +22,12 @@ import java.util.Map;
 
 @WebSocket
 public class WSServer {
-    private Map<Integer, Map<String, Session>> gameIDToUsernameToSessions = new HashMap<>();
-    private Map<Integer, List<Session>> gameIDToSessions = new HashMap<>();
+    private final Map<Integer, List<Session>> gameIDToSessions = new HashMap<>();
+    private final Map<Session, String> sessionToUsername = new HashMap<>();
     private final Gson gson = new Gson();
     @OnWebSocketMessage
     public void onMessage(Session session, String message) {
+        System.out.println(gameIDToSessions);
         UserGameCommand command = gson.fromJson(message,UserGameCommand.class);
         switch (command.getCommandType()){
             case UserGameCommand.CommandType.JOIN_OBSERVER -> joinObserver(session, message);
@@ -35,6 +36,7 @@ public class WSServer {
             case UserGameCommand.CommandType.LEAVE -> leave(session, message);
             case UserGameCommand.CommandType.RESIGN -> resign(session, message);
         }
+        System.out.println(gameIDToSessions);
     }
 
     private void joinObserver(Session session, String message) {
@@ -43,14 +45,15 @@ public class WSServer {
             JoinObserver command = gson.fromJson(message, JoinObserver.class);
 
             String username;
-            try{
-                username = Authentications.getUsername(command.getAuthString());
-            }catch(Exception e){
-                throw new Exception("That is a bad auth token");
+            if (sessionToUsername.get(session) == null){
+                try{
+                    username = Authentications.getUsername(command.getAuthString());
+                }catch(Exception e){
+                    throw new Exception("That is a bad auth token");
+                }
+            }else{
+                username = sessionToUsername.get(session);
             }
-
-            addPlayer(command.getGameID(),username,session);
-
             // Load Game back to root client
             MyRequest req = new MyRequest();
             req.setAuthToken(command.getAuthString());
@@ -69,8 +72,8 @@ public class WSServer {
             // message all related user joined as observer
             String msg = "Player " + username + " joined game " + command.getGameID() + " as observer";
             response = new Notification(msg);
+            addPlayer(command.getGameID(),session, username);
             sendToAllButRoot(response, command.getGameID(), session);
-
         }catch(Exception e){
             response = new MyError("Error: " + e);
             try {
@@ -86,12 +89,15 @@ public class WSServer {
         try{
             JoinPlayer command = gson.fromJson(message, JoinPlayer.class);
             String username;
-            try{
-                username = Authentications.getUsername(command.getAuthString());
-            }catch(Exception e){
-                throw new Exception("That is a bad auth token");
+            if (sessionToUsername.get(session) == null){
+                try{
+                    username = Authentications.getUsername(command.getAuthString());
+                }catch(Exception e){
+                    throw new Exception("That is a bad auth token");
+                }
+            }else{
+                username = sessionToUsername.get(session);
             }
-
             MyRequest req = new MyRequest();
             req.setAuthToken(command.getAuthString());
             req.setUsername(username);
@@ -100,15 +106,19 @@ public class WSServer {
             String usernameInThatPlace = null;
             try {
                 loadedGame = GameInteractions.getGame(req);
-                switch (command.getPlayerColor()) {
-                    case ChessGame.TeamColor.WHITE -> usernameInThatPlace = loadedGame.getWhiteUsername();
-                    case ChessGame.TeamColor.BLACK -> usernameInThatPlace = loadedGame.getBlackUsername();
+                if(loadedGame == null){
+                    throw new Exception("Could not get game in joinPlayer");
+                }else{
+                    switch (command.getPlayerColor()) {
+                        case ChessGame.TeamColor.WHITE -> usernameInThatPlace = loadedGame.getWhiteUsername();
+                        case ChessGame.TeamColor.BLACK -> usernameInThatPlace = loadedGame.getBlackUsername();
+                    }
                 }
             } catch (Exception e) {
                 throw new Exception("That is a bad GameID");
             }
             if (usernameInThatPlace.equals(username) && loadedGame != null) {
-                addPlayer(command.getGameID(), username, session);
+                addPlayer(command.getGameID(), session, username);
                 // Server sends a LOAD_GAME message back to the root client.
                 response = new LoadGame(loadedGame);
                 try {
@@ -124,6 +134,7 @@ public class WSServer {
             }
 
         }catch(Exception e){
+            System.out.println(e);
             response = new MyError("Error: " + e);
             try {
                 session.getRemote().sendString(new Gson().toJson(response));
@@ -133,7 +144,7 @@ public class WSServer {
         }
     }
 
-    private void addPlayer(int gameID, String username, Session session) {
+    private void addPlayer(int gameID, Session session, String username) {
         if(gameIDToSessions.get(gameID) == null){
             List<Session> newList = new ArrayList<>();
             newList.add(session);
@@ -141,14 +152,6 @@ public class WSServer {
         }else if(!gameIDToSessions.get(gameID).contains(session)) {
             gameIDToSessions.get(gameID).add(session);
         }
-
-//        Map<String, Session> usernameToSession = new HashMap<>();
-//        usernameToSession.put(username,session);
-//        if(gameIDToUsernameToSessions.get(gameID).equals(null)){
-//            gameIDToUsernameToSessions.put(gameID,usernameToSession);
-//        }else{
-//            gameIDToUsernameToSessions.get(gameID).put(username,session);
-//        }
     }
 
     private void makeMove(Session session, String message)  {
@@ -168,11 +171,13 @@ public class WSServer {
             GameData loadedGame;
             try {
                 loadedGame = GameInteractions.getGame(req);
+                if(loadedGame != null){
+                    if(loadedGame.getChessGame().gameOver){
+                        throw new Exception("You cannot make a move when the game is over");
+                    }
+                }
             } catch (Exception e) {
                 throw new Exception("That is a bad GameID");
-            }
-            if(loadedGame.getChessGame().gameOver){
-                throw new Exception("You cannot make a move when the game is over");
             }
             if(!username.equals(loadedGame.getBlackUsername()) && !username.equals(loadedGame.getWhiteUsername())){
                 throw new Exception("You cannot make a move as an observer");
@@ -237,6 +242,7 @@ public class WSServer {
 
     private void removePlayer(int gameID, Session session) {
         gameIDToSessions.get(gameID).remove(session);
+        sessionToUsername.remove(session);
     }
 
     private void resign(Session session, String message) {
@@ -263,6 +269,7 @@ public class WSServer {
             response = new Notification(username + " resigned from game with ID " + command.getGameID());
             sendToAllRelated(response,command.getGameID());
             removeGame(command.getGameID());
+//            removePlayer(command.getGameID(), session);
         }catch(Exception e){
             response = new MyError("Error: " + e);
             try {
