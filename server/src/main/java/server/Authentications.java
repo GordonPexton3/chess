@@ -179,4 +179,8 @@ public class Authentications {
             return false;
         }
     }
+
+    public static String getUsername(String authToken) throws SQLException, DataAccessException {
+        return auth.getUsername(authToken);
+    }
 }

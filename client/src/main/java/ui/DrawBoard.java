@@ -25,10 +25,10 @@ public class DrawBoard {
         this.board = chessGame.getChessBoard().getBoard();
 
         if(chessGame.getTeamTurn() == ChessGame.TeamColor.WHITE){
-            drawBoardBlackPlayer(out);
+//            drawBoardBlackPlayer(out);
             drawBoardWhitePlayer(out);
         }else if(chessGame.getTeamTurn() == ChessGame.TeamColor.BLACK){
-            drawBoardWhitePlayer(out);
+//            drawBoardWhitePlayer(out);
             drawBoardBlackPlayer(out);
         }
         out.print(RESET_BG_COLOR);

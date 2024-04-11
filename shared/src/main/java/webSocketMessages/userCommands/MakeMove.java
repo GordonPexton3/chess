@@ -9,6 +9,7 @@ public class MakeMove extends UserGameCommand{
         super(authToken);
         this.gameID = gameID;
         this.move = move;
+        super.commandType = CommandType.MAKE_MOVE;
     }
 
     public int getGameID() {

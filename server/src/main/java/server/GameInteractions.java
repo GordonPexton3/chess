@@ -65,14 +65,10 @@ public class GameInteractions {
         return resp;
     }
 
-    public static GameData getGame(MyRequest req){
+    public static GameData getGame(MyRequest req) throws Exception{
         MyResponse resp = new MyResponse();
         if(authorized(req, resp)){
-            try {
-                return games.getGame(req.getGameID());
-            }catch(SQLException | DataAccessException e){
-                return null;
-            }
+            return games.getGame(req.getGameID());
         }
         return null;
     }
@@ -197,7 +193,6 @@ public class GameInteractions {
     }
 
     private static boolean authorized(MyRequest req, MyResponse resp){
-//        return Authentications.authorized(req, resp);
         try{
             auth.getUsername(req.getAuthToken());
             return true;

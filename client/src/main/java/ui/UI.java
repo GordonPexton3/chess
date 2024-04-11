@@ -32,7 +32,7 @@ public class UI {
             System.out.println("2. Quit");
             System.out.println("3. Login");
             System.out.println("4. Register");
-            System.out.printf("Type your numbers%n>>> ");
+            System.out.printf(">>> ");
             String line = scanner.nextLine();
             int result;
             try{
@@ -103,7 +103,7 @@ public class UI {
             System.out.println("4. List Games");
             System.out.println("5. Join Games");
             System.out.println("6. Join Observer");
-            System.out.printf("Type your numbers%n>>> ");
+            System.out.printf(">>> ");
             String line = scanner.nextLine();
             int result;
             try{
@@ -135,7 +135,7 @@ public class UI {
         }
     }
 
-    private void joinObserver() throws Error{
+    private void joinObserver(){
         try {
             MyRequest req = new MyRequest();
             req.setAuthToken(this.authToken);
@@ -158,48 +158,50 @@ public class UI {
     }
 
     private void joinGame() {
-        MyRequest req = new MyRequest();
-        req.setAuthToken(this.authToken);
-        System.out.printf("What is the number of the game you want to join as player%n>>> ");
-        try {
-            req.setGameID(this.games.get(Integer.valueOf(scanner.nextLine())).getGameID());
-        } catch (NumberFormatException e) {
-            System.out.println("please put in a game number as appears in the game list");
-            throw new Error();
-        } catch (NullPointerException e){
-            System.out.println("That number does not refer to an existing game.");
-            throw new Error();
-        }
-        boolean gotPlayerColor = false;
-        while(!gotPlayerColor){
-            System.out.println("1. Join as While Player");
-            System.out.println("2. Join as Black Player");
-            int result;
-            try{
-                result = Integer.parseInt(scanner.nextLine());
-            }catch(NumberFormatException e){
-                result = 0;
+        boolean once = true;
+        while(once){
+            once = false;
+            MyRequest req = new MyRequest();
+            req.setAuthToken(this.authToken);
+            System.out.printf("What is the number of the game you want to join as player%n>>> ");
+            try {
+                req.setGameID(this.games.get(Integer.valueOf(scanner.nextLine())).getGameID());
+            } catch (NumberFormatException e) {
+                System.out.println("please put in a game number as appears in the game list");
+                break;
+            } catch (NullPointerException e){
+                System.out.println("That number does not refer to an existing game.");
+                break;
             }
-            if(result == 1){
-                req.setPlayerColor("WHITE");
-                playerColor = ChessGame.TeamColor.WHITE;
-                gotPlayerColor = true;
-            }else if(result == 2){
-                req.setPlayerColor("BLACK");
-                playerColor = ChessGame.TeamColor.BLACK;
-                gotPlayerColor = true;
+            boolean gotPlayerColor = false;
+            while(!gotPlayerColor){
+                System.out.println("1. Join as While Player");
+                System.out.println("2. Join as Black Player");
+                int result;
+                try{
+                    result = Integer.parseInt(scanner.nextLine());
+                }catch(NumberFormatException e){
+                    result = 0;
+                }
+                if(result == 1){
+                    req.setPlayerColor("WHITE");
+                    playerColor = ChessGame.TeamColor.WHITE;
+                    gotPlayerColor = true;
+                }else if(result == 2){
+                    req.setPlayerColor("BLACK");
+                    playerColor = ChessGame.TeamColor.BLACK;
+                    gotPlayerColor = true;
+                }else{
+                    System.out.println("Please put in 1 or 2");
+                }
+            }
+            MyResponse resp = serverFacade.joinGame(req);
+            if(resp.getStatus() == 200){
+                new GamePlay(req.getGameID(), authToken, username, playerColor);
             }else{
-                System.out.println("Please put in 1 or 2");
+                System.out.println(resp.getMessage());
             }
         }
-        MyResponse resp = serverFacade.joinGame(req);
-        if(resp.getStatus() == 200){
-//            GameData gameData = this.games.get(resp.getGameID());
-            new GamePlay(resp.getGameID(), authToken, username, playerColor);
-        }else{
-            System.out.println(resp.getMessage());
-        }
-        throw new Error();
     }
 
     private void listGames() {
@@ -242,10 +244,9 @@ public class UI {
         System.out.printf("What is your game name%n>>> ");
         req.setGameName(scanner.nextLine());
         MyResponse resp = serverFacade.createGame(req);
-        if(resp.getStatus() == 200){
-            new DrawBoard();
-        }else{
+        if(resp.getStatus() != 200){
             System.out.println(resp.getMessage());
         }
+        populateGamesList();
     }
 }

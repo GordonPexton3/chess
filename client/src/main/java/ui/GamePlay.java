@@ -4,6 +4,7 @@ import chess.ChessGame;
 import chess.ChessMove;
 import chess.ChessPosition;
 import server.MyRequest;
+import webSocketMessages.serverMessages.ServerMessage;
 import webSocketMessages.userCommands.*;
 
 import java.util.Arrays;
@@ -11,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
-public class GamePlay {
+public class GamePlay implements ServerMessageObserver {
     private final DrawBoard db = new DrawBoard();
     private final Scanner scanner = new Scanner(System.in);
     private WSClient ws;
@@ -33,20 +34,21 @@ public class GamePlay {
         req.setGameID(gameID);
         this.username = username;
         this.playerColor = playerColor;
-        messageAllYouJoined();
+        indicateYouJoined();
         run();
     }
 
-    private void messageAllYouJoined() {
+    private void indicateYouJoined() {
         UserGameCommand command;
         if(playerColor == null){
             // joined as observer
-            command = new JoinObserver(authToken, gameID, username, null);
+            command = new JoinObserver(authToken, gameID, null);
         }else{
-            command = new JoinPlayer(authToken, gameID, username, playerColor);
+            command = new JoinPlayer(authToken, gameID, playerColor);
         }
         ws.send(command);
-
+        while(ws.getLastGameState() == null){};
+        db.drawBoard(ws.getLastGameState());
     }
 
     private void run(){
@@ -65,7 +67,7 @@ public class GamePlay {
                     System.out.println("Resign");
                     System.out.println("Highlight Legal Moves");
                 }
-                case "Redraw Chess Board" -> db.drawBoard(ws.getUpToDateGame());
+                case "Redraw" -> System.out.println("will redraw");
                 case "Leave" -> leave = true;
                 case "Make Move" -> makeMoves();
                 case "Resign" -> resign = resign();
@@ -76,7 +78,7 @@ public class GamePlay {
     }
 
     private boolean resign(){
-        UserGameCommand command = new Resign(authToken,gameID,username);
+        UserGameCommand command = new Resign(authToken,gameID);
         ws.send(command);
         return true;
     }
@@ -86,7 +88,7 @@ public class GamePlay {
         String piecePositionString = scanner.nextLine();
         List<Integer> piecePositionList = parseInputToCoordinates(piecePositionString);
         ChessPosition piecePosition = new ChessPosition(piecePositionList.get(0), piecePositionList.get(1));
-        db.drawMovesOnBoard(ws.getUpToDateGame(), piecePosition);
+        db.drawMovesOnBoard(ws.getLastGameState(), piecePosition);
     }
 
     private void makeMoves() {
@@ -145,4 +147,9 @@ public class GamePlay {
             'g',2,
             'h',1
     );
+
+    @Override
+    public void notify(ServerMessage message, String jsonMessage) {
+
+    }
 }

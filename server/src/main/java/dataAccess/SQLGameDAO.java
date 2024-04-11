@@ -50,7 +50,6 @@ public class SQLGameDAO{
                 if(rs.next()){
                     String gameDataString = rs.getString("gameData");
                     return new Gson().fromJson(gameDataString, GameData.class);
-//                    return (GameData) rs.getObject("gameData");
                 }else{
                     throw new DataAccessException("Game doesn't exist");
                 }
@@ -62,7 +61,6 @@ public class SQLGameDAO{
     public void createGame(Integer gameID, String gameName) throws SQLException, DataAccessException {
         try (var conn = getConnection()) {
             String gameData = new Gson().toJson(new GameData(gameID, gameName));
-            System.out.println(gameData);
 //            GameData gameData = new GameData(gameID, gameName);
             var addGame = "INSERT INTO games " +
                     "(gameID, gameData) VALUES ('" +
@@ -84,7 +82,6 @@ public class SQLGameDAO{
                 var rs = preparedStatement.executeQuery();
                 while (rs.next()) {
                     String gameDataString = rs.getString("gameData");
-                    System.out.println(gameDataString);
                     gamesList.add(new Gson().fromJson(gameDataString, GameData.class));
 //                    gamesList.add((GameData) rs.getObject("gameData"));
                 }
@@ -97,7 +94,6 @@ public class SQLGameDAO{
 
 
     public void updateGame(Integer gameID, GameData gameDataObject) throws SQLException, DataAccessException{
-        getGame(gameID);
         try(var conn = getConnection()){
             String gameDataString = new Gson().toJson(gameDataObject);
             String updateString = "UPDATE games SET gameData=? WHERE gameID=?";
