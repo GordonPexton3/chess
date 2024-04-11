@@ -1,5 +1,6 @@
 package ui;
 
+import chess.ChessGame;
 import model.GameData;
 import server.MyRequest;
 import server.MyResponse;
@@ -13,7 +14,9 @@ public class UI {
     private final Map<Integer, GameData> games = new HashMap<>();
     private boolean logout;
     private String authToken;
+    private String username;
     private ServerFacade serverFacade;
+    private ChessGame.TeamColor playerColor;
     private final Scanner scanner = new Scanner(System.in);
 
     public void run(int port){
@@ -65,6 +68,7 @@ public class UI {
         MyResponse resp = serverFacade.login(req);
         if(resp.getStatus() == 200){
             this.authToken = resp.getAuthToken();
+            this.username = req.getUsername();
             postLogin();
         }else{
             System.out.println(resp.getMessage());
@@ -82,6 +86,7 @@ public class UI {
         MyResponse resp = serverFacade.register(req);
         if(resp.getStatus() == 200){
             this.authToken = resp.getAuthToken();
+            this.username = req.getUsername();
             postLogin();
         }else{
             System.out.println(resp.getMessage());
@@ -141,7 +146,7 @@ public class UI {
             req.setGameID(selectedGameData.getGameID());
             MyResponse resp = serverFacade.joinGame(req);
             if(resp.getStatus() == 200){
-                new GamePlay(selectedGameData.getGameID(), authToken);
+                new GamePlay(selectedGameData.getGameID(), authToken, username, playerColor);
             }else{
                 System.out.println(resp.getMessage());
             }
@@ -177,9 +182,11 @@ public class UI {
             }
             if(result == 1){
                 req.setPlayerColor("WHITE");
+                playerColor = ChessGame.TeamColor.WHITE;
                 gotPlayerColor = true;
             }else if(result == 2){
                 req.setPlayerColor("BLACK");
+                playerColor = ChessGame.TeamColor.BLACK;
                 gotPlayerColor = true;
             }else{
                 System.out.println("Please put in 1 or 2");
@@ -188,7 +195,7 @@ public class UI {
         MyResponse resp = serverFacade.joinGame(req);
         if(resp.getStatus() == 200){
 //            GameData gameData = this.games.get(resp.getGameID());
-            new GamePlay(resp.getGameID(), authToken);
+            new GamePlay(resp.getGameID(), authToken, username, playerColor);
         }else{
             System.out.println(resp.getMessage());
         }

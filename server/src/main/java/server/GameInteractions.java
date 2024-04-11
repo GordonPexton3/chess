@@ -12,12 +12,43 @@ import java.sql.SQLException;
 import java.util.Random;
 
 public class GameInteractions {
-
     private static SQLAuthDAO auth;
     private static SQLGameDAO games;
+
+    static {
+        try {
+            auth = SQLAuthDAO.getInstance();
+            games = SQLGameDAO.getInstance();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
     public static void makeDAOs() throws SQLException, DataAccessException {
         auth = SQLAuthDAO.getInstance();
         games = SQLGameDAO.getInstance();
+    }
+
+    public static MyResponse endGame(MyRequest req){
+        MyResponse resp = new MyResponse();
+        if(authorized(req, resp)){
+            try {
+                GameData gameData = games.getGame(req.getGameID());
+                if (gameData.getBlackUsername().equals(req.getUsername()) || gameData.getWhiteUsername().equals(req.getUsername())){
+                    gameData.getChessGame().gameOver = true;
+                    games.updateGame(req.getGameID(),gameData);
+                    resp.setStatus(200);
+                }else{
+                    resp.setMessage("you can't resign if you are not a player");
+                    resp.setStatus(0);
+                }
+            }catch(SQLException | DataAccessException e){
+                resp.setMessage("Problem in GameInteractions::listGames\n"+e);
+                resp.setStatus(500);
+            }
+        }
+        return resp;
     }
 
     public static MyResponse listGames(MyRequest req){
@@ -166,6 +197,18 @@ public class GameInteractions {
     }
 
     private static boolean authorized(MyRequest req, MyResponse resp){
-        return Authentications.authorized(req, resp);
+//        return Authentications.authorized(req, resp);
+        try{
+            auth.getUsername(req.getAuthToken());
+            return true;
+        }catch(DataAccessException e) {
+            resp.setMessage("Error: unauthorized");
+            resp.setStatus(401);
+            return false;
+        }catch(SQLException e){
+            resp.setMessage("Error: " + e);
+            resp.setStatus(500);
+            return false;
+        }
     }
 }

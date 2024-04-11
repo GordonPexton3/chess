@@ -1,19 +1,18 @@
 package model;
 
 import chess.ChessGame;
-import com.google.gson.Gson;
 
 public class GameData {
     private Integer gameID;
     private String gameName;
     private String whiteUsername;
     private String blackUsername;
-    private String chessGameString;
+    private ChessGame chessGame;
 
     public GameData(Integer gameID, String gameName) {
         this.gameID = gameID;
         this.gameName = gameName;
-        this.chessGameString = new Gson().toJson(new ChessGame());
+        this.chessGame = new ChessGame();
     }
     public String getWhiteUsername() {
         return whiteUsername;
@@ -28,8 +27,8 @@ public class GameData {
     public void setGameName(String gameName) {
         this.gameName = gameName;
     }
-    public void setChessGame(ChessGame chessGame) { this.chessGameString = new Gson().toJson(chessGame); }
-    public ChessGame getChessGame(){ return new Gson().fromJson(chessGameString, ChessGame.class); }
+    public void setChessGame(ChessGame chessGame) { this.chessGame = chessGame; }
+    public ChessGame getChessGame(){ return chessGame; }
     public void setWhiteUsername(String whiteUsername) { this.whiteUsername = whiteUsername; }
     public void setBlackUsername(String blackUsername) { this.blackUsername = blackUsername;}
     public Integer getGameID() {return this.gameID;}

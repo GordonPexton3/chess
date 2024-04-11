@@ -13,6 +13,7 @@ public class ChessGame {
 
     private TeamColor turn;
     private ChessBoard board;
+    public boolean gameOver = false;
     public ChessGame() {
         this.board = new ChessBoard();
         this.board.resetBoard();
@@ -88,6 +89,9 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
+        if(gameOver){
+            throw new InvalidMoveException("The game is over you dork - Alejandro");
+        }
         // TRACE
         ChessBoard board = getChessBoard();
         ChessPiece piece = getChessBoard().getPiece(move.getStartPosition());
@@ -272,6 +276,7 @@ public class ChessGame {
     public ChessBoard getChessBoard() {
         return board;
     }
+    public ChessBoard getBoard(){return board;}
 
     /**
      * this finds the location of this teams

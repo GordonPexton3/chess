@@ -33,34 +33,52 @@ public class WSServer {
     }
 
     private void joinObserver(Session session, JoinObserver command) {
-        ServerMessage response;
         try{
+            ServerMessage response;
+            // Load Game back to root client
             MyRequest req = new MyRequest();
             req.setGameID(command.getGameID());
             req.setAuthToken(command.getAuthString());
-            MyResponse resp = GameInteractions.joinGame(req);
-            if (resp.getStatus() != 200){
-                throw new Exception();
-            }
-            GameData updatedGameData = GameInteractions.getGame(req);
-            if(updatedGameData == null){
-                throw new Exception();
-            }
-            String msg = command.getUserID() + "joined game " + command.getUserID();
+            GameData gameData = GameInteractions.getGame(req);
+            response = new LoadGame(ServerMessage.ServerMessageType.LOAD_GAME,gameData);
+            session.getRemote().sendString(new Gson().toJson(response));
+            // message all related that the command.username joined as command.playerColor
+            String msg = command.getUsername() + " joined game " + command.getGameID() + " as observer";
             response = new Notification(ServerMessage.ServerMessageType.NOTIFICATION,msg);
             sendToAllButRoot(response, command.getGameID(), session);
-
-            response = new LoadGame(ServerMessage.ServerMessageType.LOAD_GAME,updatedGameData);
-            sendToAllRelated(response, command.getGameID());
-
-        }catch(Exception e){
-            response = new MyError(ServerMessage.ServerMessageType.ERROR,e.toString());
-            try {
-                session.getRemote().sendString(new Gson().toJson(response));
-            }catch(IOException a){
-                System.out.println("There is a problem with casting your error to a json and returning it: " + a);
-            }
+        }catch(IOException e){
+            System.out.println("Probably a json conversion problem in joinObserver::WSServer: " + e);
         }
+
+
+//        ServerMessage response;
+//        try{
+//            MyRequest req = new MyRequest();
+//            req.setGameID(command.getGameID());
+//            req.setAuthToken(command.getAuthString());
+//            MyResponse resp = GameInteractions.joinGame(req);
+//            if (resp.getStatus() != 200){
+//                throw new Exception();
+//            }
+//            GameData updatedGameData = GameInteractions.getGame(req);
+//            if(updatedGameData == null){
+//                throw new Exception();
+//            }
+//            String msg = command.getUserID() + "joined game " + command.getUserID();
+//            response = new Notification(ServerMessage.ServerMessageType.NOTIFICATION,msg);
+//            sendToAllButRoot(response, command.getGameID(), session);
+//
+//            response = new LoadGame(ServerMessage.ServerMessageType.LOAD_GAME,updatedGameData);
+//            sendToAllRelated(response, command.getGameID());
+//
+//        }catch(Exception e){
+//            response = new MyError(ServerMessage.ServerMessageType.ERROR,e.toString());
+//            try {
+//                session.getRemote().sendString(new Gson().toJson(response));
+//            }catch(IOException a){
+//                System.out.println("There is a problem with casting your error to a json and returning it: " + a);
+//            }
+//        }
     }
 
     private void joinPlayer(Session session, JoinPlayer command) {
@@ -93,6 +111,16 @@ public class WSServer {
     }
 
     private void resign(Session session, Resign command) {
+        MyRequest req = new MyRequest();
+        req.setUsername(command.getUsername());
+        req.setGameID(command.getGameID());
+        req.setAuthToken(command.getAuthString());
+        MyResponse resp = GameInteractions.endGame(req);
+        if(resp.getStatus() != 200) {
+            // send back the error to the root client
+        }else{
+            // send a Notification to everyone that the player resigned
+        }
 
     }
 

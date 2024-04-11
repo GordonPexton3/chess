@@ -10,11 +10,15 @@ import java.sql.SQLException;
 
 @WebSocket
 public class Server{
+    private final WSServer wSserver;
+    public Server(){
+        this.wSserver = new WSServer();
+    }
     public int run(int desiredPort) {
         Spark.port(desiredPort);
 
         Spark.staticFiles.location("web");
-        Spark.webSocket("/connect", WSServer.class);
+        Spark.webSocket("/connect", wSserver);
         Spark.post("/user", this::register);
         Spark.post("/session", this::login);
         Spark.delete("/session", this::logout);

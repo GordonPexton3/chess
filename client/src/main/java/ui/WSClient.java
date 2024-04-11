@@ -1,6 +1,10 @@
 package ui;
 
+import chess.ChessGame;
 import com.google.gson.Gson;
+import webSocketMessages.serverMessages.LoadGame;
+import webSocketMessages.serverMessages.MyError;
+import webSocketMessages.serverMessages.Notification;
 import webSocketMessages.serverMessages.ServerMessage;
 import webSocketMessages.userCommands.UserGameCommand;
 
@@ -9,6 +13,8 @@ import java.net.URI;
 
 public class WSClient extends Endpoint {
     public Session session;
+    private ChessGame lastGameState;
+    private final DrawBoard db = new DrawBoard();
 
     public WSClient() throws Exception {
         URI uri = new URI("ws://localhost:8080/connect");
@@ -19,9 +25,9 @@ public class WSClient extends Endpoint {
 
             ServerMessage serverMessage = new Gson().fromJson(message, ServerMessage.class);
             switch (serverMessage.getServerMessageType()){
-                case ServerMessage.ServerMessageType.ERROR -> Error(serverMessage);
-                case ServerMessage.ServerMessageType.LOAD_GAME -> loadGame(serverMessage);
-                case ServerMessage.ServerMessageType.NOTIFICATION -> notification(serverMessage);
+                case ServerMessage.ServerMessageType.ERROR -> Error((MyError) serverMessage);
+                case ServerMessage.ServerMessageType.LOAD_GAME -> loadGame((LoadGame) serverMessage);
+                case ServerMessage.ServerMessageType.NOTIFICATION -> notification((Notification) serverMessage);
             }
         });
     }
@@ -34,20 +40,20 @@ public class WSClient extends Endpoint {
             System.out.println("Something broke sending a message " + e);
         }
     }
-
-    private void notification(ServerMessage serverMessage) {
-
+    private void notification(Notification serverMessage) {
+        System.out.println(serverMessage.getMessage());
     }
-
-    private void loadGame(ServerMessage serverMessage) {
-
+    private void loadGame(LoadGame serverMessage) {
+        lastGameState = serverMessage.getGame().getChessGame();
+        db.drawBoard(lastGameState);
     }
-
-    private void Error(ServerMessage serverMessage) {
-
+    private void Error(MyError serverMessage) {
+        System.out.println(serverMessage.getErrorMessage());
     }
-
-
     public void onOpen(Session session, EndpointConfig endpointConfig) {
+    }
+
+    public ChessGame getUpToDateGame() {
+        return lastGameState;
     }
 }

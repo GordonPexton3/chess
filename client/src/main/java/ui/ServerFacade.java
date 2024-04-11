@@ -65,6 +65,9 @@ public class ServerFacade {
         }catch(IOException e){
             System.out.println("You broke something in ServerFacade\n" + e);
             return new MyResponse();
+        }catch(NullPointerException e){
+            System.out.println("WHY DOES THIS KEEP HAPPENING ");
+            return new MyResponse();
         }
     }
 }

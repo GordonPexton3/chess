@@ -1,11 +1,10 @@
 package ui;
 
+import chess.ChessGame;
 import chess.ChessMove;
 import chess.ChessPosition;
-import server.GameInteractions;
 import server.MyRequest;
-import webSocketMessages.userCommands.MakeMove;
-import webSocketMessages.userCommands.UserGameCommand;
+import webSocketMessages.userCommands.*;
 
 import java.util.Arrays;
 import java.util.List;
@@ -19,8 +18,10 @@ public class GamePlay {
     private final String authToken;
     private final int gameID;
     private final MyRequest req = new MyRequest();
+    private final String username;
+    private final ChessGame.TeamColor playerColor;
 
-    public GamePlay(int gameID, String authToken) {
+    public GamePlay(int gameID, String authToken, String username, ChessGame.TeamColor playerColor) {
         try{
             ws = new WSClient();
         }catch(Exception e){
@@ -30,11 +31,25 @@ public class GamePlay {
         this.authToken = authToken;
         req.setAuthToken(authToken);
         req.setGameID(gameID);
+        this.username = username;
+        this.playerColor = playerColor;
+        messageAllYouJoined();
         run();
     }
 
+    private void messageAllYouJoined() {
+        UserGameCommand command;
+        if(playerColor == null){
+            // joined as observer
+            command = new JoinObserver(authToken, gameID, username, null);
+        }else{
+            command = new JoinPlayer(authToken, gameID, username, playerColor);
+        }
+        ws.send(command);
+
+    }
+
     private void run(){
-        db.drawBoard(GameInteractions.getGame(req).getChessGame());
         boolean leave = false;
         boolean resign = false;
         System.out.print("Help (h) ");
@@ -50,22 +65,28 @@ public class GamePlay {
                     System.out.println("Resign");
                     System.out.println("Highlight Legal Moves");
                 }
-                case "Redraw Chess Board" -> db.drawBoard(GameInteractions.getGame(req).getChessGame());
+                case "Redraw Chess Board" -> db.drawBoard(ws.getUpToDateGame());
                 case "Leave" -> leave = true;
                 case "Make Move" -> makeMoves();
-                case "Resign" -> resign = true;
+                case "Resign" -> resign = resign();
                 case "Highlight Legal Moves" -> highlightMoves();
                 default -> System.out.println("Input invalid. Try it again. This isn't hard. You can do it.");
             }
         }
     }
 
+    private boolean resign(){
+        UserGameCommand command = new Resign(authToken,gameID,username);
+        ws.send(command);
+        return true;
+    }
+
     private void highlightMoves() {
-//        System.out.println("What is the position of the piece");
-//        String piecePositionString = scanner.nextLine();
-//        List<Integer> piecePositionList = parseInputToCoordinates(piecePositionString);
-//        ChessPosition piecePosition = new ChessPosition(piecePositionList.get(0), piecePositionList.get(1));
-//        db.drawMovesOnBoard(chessGame, piecePosition);
+        System.out.println("What is the position of the piece");
+        String piecePositionString = scanner.nextLine();
+        List<Integer> piecePositionList = parseInputToCoordinates(piecePositionString);
+        ChessPosition piecePosition = new ChessPosition(piecePositionList.get(0), piecePositionList.get(1));
+        db.drawMovesOnBoard(ws.getUpToDateGame(), piecePosition);
     }
 
     private void makeMoves() {
