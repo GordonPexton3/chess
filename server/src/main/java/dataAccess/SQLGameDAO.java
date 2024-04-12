@@ -18,12 +18,6 @@ public class SQLGameDAO{
     private void configureDatabase() throws SQLException, DataAccessException {
         DatabaseManager.createDatabase();
         try (var conn = getConnection()) {
-//            var createAuthTable = """
-//            CREATE TABLE  IF NOT EXISTS games (
-//                gameID INT NOT NULL,
-//                gameData VARCHAR(255) NOT NULL,
-//                INDEX (gameID)
-//            )""";
             var createAuthTable = """
             CREATE TABLE IF NOT EXISTS games (
                 gameID INT NOT NULL,
@@ -83,11 +77,10 @@ public class SQLGameDAO{
                 while (rs.next()) {
                     String gameDataString = rs.getString("gameData");
                     gamesList.add(new Gson().fromJson(gameDataString, GameData.class));
-//                    gamesList.add((GameData) rs.getObject("gameData"));
                 }
             }
         } catch (Exception e) {
-            System.out.println(e);
+            System.out.println(e.getMessage());
         }
         return gamesList;
     }
