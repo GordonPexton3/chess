@@ -2,8 +2,8 @@ package ui;
 
 import chess.ChessGame;
 import model.GameData;
-import server.MyRequest;
-import server.MyResponse;
+import ServerCommunicationClasses.MyRequest;
+import ServerCommunicationClasses.MyResponse;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -1,5 +1,7 @@
 package server;
 
+import ServerCommunicationClasses.MyRequest;
+import ServerCommunicationClasses.MyResponse;
 import dataAccess.DataAccessException;
 import dataAccess.SQLAuthDAO;
 import dataAccess.SQLGameDAO;

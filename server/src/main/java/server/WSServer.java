@@ -1,5 +1,7 @@
 package server;
 
+import ServerCommunicationClasses.MyRequest;
+import ServerCommunicationClasses.MyResponse;
 import chess.ChessGame;
 import chess.ChessPiece;
 import chess.InvalidMoveException;
@@ -88,6 +90,7 @@ public class WSServer {
 
     private void joinPlayer(Session session, String message) {
         System.out.println("Join Player");
+        System.out.println(message);
         ServerMessage response;
         JoinPlayer command;
         try{
@@ -96,6 +99,7 @@ public class WSServer {
             if (sessionToUsername.get(session) == null){
                 if(command.getAuthString() == null){
                     justSendHimAGame(session, command);
+                    System.out.println("This is where the error happens");
                     throw new NullPointerException();
                 }
                 try{

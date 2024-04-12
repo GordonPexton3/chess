@@ -11,8 +11,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import server.Authentications;
 import server.GameInteractions;
-import server.MyRequest;
-import server.MyResponse;
+import ServerCommunicationClasses.MyRequest;
+import ServerCommunicationClasses.MyResponse;
 
 import java.sql.SQLException;
 import java.util.Vector;

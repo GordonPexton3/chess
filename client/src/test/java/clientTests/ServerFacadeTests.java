@@ -3,8 +3,8 @@ package clientTests;
 import model.GameData;
 import org.junit.jupiter.api.*;
 import server.Authentications;
-import server.MyRequest;
-import server.MyResponse;
+import ServerCommunicationClasses.MyRequest;
+import ServerCommunicationClasses.MyResponse;
 import server.Server;
 import ui.ServerFacade;
 

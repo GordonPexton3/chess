@@ -1,8 +1,8 @@
 package ui;
 
 import com.google.gson.Gson;
-import server.MyRequest;
-import server.MyResponse;
+import ServerCommunicationClasses.MyRequest;
+import ServerCommunicationClasses.MyResponse;
 
 import java.io.IOException;
 import java.io.InputStream;

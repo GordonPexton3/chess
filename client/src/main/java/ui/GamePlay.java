@@ -4,7 +4,7 @@ import chess.ChessGame;
 import chess.ChessMove;
 import chess.ChessPosition;
 import com.google.gson.Gson;
-import server.MyRequest;
+import ServerCommunicationClasses.MyRequest;
 import webSocketMessages.serverMessages.LoadGame;
 import webSocketMessages.serverMessages.MyError;
 import webSocketMessages.serverMessages.Notification;
@@ -67,12 +67,12 @@ public class GamePlay implements ServerMessageObserver {
             switch (response) {
                 case "h" -> System.out.println("""
                     you can type any of the following ...
-                    Redraw Board
+                    Redraw
                     Leave
                     Make Move
                     Resign
                     Show Moves""");
-                case "Redraw" -> db.drawBoard(lastGameState);
+                case "Redraw" -> db.drawBoard(lastGameState, playerColor);
                 case "Leave" -> leave = leave();
                 case "Make Move" -> makeMoves();
                 case "Resign" -> resign = resign();
@@ -182,7 +182,7 @@ public class GamePlay implements ServerMessageObserver {
         LoadGame loadGame = gson.fromJson(message, LoadGame.class);
         lastGameState = loadGame.getGame().getChessGame();
         System.out.println("\n");
-        db.drawBoard(lastGameState);
+        db.drawBoard(lastGameState, playerColor);
     }
     private void Error(String message) {
         MyError error = gson.fromJson(message, MyError.class);

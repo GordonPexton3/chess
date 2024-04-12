@@ -20,17 +20,23 @@ public class DrawBoard {
     private boolean drawMoves = false;
     private List<ChessPosition> piecePositions;
 
-    public void drawBoard(ChessGame chessGame) {
+    public void drawBoard(ChessGame chessGame, ChessGame.TeamColor playerColor) {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
         this.board = chessGame.getChessBoard().getBoard();
 
-        if(chessGame.getTeamTurn() == ChessGame.TeamColor.WHITE){
-//            drawBoardBlackPlayer(out);
+        if(playerColor == ChessGame.TeamColor.WHITE){
             drawBoardWhitePlayer(out);
-        }else if(chessGame.getTeamTurn() == ChessGame.TeamColor.BLACK){
-//            drawBoardWhitePlayer(out);
+        }else if(playerColor == ChessGame.TeamColor.BLACK){
             drawBoardBlackPlayer(out);
         }
+
+//        if(chessGame.getTeamTurn() == ChessGame.TeamColor.WHITE){
+////            drawBoardBlackPlayer(out);
+//            drawBoardWhitePlayer(out);
+//        }else if(chessGame.getTeamTurn() == ChessGame.TeamColor.BLACK){
+////            drawBoardWhitePlayer(out);
+//            drawBoardBlackPlayer(out);
+//        }
         out.print(RESET_BG_COLOR);
         out.print(RESET_TEXT_COLOR);
     }

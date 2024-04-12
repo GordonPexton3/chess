@@ -1,6 +1,8 @@
 package server;
 
 
+import ServerCommunicationClasses.MyRequest;
+import ServerCommunicationClasses.MyResponse;
 import com.google.gson.Gson;
 import dataAccess.DataAccessException;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;

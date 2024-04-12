@@ -1,4 +1,4 @@
-package server;
+package ServerCommunicationClasses;
 
 public class MyRequest {
 
