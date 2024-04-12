@@ -71,7 +71,6 @@ public class UI {
         MyResponse resp = serverFacade.login(req);
         if(resp.getStatus() == 200){
             this.authToken = resp.getAuthToken();
-            this.username = req.getUsername();
             postLogin();
         }else{
             System.out.println(resp.getMessage());
@@ -89,7 +88,6 @@ public class UI {
         MyResponse resp = serverFacade.register(req);
         if(resp.getStatus() == 200){
             this.authToken = resp.getAuthToken();
-            this.username = req.getUsername();
             postLogin();
         }else{
             System.out.println(resp.getMessage());
