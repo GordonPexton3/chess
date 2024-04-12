@@ -35,7 +35,7 @@ public class UI {
                                3. Login
                                4. Register
                                >>>
-                               """);
+                                """);
             String line = scanner.nextLine();
             int result;
             try{
@@ -105,7 +105,7 @@ public class UI {
                     4. List Games
                     5. Join Games
                     6. Join Observer
-                    >>>""");
+                     >>>""");
             String line = scanner.nextLine();
             int result;
             try{
