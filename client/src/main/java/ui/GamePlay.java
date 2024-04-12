@@ -161,7 +161,7 @@ public class GamePlay implements ServerMessageObserver {
     @Override
     public void notify(ServerMessage serverMessage, String jsonMessage) {
         switch (serverMessage.getServerMessageType()){
-            case ServerMessage.ServerMessageType.ERROR -> Error(jsonMessage);
+            case ServerMessage.ServerMessageType.ERROR -> error(jsonMessage);
             case ServerMessage.ServerMessageType.LOAD_GAME -> loadGame(jsonMessage);
             case ServerMessage.ServerMessageType.NOTIFICATION -> notification(jsonMessage);
         }
@@ -178,7 +178,7 @@ public class GamePlay implements ServerMessageObserver {
         db.drawBoard(lastGameState, playerColor);
         System.out.print(">>> ");
     }
-    private void Error(String message) {
+    private void error(String message) {
         MyError error = gson.fromJson(message, MyError.class);
         System.out.print(error.getErrorMessage() + "\n>>> ");
     }
