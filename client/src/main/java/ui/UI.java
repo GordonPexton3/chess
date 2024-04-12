@@ -16,7 +16,6 @@ public class UI {
     private final Map<Integer, GameData> games = new HashMap<>();
     private boolean logout;
     private String authToken;
-    private String username;
     private ServerFacade serverFacade;
     private ChessGame.TeamColor playerColor;
     private final Scanner scanner = new Scanner(System.in);
@@ -30,11 +29,13 @@ public class UI {
         boolean quit = false;
         while (!quit) {
             this.logout = false;
-            System.out.println("1. Help");
-            System.out.println("2. Quit");
-            System.out.println("3. Login");
-            System.out.println("4. Register");
-            System.out.printf(">>> ");
+            System.out.print("""
+                               1. Help
+                               2. Quit
+                               3. Login
+                               4. Register
+                               >>>
+                               """);
             String line = scanner.nextLine();
             int result;
             try{
@@ -99,13 +100,14 @@ public class UI {
         populateGamesList();
         while (!logout) {
             MyRequest req = new MyRequest();
-            System.out.println("1. Help");
-            System.out.println("2. logout");
-            System.out.println("3. Create Game");
-            System.out.println("4. List Games");
-            System.out.println("5. Join Games");
-            System.out.println("6. Join Observer");
-            System.out.printf(">>> ");
+            System.out.println("""
+                    1. Help
+                    2. logout
+                    3. Create Game
+                    4. List Games
+                    5. Join Games
+                    6. Join Observer
+                    >>>""");
             String line = scanner.nextLine();
             int result;
             try{
@@ -152,7 +154,9 @@ public class UI {
                 new GamePlay(selectedGameData.getGameID(), authToken, playerColor);
                 try{
                     sleep(500);
-                }catch (InterruptedException e) {}
+                }catch (InterruptedException e) {
+                    System.out.println("TImer problems");
+                }
             }else{
                 System.out.println(resp.getMessage());
             }
@@ -206,7 +210,9 @@ public class UI {
                 new GamePlay(req.getGameID(), authToken, playerColor);
                 try{
                     sleep(500);
-                }catch (InterruptedException e) {}
+                }catch (InterruptedException e) {
+                    System.out.println("TImer Problems");
+                }
             }else{
                 System.out.println(resp.getMessage());
             }
