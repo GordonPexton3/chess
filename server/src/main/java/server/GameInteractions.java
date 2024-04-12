@@ -1,7 +1,7 @@
 package server;
 
-import ServerCommunicationClasses.MyRequest;
-import ServerCommunicationClasses.MyResponse;
+import model.MyRequest;
+import model.MyResponse;
 import chess.ChessGame;
 import chess.ChessMove;
 import chess.InvalidMoveException;

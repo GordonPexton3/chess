@@ -4,7 +4,7 @@ import chess.ChessGame;
 import chess.ChessMove;
 import chess.ChessPosition;
 import com.google.gson.Gson;
-import ServerCommunicationClasses.MyRequest;
+import model.MyRequest;
 import webSocketMessages.serverMessages.LoadGame;
 import webSocketMessages.serverMessages.MyError;
 import webSocketMessages.serverMessages.Notification;

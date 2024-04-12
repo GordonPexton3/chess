@@ -1,4 +1,4 @@
-package ServerCommunicationClasses;
+package model;
 
 import model.GameData;
 
