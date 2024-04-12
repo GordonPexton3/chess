@@ -29,7 +29,6 @@ public class WSClient extends Endpoint {
         try{
             String strMsg = new Gson().toJson(command);
             this.session.getBasicRemote().sendText(strMsg);
-            Thread.sleep(500);
         }catch(Exception e){
             System.out.println("Something broke sending a message " + e);
         }

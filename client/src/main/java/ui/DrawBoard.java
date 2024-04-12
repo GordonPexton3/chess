@@ -56,22 +56,23 @@ public class DrawBoard {
     }
 
     private void drawBoardWhitePlayer(PrintStream out) {
-        out.println(SET_BG_COLOR_BLACK);
+//        out.println(SET_BG_COLOR_BLACK);
         borderHtoA(out);
         for (int r = 0; r <= 7 ; r++){
             drawRow(out,r,true);
         }
         borderHtoA(out);
-        out.println(SET_BG_COLOR_BLACK);
+//        out.println(SET_BG_COLOR_BLACK);
     }
 
     private void drawBoardBlackPlayer(PrintStream out) {
+//        out.println(SET_BG_COLOR_BLACK);
         borderAtoH(out);
         for (int r = 0; r <= 7 ; r++){
             drawRow(out,r,false);
         }
         borderAtoH(out);
-        out.println(SET_BG_COLOR_BLACK);
+//        out.println(SET_BG_COLOR_BLACK);
     }
 
     private void drawRow(PrintStream out, int r, boolean redUp) {
@@ -97,9 +98,9 @@ public class DrawBoard {
     private String normalOrMovesColor(String originalColor, int r, int c){
         if(drawMoves){
             if(piecePositions.contains(new ChessPosition(r + 1,c + 1))){
-                if(originalColor == SET_BG_COLOR_WHITE){
+                if(originalColor.equals(SET_BG_COLOR_WHITE)){
                     return SET_BG_COLOR_GREEN;
-                } else if (originalColor == SET_BG_COLOR_BLACK) {
+                } else if (originalColor.equals(SET_BG_COLOR_BLACK)) {
                     return SET_BG_COLOR_DARK_GREEN;
                 }
             }

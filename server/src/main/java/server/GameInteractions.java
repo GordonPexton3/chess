@@ -35,7 +35,7 @@ public class GameInteractions {
         if(authorized(req, resp)){
             try {
                 GameData gameData = games.getGame(req.getGameID());
-                if (gameData.getBlackUsername().equals(req.getUsername()) || gameData.getWhiteUsername().equals(req.getUsername())){
+                if (req.getUsername().equals(gameData.getBlackUsername()) || req.getUsername().equals(gameData.getWhiteUsername())){
                     gameData.getChessGame().gameOver = true;
                     games.updateGame(req.getGameID(),gameData);
                     resp.setStatus(200);
@@ -71,6 +71,15 @@ public class GameInteractions {
             return games.getGame(req.getGameID());
         }
         return null;
+    }
+
+    public static GameData desperateGetGame(int gameID) throws DataAccessException {
+        try{
+            return games.getGame(gameID);
+        }catch(SQLException e){
+            System.out.println("GameInteractions::desperateGetGame " + e.getMessage());
+        }
+        throw new DataAccessException("Game with ID "+gameID+" isn't in the database");
     }
 
     public static MyResponse createGame(MyRequest req){

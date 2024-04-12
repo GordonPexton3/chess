@@ -16,6 +16,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
+import static java.lang.Thread.sleep;
+
 public class GamePlay implements ServerMessageObserver {
     private final DrawBoard db = new DrawBoard();
     private final Gson gson = new Gson();
@@ -33,7 +35,7 @@ public class GamePlay implements ServerMessageObserver {
         try{
             ws = new WSClient(this);
         }catch(Exception e){
-            System.out.println("The websocket didn't connect: " + e);
+            System.out.println("The websocket didn't connect: " + e.getMessage());
         }
         this.gameID = gameID;
         this.authToken = authToken;
@@ -48,12 +50,11 @@ public class GamePlay implements ServerMessageObserver {
     private void indicateYouJoined() {
         UserGameCommand command;
         if(playerColor == null){
-            // joined as observer
             command = new JoinObserver(authToken, gameID, null);
         }else{
             command = new JoinPlayer(authToken, gameID, playerColor);
         }
-        ws.send(command);
+        send(command);
     }
 
     private void run(){
@@ -61,39 +62,48 @@ public class GamePlay implements ServerMessageObserver {
         boolean resign = false;
         System.out.print("Help (h) ");
         while(!leave && !resign) {
-            System.out.printf("%n>>> ");
+            System.out.printf(">>> ");
             String response = scanner.nextLine();
             switch (response) {
-                case "h" -> {
-                    System.out.println("you can type any of the following ...");
-                    System.out.println("Redraw Chess Board");
-                    System.out.println("Leave");
-                    System.out.println("Make Move");
-                    System.out.println("Resign");
-                    System.out.println("Highlight Legal Moves");
-                }
-                case "Redraw" -> System.out.println("will redraw");
-                case "Leave" -> leave = true;
+                case "h" -> System.out.println("""
+                    you can type any of the following ...
+                    Redraw Board
+                    Leave
+                    Make Move
+                    Resign
+                    Show Moves""");
+                case "Redraw" -> db.drawBoard(lastGameState);
+                case "Leave" -> leave = leave();
                 case "Make Move" -> makeMoves();
                 case "Resign" -> resign = resign();
-                case "Highlight Legal Moves" -> highlightMoves();
+                case "Show Moves" -> highlightMoves();
                 default -> System.out.println("Input invalid. Try it again. This isn't hard. You can do it.");
             }
         }
     }
 
+    private boolean leave() {
+        UserGameCommand command = new Leave(authToken,gameID);
+        send(command);
+        return true;
+    }
+
     private boolean resign(){
         UserGameCommand command = new Resign(authToken,gameID);
-        ws.send(command);
+        send(command);
         return true;
     }
 
     private void highlightMoves() {
-        System.out.println("What is the position of the piece");
-        String piecePositionString = scanner.nextLine();
-        List<Integer> piecePositionList = parseInputToCoordinates(piecePositionString);
-        ChessPosition piecePosition = new ChessPosition(piecePositionList.get(0), piecePositionList.get(1));
-        db.drawMovesOnBoard(lastGameState, piecePosition);
+        try{
+            System.out.println("What is the position of the piece");
+            String piecePositionString = scanner.nextLine();
+            List<Integer> piecePositionList = parseInputToCoordinates(piecePositionString);
+            ChessPosition piecePosition = new ChessPosition(piecePositionList.get(0), piecePositionList.get(1));
+            db.drawMovesOnBoard(lastGameState, piecePosition);
+        }catch(Exception e){
+            System.out.println(e.getMessage());
+        }
     }
 
     private void makeMoves() {
@@ -101,36 +111,37 @@ public class GamePlay implements ServerMessageObserver {
             System.out.println("Starting Coordinate");
             String startingCoordinateStr = scanner.nextLine();
             List<Integer> startCoordinates = parseInputToCoordinates(startingCoordinateStr);
-            if (startCoordinates == null) { throw new Exception(); }
-
             System.out.println("Ending Coordinate");
             String endingCoordinateStr = scanner.nextLine();
             List<Integer> endingCoordinate = parseInputToCoordinates(endingCoordinateStr);
-            if (endingCoordinate == null) { throw new Exception();}
-
             ChessPosition startingPosition = new ChessPosition(startCoordinates.get(0), startCoordinates.get(1));
             ChessPosition endPosition = new ChessPosition(endingCoordinate.get(0), endingCoordinate.get(1));
             ChessMove move = new ChessMove(startingPosition, endPosition, null);
             UserGameCommand command = new MakeMove(authToken,gameID,move);
-            ws.send(command);
+            send(command);
         }catch(Exception e){
-            System.out.println("Problem in makeMoves GamePlay");
+            System.out.println(e.getMessage());
         }
     }
 
-    private List<Integer> parseInputToCoordinates(String startingCoordinateStr){
+
+
+    private List<Integer> parseInputToCoordinates(String startingCoordinateStr) throws Exception {
         char[] charArray = startingCoordinateStr.toCharArray();
         if(charArray.length != 2){
-            System.out.println("Your input is invalid, please put a row and a column with no spaces");
-            return null;
+            throw new Exception("Your input is invalid, please put a row and a column with no spaces");
         }
         Integer startRow = numCharToInt.get(charArray[0]);
         Integer startCol = charToInt.get(charArray[1]);
         if(startRow == null || startCol == null){
-            System.out.println("Your input is invalid, please put a row and a column with no spaces");
-            return null;
+            throw new Exception("Your input is invalid, please put a row and a column with no spaces");
         }
         return Arrays.asList(startRow, startCol);
+    }
+
+    private void send(UserGameCommand command){
+        ws.send(command);
+        try{sleep(500);}catch(Exception e){};
     }
     private final Map<Character, Integer> numCharToInt = Map.of(
             '1',8,
@@ -165,16 +176,16 @@ public class GamePlay implements ServerMessageObserver {
     private void notification(String message) {
         Notification notification = gson.fromJson(message, Notification.class);
         messageBuffer = notification.getMessage();
-        System.out.println("Notification" + messageBuffer);
+        System.out.println("\nNotification " + messageBuffer + "\n>>>");
     }
     private void loadGame(String message) {
         LoadGame loadGame = gson.fromJson(message, LoadGame.class);
         lastGameState = loadGame.getGame().getChessGame();
+        System.out.println("\n");
         db.drawBoard(lastGameState);
     }
     private void Error(String message) {
         MyError error = gson.fromJson(message, MyError.class);
-        messageBuffer = error.getErrorMessage();
-        System.out.println(messageBuffer);
+        System.out.println(error.getErrorMessage());
     }
 }

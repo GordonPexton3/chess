@@ -10,6 +10,8 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.Vector;
 
+import static java.lang.Thread.sleep;
+
 public class UI {
     private final Map<Integer, GameData> games = new HashMap<>();
     private boolean logout;
@@ -136,6 +138,7 @@ public class UI {
     }
 
     private void joinObserver(){
+        populateGamesList();
         try {
             MyRequest req = new MyRequest();
             req.setAuthToken(this.authToken);
@@ -147,6 +150,9 @@ public class UI {
             MyResponse resp = serverFacade.joinGame(req);
             if(resp.getStatus() == 200){
                 new GamePlay(selectedGameData.getGameID(), authToken, username, playerColor);
+                try{
+                    sleep(500);
+                }catch (InterruptedException e) {}
             }else{
                 System.out.println(resp.getMessage());
             }
@@ -198,6 +204,9 @@ public class UI {
             MyResponse resp = serverFacade.joinGame(req);
             if(resp.getStatus() == 200){
                 new GamePlay(req.getGameID(), authToken, username, playerColor);
+                try{
+                    sleep(500);
+                }catch (InterruptedException e) {}
             }else{
                 System.out.println(resp.getMessage());
             }
