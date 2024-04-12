@@ -4,7 +4,6 @@ import chess.ChessGame;
 import chess.ChessMove;
 import chess.ChessPosition;
 import com.google.gson.Gson;
-import model.MyRequest;
 import webSocketMessages.serverMessages.LoadGame;
 import webSocketMessages.serverMessages.MyError;
 import webSocketMessages.serverMessages.Notification;
@@ -25,11 +24,8 @@ public class GamePlay implements ServerMessageObserver {
     private WSClient ws;
     private final String authToken;
     private final int gameID;
-    private final MyRequest req = new MyRequest();
-    private final String username;
     private ChessGame lastGameState;
     private final ChessGame.TeamColor playerColor;
-    private String messageBuffer;
 
     public GamePlay(int gameID, String authToken, String username, ChessGame.TeamColor playerColor) {
         try{
@@ -39,9 +35,6 @@ public class GamePlay implements ServerMessageObserver {
         }
         this.gameID = gameID;
         this.authToken = authToken;
-        req.setAuthToken(authToken);
-        req.setGameID(gameID);
-        this.username = username;
         this.playerColor = playerColor;
         indicateYouJoined();
         run();
@@ -140,7 +133,9 @@ public class GamePlay implements ServerMessageObserver {
 
     private void send(UserGameCommand command){
         ws.send(command);
-        try{sleep(500);}catch(Exception e){};
+        try{sleep(500);}catch(Exception e){
+            System.out.println("Timer Problem");
+        }
     }
     private final Map<Character, Integer> numCharToInt = Map.of(
             '1',1,
