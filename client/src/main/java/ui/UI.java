@@ -149,7 +149,7 @@ public class UI {
             req.setGameID(selectedGameData.getGameID());
             MyResponse resp = serverFacade.joinGame(req);
             if(resp.getStatus() == 200){
-                new GamePlay(selectedGameData.getGameID(), authToken, username, playerColor);
+                new GamePlay(selectedGameData.getGameID(), authToken, playerColor);
                 try{
                     sleep(500);
                 }catch (InterruptedException e) {}
@@ -203,7 +203,7 @@ public class UI {
             }
             MyResponse resp = serverFacade.joinGame(req);
             if(resp.getStatus() == 200){
-                new GamePlay(req.getGameID(), authToken, username, playerColor);
+                new GamePlay(req.getGameID(), authToken, playerColor);
                 try{
                     sleep(500);
                 }catch (InterruptedException e) {}

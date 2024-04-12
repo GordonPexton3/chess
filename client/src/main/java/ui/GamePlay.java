@@ -27,7 +27,7 @@ public class GamePlay implements ServerMessageObserver {
     private ChessGame lastGameState;
     private final ChessGame.TeamColor playerColor;
 
-    public GamePlay(int gameID, String authToken, String username, ChessGame.TeamColor playerColor) {
+    public GamePlay(int gameID, String authToken, ChessGame.TeamColor playerColor) {
         try{
             ws = new WSClient(this);
         }catch(Exception e){
