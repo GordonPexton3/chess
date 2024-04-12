@@ -206,7 +206,7 @@ public class WSServer {
                     throw new Exception("You cannot make a move when the game is over");
                 }
             } catch (Exception e) {
-                throw new Exception("That is a bad GameID");
+                throw new Exception("You cannot make a move when the game is over");
             }
             if(!username.equals(loadedGame.getBlackUsername()) && !username.equals(loadedGame.getWhiteUsername())){
                 throw new Exception("You cannot make a move as an observer");
@@ -235,19 +235,26 @@ public class WSServer {
             String msg = "Player " + username + " made move " + command.getMove().toString();
             response = new Notification(msg);
             sendToAllButRoot(response, command.getGameID(), session);
-            ChessGame.TeamColor otherPlayerColor = loadedGame.getChessGame().getTeamTurn();
+            ChessGame.TeamColor otherPlayerColor = updatedGameData.getChessGame().getTeamTurn();
             String otherPlayerUsername = "";
             switch (otherPlayerColor){
-                case BLACK -> otherPlayerUsername = loadedGame.getBlackUsername();
-                case WHITE -> otherPlayerUsername = loadedGame.getWhiteUsername();
+                case BLACK -> otherPlayerUsername = updatedGameData.getBlackUsername();
+                case WHITE -> otherPlayerUsername = updatedGameData.getWhiteUsername();
             }
-            if(loadedGame.getChessGame().isInCheck(otherPlayerColor)){
+            if(updatedGameData.getChessGame().isInCheck(otherPlayerColor)){
                 msg = "Player " + otherPlayerUsername + " is now in check";
                 response = new Notification(msg);
                 sendToAllButRoot(response, command.getGameID(), session);
             }
-            if(loadedGame.getChessGame().isInCheckmate(otherPlayerColor)){
+            if(updatedGameData.getChessGame().isInCheckmate(otherPlayerColor)){
+                GameInteractions.endGame(req);
                 msg = "Player " + otherPlayerUsername + " is now in check mate";
+                response = new Notification(msg);
+                sendToAllButRoot(response, command.getGameID(), session);
+            }
+            if(updatedGameData.getChessGame().isInStalemate(otherPlayerColor)){
+                GameInteractions.endGame(req);
+                msg = "Player " + otherPlayerUsername + " is now stalemate";
                 response = new Notification(msg);
                 sendToAllButRoot(response, command.getGameID(), session);
             }
@@ -297,9 +304,9 @@ public class WSServer {
         ServerMessage response;
         try{
             Resign command = gson.fromJson(message, Resign.class);
-            if(gameIDToSessions.get(command.getGameID()) == null){
-                throw new Exception("The game is already over");
-            }
+//            if(gameIDToSessions.get(command.getGameID()) == null){
+//                throw new Exception("The game is already over");
+//            }
             String username;
             try{
                 username = Authentications.getUsername(command.getAuthString());
@@ -310,13 +317,21 @@ public class WSServer {
             req.setUsername(username);
             req.setGameID(command.getGameID());
             req.setAuthToken(command.getAuthString());
-            MyResponse resp = GameInteractions.endGame(req);
-            if(resp.getStatus() != 200){
-                throw new Exception(resp.getMessage());
+            GameData loadedGame = GameInteractions.desperateGetGame(command.getGameID());
+            try{
+                if(loadedGame.getChessGame().gameOver){
+                    throw new Exception("The game is already over");
+                }
+            }catch(NullPointerException e){
+                System.out.printf("Apparently that game isn't in the database: Server::Resign");
             }
+            MyResponse resp = GameInteractions.endGame(req);
+//            if(resp.getStatus() != 200){
+//                throw new Exception(resp.getMessage());
+//            }
             response = new Notification("user " + username + " resigned from game with ID " + command.getGameID());
             sendToAllRelated(response,command.getGameID());
-            removeGame(command.getGameID());
+//            removeGame(command.getGameID());
         }catch(Exception e){
             System.out.println("Resign Error");
             response = new MyError("Error in resign: " + e.getMessage());
@@ -328,9 +343,9 @@ public class WSServer {
         }
     }
 
-    private void removeGame(int gameID) {
-        gameIDToSessions.remove(gameID);
-    }
+//    private void removeGame(int gameID) {
+//        gameIDToSessions.remove(gameID);
+//    }
 
     private void sendToAllRelated(ServerMessage msg, int gameID){
         try{

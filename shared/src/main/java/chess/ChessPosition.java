@@ -1,5 +1,6 @@
 package chess;
 
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -36,9 +37,20 @@ public class ChessPosition {
     @Override
     public String toString() {
         return "(" + row +
-                "," + col +
+                "," + intToChar.get(col) +
                 ")";
     }
+
+    private final Map<Integer,Character> intToChar = Map.of(
+            1,'a',
+            2,'b',
+            3,'c',
+            4,'d',
+            5,'e',
+            6,'f',
+            7,'g',
+            8,'h'
+    );
 
     @Override
     public boolean equals(Object o) {

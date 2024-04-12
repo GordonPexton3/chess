@@ -59,10 +59,8 @@ public class GamePlay implements ServerMessageObserver {
 
     private void run(){
         boolean leave = false;
-        boolean resign = false;
-        System.out.print("Help (h) ");
-        while(!leave && !resign) {
-            System.out.printf(">>> ");
+        System.out.print("Help (h)\n>>> ");
+        while(!leave) {
             String response = scanner.nextLine();
             switch (response) {
                 case "h" -> System.out.println("""
@@ -72,12 +70,13 @@ public class GamePlay implements ServerMessageObserver {
                     Make Move
                     Resign
                     Show Moves""");
-                case "Redraw" -> db.drawBoard(lastGameState, playerColor);
+                case "Redraw" -> {  db.drawBoard(lastGameState, playerColor);
+                                    System.out.print(">>> ");}
                 case "Leave" -> leave = leave();
                 case "Make Move" -> makeMoves();
-                case "Resign" -> resign = resign();
+                case "Resign" -> resign();
                 case "Show Moves" -> highlightMoves();
-                default -> System.out.println("Input invalid. Try it again. This isn't hard. You can do it.");
+                default -> System.out.print("Input invalid. Try it again. This isn't hard. You can do it.\n>>> ");
             }
         }
     }
@@ -88,10 +87,10 @@ public class GamePlay implements ServerMessageObserver {
         return true;
     }
 
-    private boolean resign(){
+    private void resign(){
+        db.drawBoard(lastGameState, playerColor);
         UserGameCommand command = new Resign(authToken,gameID);
         send(command);
-        return true;
     }
 
     private void highlightMoves() {
@@ -120,7 +119,7 @@ public class GamePlay implements ServerMessageObserver {
             UserGameCommand command = new MakeMove(authToken,gameID,move);
             send(command);
         }catch(Exception e){
-            System.out.println(e.getMessage());
+            System.out.print(e.getMessage());
         }
     }
 
@@ -129,12 +128,12 @@ public class GamePlay implements ServerMessageObserver {
     private List<Integer> parseInputToCoordinates(String startingCoordinateStr) throws Exception {
         char[] charArray = startingCoordinateStr.toCharArray();
         if(charArray.length != 2){
-            throw new Exception("Your input is invalid, please put a row and a column with no spaces");
+            throw new Exception("Your input is invalid, please put a row and a column with no spaces\n>>> ");
         }
         Integer startRow = numCharToInt.get(charArray[0]);
         Integer startCol = charToInt.get(charArray[1]);
         if(startRow == null || startCol == null){
-            throw new Exception("Your input is invalid, please put a row and a column with no spaces");
+            throw new Exception("Your input is invalid, please put a row and a column with no spaces\n>>> ");
         }
         return Arrays.asList(startRow, startCol);
     }
@@ -144,24 +143,24 @@ public class GamePlay implements ServerMessageObserver {
         try{sleep(500);}catch(Exception e){};
     }
     private final Map<Character, Integer> numCharToInt = Map.of(
-            '1',8,
-            '2',7,
-            '3',6,
-            '4',5,
-            '5',4,
-            '6',3,
-            '7',2,
-            '8',1
+            '1',1,
+            '2',2,
+            '3',3,
+            '4',4,
+            '5',5,
+            '6',6,
+            '7',7,
+            '8',8
     );
     private final Map<Character, Integer> charToInt = Map.of(
-            'a',8,
-            'b',7,
-            'c',6,
-            'd',5,
-            'e',4,
-            'f',3,
-            'g',2,
-            'h',1
+            'a',1,
+            'b',2,
+            'c',3,
+            'd',4,
+            'e',5,
+            'f',6,
+            'g',7,
+            'h',8
     );
 
     @Override
@@ -175,17 +174,17 @@ public class GamePlay implements ServerMessageObserver {
 
     private void notification(String message) {
         Notification notification = gson.fromJson(message, Notification.class);
-        messageBuffer = notification.getMessage();
-        System.out.println("\nNotification " + messageBuffer + "\n>>>");
+        System.out.print("Notification: " + notification.getMessage() + "\n>>> ");
     }
     private void loadGame(String message) {
         LoadGame loadGame = gson.fromJson(message, LoadGame.class);
         lastGameState = loadGame.getGame().getChessGame();
         System.out.println("\n");
         db.drawBoard(lastGameState, playerColor);
+        System.out.print(">>> ");
     }
     private void Error(String message) {
         MyError error = gson.fromJson(message, MyError.class);
-        System.out.println(error.getErrorMessage());
+        System.out.print(error.getErrorMessage() + "\n>>> ");
     }
 }

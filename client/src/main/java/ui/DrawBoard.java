@@ -28,15 +28,13 @@ public class DrawBoard {
             drawBoardWhitePlayer(out);
         }else if(playerColor == ChessGame.TeamColor.BLACK){
             drawBoardBlackPlayer(out);
+        }else{
+            if(chessGame.getTeamTurn() == ChessGame.TeamColor.WHITE){
+                drawBoardWhitePlayer(out);
+            }else if(chessGame.getTeamTurn() == ChessGame.TeamColor.BLACK){
+                drawBoardBlackPlayer(out);
+            }
         }
-
-//        if(chessGame.getTeamTurn() == ChessGame.TeamColor.WHITE){
-////            drawBoardBlackPlayer(out);
-//            drawBoardWhitePlayer(out);
-//        }else if(chessGame.getTeamTurn() == ChessGame.TeamColor.BLACK){
-////            drawBoardWhitePlayer(out);
-//            drawBoardBlackPlayer(out);
-//        }
         out.print(RESET_BG_COLOR);
         out.print(RESET_TEXT_COLOR);
     }
@@ -132,9 +130,9 @@ public class DrawBoard {
     private void printEdge(PrintStream out, boolean redUp, int r){
         borderFont(out);
         if(redUp){
-            out.printf(" %d ", r + 1);
-        }else{
             out.printf(" %d ", 8 - r);
+        }else{
+            out.printf(" %d ", r + 1);
         }
     }
 
@@ -169,7 +167,7 @@ public class DrawBoard {
     private void borderHtoA(PrintStream out){
         borderFont(out);
         out.print("   ");
-        for(int i = 7; i >= 0; i --){
+        for(int i = 0; i <= 7; i ++){
             out.print(rows[i]);
         }
         out.print("   ");
@@ -179,7 +177,7 @@ public class DrawBoard {
     private void borderAtoH(PrintStream out){
         borderFont(out);
         out.print("   ");
-        for(int i = 0; i <= 7; i++){
+        for(int i = 7; i >= 0; i--){
             out.print(rows[i]);
         }
         out.print("   ");
