@@ -1,13 +1,12 @@
 package server;
 
-import model.MyRequest;
-import model.MyResponse;
 import chess.ChessGame;
 import chess.ChessPiece;
 import chess.InvalidMoveException;
 import com.google.gson.Gson;
 import dataAccess.DataAccessException;
 import model.GameData;
+import model.MyRequest;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
@@ -129,7 +128,7 @@ public class WSServer {
             }catch(NullPointerException e){
                 throw new Exception("This shouldn't have happened, you should exist as the player.");
             }
-            if (userSameColorAsInGameData && loadedGame != null) {
+            if (userSameColorAsInGameData) {
                 addPlayer(command.getGameID(), session, username);
                 // Server sends a LOAD_GAME message back to the root client.
                 response = new LoadGame(loadedGame);
@@ -206,7 +205,7 @@ public class WSServer {
                     throw new Exception("You cannot make a move when the game is over");
                 }
             } catch (Exception e) {
-                throw new Exception("You cannot make a move when the game is over");
+                throw new Exception(e.getMessage());
             }
             if(!username.equals(loadedGame.getBlackUsername()) && !username.equals(loadedGame.getWhiteUsername())){
                 throw new Exception("You cannot make a move as an observer");
@@ -241,22 +240,20 @@ public class WSServer {
                 case BLACK -> otherPlayerUsername = updatedGameData.getBlackUsername();
                 case WHITE -> otherPlayerUsername = updatedGameData.getWhiteUsername();
             }
-            if(updatedGameData.getChessGame().isInCheck(otherPlayerColor)){
-                msg = "Player " + otherPlayerUsername + " is now in check";
-                response = new Notification(msg);
-                sendToAllButRoot(response, command.getGameID(), session);
-            }
             if(updatedGameData.getChessGame().isInCheckmate(otherPlayerColor)){
                 GameInteractions.endGame(req);
                 msg = "Player " + otherPlayerUsername + " is now in check mate";
                 response = new Notification(msg);
-                sendToAllButRoot(response, command.getGameID(), session);
-            }
-            if(updatedGameData.getChessGame().isInStalemate(otherPlayerColor)){
+                sendToAllRelated(response, command.getGameID());
+            }else if(updatedGameData.getChessGame().isInCheck(otherPlayerColor)) {
+                msg = "Player " + otherPlayerUsername + " is now in check";
+                response = new Notification(msg);
+                sendToAllRelated(response, command.getGameID());
+            }else if(updatedGameData.getChessGame().isInStalemate(otherPlayerColor)){
                 GameInteractions.endGame(req);
                 msg = "Player " + otherPlayerUsername + " is now stalemate";
                 response = new Notification(msg);
-                sendToAllButRoot(response, command.getGameID(), session);
+                sendToAllRelated(response, command.getGameID());
             }
         }catch(Exception e){
             System.out.println("Make Move Error");
@@ -304,9 +301,6 @@ public class WSServer {
         ServerMessage response;
         try{
             Resign command = gson.fromJson(message, Resign.class);
-//            if(gameIDToSessions.get(command.getGameID()) == null){
-//                throw new Exception("The game is already over");
-//            }
             String username;
             try{
                 username = Authentications.getUsername(command.getAuthString());
@@ -318,20 +312,19 @@ public class WSServer {
             req.setGameID(command.getGameID());
             req.setAuthToken(command.getAuthString());
             GameData loadedGame = GameInteractions.desperateGetGame(command.getGameID());
+            if(!username.equals(loadedGame.getWhiteUsername()) && !username.equals(loadedGame.getBlackUsername())){
+                throw new Exception("You cannot resign as an observer");
+            }
             try{
                 if(loadedGame.getChessGame().gameOver){
                     throw new Exception("The game is already over");
                 }
             }catch(NullPointerException e){
-                System.out.printf("Apparently that game isn't in the database: Server::Resign");
+                System.out.print("Apparently that game isn't in the database: Server::Resign");
             }
-            MyResponse resp = GameInteractions.endGame(req);
-//            if(resp.getStatus() != 200){
-//                throw new Exception(resp.getMessage());
-//            }
+            GameInteractions.endGame(req);
             response = new Notification("user " + username + " resigned from game with ID " + command.getGameID());
             sendToAllRelated(response,command.getGameID());
-//            removeGame(command.getGameID());
         }catch(Exception e){
             System.out.println("Resign Error");
             response = new MyError("Error in resign: " + e.getMessage());
@@ -342,10 +335,6 @@ public class WSServer {
             }
         }
     }
-
-//    private void removeGame(int gameID) {
-//        gameIDToSessions.remove(gameID);
-//    }
 
     private void sendToAllRelated(ServerMessage msg, int gameID){
         try{
